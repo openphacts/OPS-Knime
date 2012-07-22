@@ -7,7 +7,7 @@ The committed code shows an example Knime plug-in that retrieves data based on t
 
 Installation
 ------------
-* Copy to plugins/OpenPhacts_1.0.0.201207221914.jar to the "dropins" folder of your KNIME installation
+* Copy the jar file in plugins to the "dropins" folder of your KNIME installation
 
 TODO
 -------------
