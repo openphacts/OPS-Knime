@@ -14,3 +14,4 @@ TODO
 * Better error handling
 * Configuration options should present only available choices
 * Configuration options should give range restrictions for the activity value
+* Currently, only returns the first 10 resutls, this can be updated either to grab all results or walk through the pages
