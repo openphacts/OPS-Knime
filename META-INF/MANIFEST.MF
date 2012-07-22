@@ -14,7 +14,7 @@ Bundle-ClassPath: openphactsdata.jar,
  lib/ezmorph-1.0.6.jar
 Bundle-Activator: ops.Activator
 Export-Package: 
- org,
+ ops,
  org.openphacts
 Require-Bundle: org.eclipse.core.runtime,
  org.knime.workbench.core,
