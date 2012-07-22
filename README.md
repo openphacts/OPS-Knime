@@ -9,6 +9,13 @@ Installation
 ------------
 * Copy the jar file in plugins to the "dropins" folder of your KNIME installation
 
+Development
+----------
+* To do development on the plugin you should use the knime sdk (http://www.knime.org/node/81) which is a specialized version of eclipse. 
+* The key classes are
+** OpenPhactsDataNodeModel.java
+** OpenPhactsDataNodeDialog.java 
+
 TODO
 -------------
 * Better error handling
