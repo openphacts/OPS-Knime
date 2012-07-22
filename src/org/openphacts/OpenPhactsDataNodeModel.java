@@ -70,7 +70,7 @@ public class OpenPhactsDataNodeModel extends NodeModel {
     
 
     public static final String ORGANISM = "organism";
-    public static final String DEFAULT_ORGANISM = "Homo Sapiens";
+    public static final String DEFAULT_ORGANISM = "Homo sapiens";
 
 
     public static final String MAX_ACT = "maxact";
