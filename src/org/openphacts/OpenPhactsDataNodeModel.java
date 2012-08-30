@@ -60,7 +60,7 @@ public class OpenPhactsDataNodeModel extends NodeModel {
 	public static final String API_URL = "OpenPhactsURL";
 
     /** initial default count value. */
-    public static final String DEFAULT_API_URL = "http://ops.few.vu.nl/";
+    public static final String DEFAULT_API_URL = "http://ops2.few.vu.nl/";
 
     public static final String FAMILY_URI = "input_uri";
     public static final String DEFAULT_FAMILY_URI = "http://purl.uniprot.org/enzyme/1.1.-.-";
@@ -150,13 +150,29 @@ public class OpenPhactsDataNodeModel extends NodeModel {
     		String standard_unit = item.getString("standardUnits").toString();
     		String relation = item.getString("relation").toString();
     		
-    		JSONObject assay = item.getJSONObject("onAssay").getJSONObject("target");
+    		JSONObject assay = item.getJSONObject("onAssay");
+    		System.out.println(assay);
     		String assay_org = assay.getString("assay_organism");
-    		String assay_title = assay.getString("title");
+    		String assay_title = assay.getString("description");
     		
-    		JSONObject molecule = item.getJSONObject("forMolecule").getJSONObject("exactMatch");
-    		String smiles = molecule.getString("smiles");
-    		String inchi = molecule.getString("inchi");
+    		//String assay_org = "blah";
+    		//String assay_title = "blah";
+    		
+    	
+    		JSONObject molecule = item.getJSONObject("forMolecule");
+    		JSONArray array = molecule.getJSONArray("exactMatch");
+    		
+    		String smiles = "";
+    		String inchi = "";
+    		for (int j = 0; j < array.size(); j++) {
+    			JSONObject jo = (JSONObject)array.get(j);
+    			if (jo.containsKey("smiles")) {
+    				 smiles = jo.getString("smiles");
+    			} 
+    			if (jo.containsKey("inchi")) {
+    				inchi = jo.getString("inchi");
+    			}
+    		}
     		
     		RowKey key = new RowKey("result " + i);
     		DataCell[] cells = new DataCell[8];
@@ -196,7 +212,7 @@ public class OpenPhactsDataNodeModel extends NodeModel {
     	queryStr = queryStr +  "assay_organism=" + URLEncoder.encode(organism_settings.getStringValue(),"UTF-8");
     	//queryStr = queryStr + "_page=1";
     	
-    	String url_str = "http://" + hosturi.getHost() + "/target/enzyme/pharmacology/pages?" + queryStr;
+    	String url_str = "http://" + hosturi.getHost() + "/target/enzyme/pharmacology/pages.json?" + queryStr;
     	
     	/*URI uri = new URI("http",
     			hosturi.getHost(),
