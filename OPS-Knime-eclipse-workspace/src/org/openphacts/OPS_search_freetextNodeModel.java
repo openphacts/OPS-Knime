@@ -46,6 +46,20 @@ public class OPS_search_freetextNodeModel extends NodeModel {
     /** initial default count value. */
     static final int DEFAULT_COUNT = 100;
 
+	public static final String APP_ID = "69ac6ae3";
+
+	public static final String APP_KEY = "08731c119b4abbf8ea95128c3e4264a8";
+
+	public static final String LIMIT = "10";
+
+	public static final String BRANCH = "ConceptWiki";
+	
+    private static final String[] BRANCH_MAP = {"Branch:", "Community", "UMLS", "SwissProt","ChemSpider","ConceptWiki"};
+    
+	public static final String METADATA = null;
+
+    private static final String[] METADATA_MAP = {"Branch:", "Community", "UMLS", "SwissProt","ChemSpider","ConceptWiki"};
+
     // example value: the models count variable filled from the dialog 
     // and used in the models execution method. The default components of the
     // dialog work with "SettingsModels".

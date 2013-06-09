@@ -16,8 +16,7 @@
    -->
    
    <extension point="org.knime.workbench.repository.nodes">
-      <node category-path="/" factory-class="org.openphacts.OPS_Compound_InformationNodeFactory" id="org.openphacts.OPS_Compound_InformationNodeFactory"/>
-   <node category-path="/" factory-class="org.openphacts.OPS_compoundNodeFactory" id="org.openphacts.OPS_compoundNodeFactory"/>
+    <node category-path="/" factory-class="org.openphacts.OPS_compoundNodeFactory" id="org.openphacts.OPS_compoundNodeFactory"/>
 <node category-path="/" factory-class="org.openphacts.OPS_search_freetextNodeFactory" id="org.openphacts.OPS_search_freetextNodeFactory"/>
 </extension>
    

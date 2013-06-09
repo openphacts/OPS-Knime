@@ -2,7 +2,11 @@ package org.openphacts;
 
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponentNumber;
+import org.knime.core.node.defaultnodesettings.DialogComponentString;
+import org.knime.core.node.defaultnodesettings.DialogComponentStringSelection;
+import org.knime.core.node.defaultnodesettings.SettingsModelInteger;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
+import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
 /**
  * <code>NodeDialog</code> for the "OPS_search_freetext" Node.
@@ -24,13 +28,20 @@ public class OPS_search_freetextNodeDialog extends DefaultNodeSettingsPane {
      */
     protected OPS_search_freetextNodeDialog() {
         super();
-        
-        addDialogComponent(new DialogComponentNumber(
-                new SettingsModelIntegerBounded(
-                    OPS_search_freetextNodeModel.CFGKEY_COUNT,
-                    OPS_search_freetextNodeModel.DEFAULT_COUNT,
-                    Integer.MIN_VALUE, Integer.MAX_VALUE),
-                    "Counter:", /*step*/ 1, /*componentwidth*/ 5));
+        // following components are bordered
+        createNewGroup("Group 1:");
+        addDialogComponent(new DialogComponentString(new SettingsModelString(
+        		OPS_search_freetextNodeModel.APP_ID, null), "Your application ID:"));
+        addDialogComponent(new DialogComponentString(new SettingsModelString(
+        		OPS_search_freetextNodeModel.APP_KEY, null), "Your application key:"));
+        addDialogComponent(new DialogComponentNumber(new SettingsModelInteger(
+        		OPS_search_freetextNodeModel.LIMIT, 3), "Limit: enter an integer (between 1 and common sense, default is 10):", 10));
+        addDialogComponent(new DialogComponentStringSelection(
+                new SettingsModelString(OPS_search_freetextNodeModel.BRANCH, null),
+                "Branch:", "Community", "UMLS", "SwissProt","ChemSpider","ConceptWiki" ));
+        addDialogComponent(new DialogComponentStringSelection(
+                new SettingsModelString(OPS_search_freetextNodeModel.METADATA, null),
+                "_metadata", "Execution", "Formats", "Views","All"));
                     
     }
 }
