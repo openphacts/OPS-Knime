@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OPS_Compound_Information-Node extension for KNIME Workbench
+Bundle-SymbolicName: org.openphacts; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: ops_compound_information.jar
+Bundle-Activator: org.openphacts.OPS_Compound_InformationNodePlugin
+Bundle-Vendor: Ronald Siebes
+Require-Bundle: org.eclipse.core.runtime,
+ org.knime.workbench.core,
+ org.knime.workbench.repository,
+ org.knime.base
+Bundle-ActivationPolicy: lazy
+Export-Package: org.openphacts
+
