@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE knimeNode PUBLIC "-//UNIKN//DTD KNIME Node 2.0//EN" "http://www.knime.org/Node.dtd">
+<knimeNode icon="./default.png" type="Source">
+    <name>OPS_compound</name>
+    
+    <shortDescription>
+        Returns information about a single compound that corresponds to {uri}.
+    </shortDescription>
+    
+    <fullDescription>
+        <intro>
+<pre>
+?ops_item skos:exactMatch ?cw_uri .
+?cw_uri skos:prefLabel ?compound_name ;
+void:inDataset &lt;http://www.conceptwiki.org&gt; .
+?ops_item skos:exactMatch ?cs_uri .
+?cs_uri chemspider:smiles ?smiles ;
+     chemspider:inchi ?inchi ;
+chemspider:inchikey ?inchiKey ;
+     ops:logp ?alogp ;
+     ops:hba ?hba ;
+     ops:hbd ?hbd ;
+     ops:ro5_violations ?num_ro5_violations ;
+     ops:psa ?psa;
+     void:inDataset &lt;http://www.chemspider.com&gt; .
+?ops_item skos:exactMatch ?equiv_compound .
+?equiv_compound ?bNode1 ?molformula ;
+         ?bNode2 ?molweight ;
+         ?bNode3 ?mw_freebase ;
+         ?bNode4 ?rtb ;
+         void:inDataset &lt;http://data.kasabi.com/dataset/chembl-rdf&gt;.
+?ops_item skos:exactMatch ?db_uri .
+?db_uri drugbank:biotransformation ?biotransformation ;
+     drugbank:description ?description ;
+     drugbank:proteinBinding ?proteinBinding ;
+     drugbank:toxicity ?toxicity ;
+     drugbank:meltingPoint ?meltingPoint ;
+     void:inDataset &lt;http://linkedlifedata.com/resource/drugbank&gt;
+
+</pre>
+
+		</intro>
+        
+        
+        <option name="Server URL"> Location of the openphacts services</option>
+        <option name="App ID">Your application ID</option>
+        <option name="App KEY">Your application key</option>
+        <option name="Your query">Provide a compound URI</option>
+       
+    </fullDescription>
+    
+    <ports>
+            <outPort index="0" name="Table with compound info">    	ConceptWikiURI,biotransformation,description,meltingPoint,proteinBinding,toxicity,prefLabel_en,prefLabel,ChemspiderURI,inchi,inchikey,smiles,hba,hbd,logp,psa,ro5_violations,ChemblURI,full_mwt,molform,mw_freebase,rtb,DrugBankURI
+</outPort>
+        <!-- possibly more output ports here-->
+    </ports>    
+    <views>
+        <view index="0" name="name of first view">Description of first view...</view>
+        <!--view index="1" name="name of second view">Description of second view...</view-->
+    </views>
+</knimeNode>

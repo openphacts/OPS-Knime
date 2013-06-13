@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE knimeNode PUBLIC "-//UNIKN//DTD KNIME Node 2.0//EN" "http://www.knime.org/Node.dtd">
+<knimeNode icon="./default.png" type="Source">
+    <name>OPS_search_freetext</name>
+    
+    <shortDescription>
+        Returns a set of concept URLs associated to the input free text. Driven by ConceptWiki.
+    </shortDescription>
+    
+    <fullDescription>
+    <intro><pre>
+?primaryTopic rdf:type ?searchType ;    
+   ops_api:searchTerm ?searchTerm ;
+   ops_api:result ?uuidURL ;
+   ops_api:limit ?resultsLimit .
+?uuidURL skos:prefLabel ?conceptPrefLabel ;
+   ops_api:match ?match ;
+   skos:altLabel ?conceptAltLabel ;
+   ops_api:semanticTag ?tagBNode ;            
+   skos:exactMatch ?urlBNode .
+?tagBNode cw:uuid tagUUID ;
+   skos:prefLabel ?tagPrefLabel ;
+   cw:deleted ?deletedFromWikiMarker .
+   skos:altLabel ?tagAltLabel ;
+?urlBNode cw:url ?url ;
+   cw:matchType ?matchType
+        </pre></intro>
+        
+        
+        <option name="app_id">Your access application id </option>
+        <option name="app_key">Your access application key </option>
+        <option name="q">Your query, e.g. 'water' </option>
+        <option name="limit"> Limits the number of results; optional. Minimum value is 1, maximum value is common sense. Default value is 10. </option>
+        <option name="branch">
+			The search results will be filtered by this source authority; optional. Possible values: 1 = Community, 2 = UMLS, 3 = SwissProt, 4 = ChemSpider, 5 = ConceptWiki 
+		</option>
+    </fullDescription>
+    
+    <ports>
+       
+        <!-- possibly more input ports here-->
+        <outPort index="0" name="Out-Port name">Table with conceptwiki_uri, Match-name, Alt. label in english, semantic tags and exact-match mappings</outPort>
+       <outPort index="1" name="Out-Port name2">Table with conceptwiki_uri, Match-name, Alt. label in english, semantic tags and exact-match mappings</outPort>
+  
+        <!-- possibly more output ports here-->
+    </ports>    
+    <views>
+        <view index="0" name="name of first view">Description of first view...</view>
+        <!--view index="1" name="name of second view">Description of second view...</view-->
+    </views>
+</knimeNode>
