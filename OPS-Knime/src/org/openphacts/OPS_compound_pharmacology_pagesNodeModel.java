@@ -72,14 +72,14 @@ public class OPS_compound_pharmacology_pagesNodeModel extends NodeModel {
 	public static final String PAGE = "_page";
 	public static final int PAGE_DEFAULT = 1;
 	public static final String PAGE_SIZE = "_pageSize";
-	public static final String PAGE_SIZE_DEFAULT = "all";
+	public static final String PAGE_SIZE_DEFAULT = "10";
 	public static final String ORDER_BY_DEFAULT = "";
 	public static final String ORDER_BY = "_orderBy";
 
 	private final SettingsModelString api_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.API_URL, OPS_compound_pharmacology_pagesNodeModel.DEFAULT_API_URL);
 	private final SettingsModelString app_id_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.APP_ID, OPS_compound_pharmacology_pagesNodeModel.APP_ID_DEFAULT);
 	private final SettingsModelString app_key_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.APP_KEY, OPS_compound_pharmacology_pagesNodeModel.APP_KEY_DEFAULT);
-	private final SettingsModelString uri_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.API_URL, OPS_compound_pharmacology_pagesNodeModel.DEFAULT_API_URL);
+	private final SettingsModelString uri_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.URI, OPS_compound_pharmacology_pagesNodeModel.URI_DEFAULT);
 	private final SettingsModelString assay_organism_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.ASSAY_ORGANISM, OPS_compound_pharmacology_pagesNodeModel.ASSAY_ORGANISM_DEFAULT);
 	private final SettingsModelString tray_organism_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.TRAY_ORGANISM, OPS_compound_pharmacology_pagesNodeModel.TRAY_ORGANISM_DEFAULT);
 	private final SettingsModelString activity_type_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.ACTIVITY_TYPE, OPS_compound_pharmacology_pagesNodeModel.ACTIVITY_TYPE_DEFAULT);
@@ -92,6 +92,7 @@ public class OPS_compound_pharmacology_pagesNodeModel extends NodeModel {
 	private final SettingsModelInteger page_settings = new SettingsModelInteger(OPS_compound_pharmacology_pagesNodeModel.PAGE, OPS_compound_pharmacology_pagesNodeModel.PAGE_DEFAULT);
 	private final SettingsModelString page_size_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.PAGE_SIZE, OPS_compound_pharmacology_pagesNodeModel.PAGE_SIZE_DEFAULT);
 	private final SettingsModelString order_by_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.ORDER_BY, OPS_compound_pharmacology_pagesNodeModel.ORDER_BY_DEFAULT);
+
 
 	/**
      * Constructor for the node model.
@@ -108,44 +109,63 @@ public class OPS_compound_pharmacology_pagesNodeModel extends NodeModel {
     @Override
     protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
             final ExecutionContext exec) throws Exception {
-        DataColumnSpec[] allColSpecs = new DataColumnSpec[18];
+        DataColumnSpec[] allColSpecs = new DataColumnSpec[27];
         allColSpecs[0] = 
-            new DataColumnSpecCreator("_about", StringCell.TYPE).createSpec();
+                new DataColumnSpecCreator("_about", StringCell.TYPE).createSpec();
         allColSpecs[1] = 
-            new DataColumnSpecCreator("prefLabel_en", StringCell.TYPE).createSpec();
+                new DataColumnSpecCreator("modified", StringCell.TYPE).createSpec();
         allColSpecs[2] = 
-            new DataColumnSpecCreator("UniProtURI", StringCell.TYPE).createSpec();  
+            new DataColumnSpecCreator("ChemblActivityURI", StringCell.TYPE).createSpec();
         allColSpecs[3] = 
-                new DataColumnSpecCreator("Function_Annotation", StringCell.TYPE).createSpec();
+            new DataColumnSpecCreator("pmid", StringCell.TYPE).createSpec();
         allColSpecs[4] = 
-            new DataColumnSpecCreator("alternativeName(s)", StringCell.TYPE).createSpec();  
+            new DataColumnSpecCreator("Chembl_forMolecule_URI", StringCell.TYPE).createSpec();  
         allColSpecs[5] = 
-            new DataColumnSpecCreator("classifiedWith", StringCell.TYPE).createSpec();
+                new DataColumnSpecCreator("full_mwt", StringCell.TYPE).createSpec();
         allColSpecs[6] = 
-            new DataColumnSpecCreator("existence", StringCell.TYPE).createSpec();
+            new DataColumnSpecCreator("DrugBankURI", StringCell.TYPE).createSpec();  
         allColSpecs[7] = 
-            new DataColumnSpecCreator("organism", StringCell.TYPE).createSpec();
+            new DataColumnSpecCreator("drugType", StringCell.TYPE).createSpec();
         allColSpecs[8] = 
-            new DataColumnSpecCreator("sequence", StringCell.TYPE).createSpec();
+            new DataColumnSpecCreator("genericName", StringCell.TYPE).createSpec();
         allColSpecs[9] = 
-            new DataColumnSpecCreator("DrugBankURI", StringCell.TYPE).createSpec();
+            new DataColumnSpecCreator("conceptWikiURI", StringCell.TYPE).createSpec();
         allColSpecs[10] = 
-            new DataColumnSpecCreator("cellularLocation", StringCell.TYPE).createSpec();
+            new DataColumnSpecCreator("prefLabel_en", StringCell.TYPE).createSpec();
         allColSpecs[11] = 
-            new DataColumnSpecCreator("molecularWeight", StringCell.TYPE).createSpec();
+            new DataColumnSpecCreator("ChemspiderURI", StringCell.TYPE).createSpec();
         allColSpecs[12] = 
-            new DataColumnSpecCreator("numberOfResidues", StringCell.TYPE).createSpec();
+            new DataColumnSpecCreator("inchi", StringCell.TYPE).createSpec();
         allColSpecs[13] = 
-            new DataColumnSpecCreator("theoreticalPi", StringCell.TYPE).createSpec();
+            new DataColumnSpecCreator("inchikey", StringCell.TYPE).createSpec();
         allColSpecs[14] = 
-            new DataColumnSpecCreator("ChemblURI", StringCell.TYPE).createSpec();
+            new DataColumnSpecCreator("smiles", StringCell.TYPE).createSpec();
         allColSpecs[15] = 
-            new DataColumnSpecCreator("description", StringCell.TYPE).createSpec();
+            new DataColumnSpecCreator("ro5_violations", StringCell.TYPE).createSpec();
         allColSpecs[16] = 
-                new DataColumnSpecCreator("keyword", StringCell.TYPE).createSpec();
+            new DataColumnSpecCreator("Chembl_onAssay_URI", StringCell.TYPE).createSpec();
         allColSpecs[17] = 
-                new DataColumnSpecCreator("subClassOf", StringCell.TYPE).createSpec();
+            new DataColumnSpecCreator("description", StringCell.TYPE).createSpec();
+        allColSpecs[18] = 
+                new DataColumnSpecCreator("targets", StringCell.TYPE).createSpec();
+        allColSpecs[19] = 
+                new DataColumnSpecCreator("organism", StringCell.TYPE).createSpec();
+        allColSpecs[20] = 
+                new DataColumnSpecCreator("relation", StringCell.TYPE).createSpec();
+        allColSpecs[21] = 
+                new DataColumnSpecCreator("standardUnits", StringCell.TYPE).createSpec();
+        allColSpecs[22] = 
+                new DataColumnSpecCreator("standardValue", StringCell.TYPE).createSpec();
+        allColSpecs[23] = 
+                new DataColumnSpecCreator("activity_type", StringCell.TYPE).createSpec();
+        allColSpecs[24] = 
+                new DataColumnSpecCreator("activity_value", StringCell.TYPE).createSpec();
 
+        allColSpecs[25] = 
+                new DataColumnSpecCreator("first", StringCell.TYPE).createSpec();
+        allColSpecs[26] = 
+                new DataColumnSpecCreator("next", StringCell.TYPE).createSpec();
+ 
        
         DataTableSpec outputSpec = new DataTableSpec(allColSpecs);
         // the execution context will provide us with storage capacity, in this
@@ -154,55 +174,81 @@ public class OPS_compound_pharmacology_pagesNodeModel extends NodeModel {
         // will buffer to disc if necessary.
         BufferedDataContainer container = exec.createDataContainer(outputSpec);
         URL requestURL = buildRequestURL();
+        System.out.println(requestURL.toString());
         JSONObject json = this.grabSomeJson(requestURL);
         
         System.out.println(json.toString());
         JSONObject result = (JSONObject)  json.get("result");
         
-        JSONObject primaryTopic = (JSONObject)  result.get("primaryTopic");
+     
         
-        RowKey key = new RowKey("result");
-		DataCell[] cells = new DataCell[18];
-		cells[0] = new StringCell(getCellFromJSON("_about",primaryTopic));
+        
+		DataCell[] cells = new DataCell[27];
+		cells[0] = new StringCell(getCellFromJSON("_about",result));
 
-		cells[1] = new StringCell(getCellFromJSON("prefLabel_en",primaryTopic));
-    	JSONArray items = (JSONArray)  primaryTopic.get("exactMatch");
+		cells[1] = new StringCell(getCellFromJSON("modified",result));
+    	JSONArray items = (JSONArray)  result.get("items");
     	
     	
-    	
+    	RowKey key =null;
     	for (int i = 0; i < items.size(); i++) {
-    		
+    		key =   new RowKey("result_"+i);
     	
     		if(items.get(i).getClass().getName().equals("net.sf.json.JSONObject")){
     			JSONObject item = items.getJSONObject(i);
+    			cells[2] = new StringCell(getCellFromJSON("_about",item));
+    			cells[3] = new StringCell(getCellFromJSON("pmid",item));
+    			JSONObject forMolecule = item.getJSONObject("forMolecule");
+    			if(forMolecule !=null){
+    				cells[4] = new StringCell(getCellFromJSON("_about",forMolecule));
+        			cells[5] = new StringCell(getCellFromJSON("full_mwt",forMolecule));
+        			JSONArray exactMatch = forMolecule.getJSONArray("exactMatch");
+        			if(exactMatch !=null){
+        				for (int j = 0; j < exactMatch.size(); j++) {
+        					JSONObject exactMatchObject = exactMatch.getJSONObject(j);
+        					if(exactMatchObject.containsValue("http://linkedlifedata.com/resource/drugbank" )){
+        	        			
+        	        			cells[6] = new StringCell(getCellFromJSON("_about",exactMatchObject));
+        	        			cells[7] = new StringCell(getCellFromJSON("drugType",exactMatchObject));
+        	        			cells[8] = new StringCell(getCellFromJSON("genericName",exactMatchObject));
+        	        		} else if(exactMatchObject.containsValue("http://www.conceptwiki.org/" )){
+        	        			cells[9] = new StringCell(getCellFromJSON("_about",exactMatchObject));
+        	        			cells[10] = new StringCell(getCellFromJSON("prefLabel_en",exactMatchObject));	
+        	        		} else if(exactMatchObject.containsValue("http://rdf.chemspider.com/" )){
+        	        			cells[11] = new StringCell(getCellFromJSON("_about",exactMatchObject));
+        	        			cells[12] = new StringCell(getCellFromJSON("inchi",exactMatchObject));
+        	        			cells[13] = new StringCell(getCellFromJSON("inchikey",exactMatchObject));
+        	        			cells[14] = new StringCell(getCellFromJSON("smiles",exactMatchObject));	
+        	        			cells[15] = new StringCell(getCellFromJSON("ro5_violations",exactMatchObject));	
+        	        		}
+        				}
+        	
+        			}
 
-        		if(item.containsValue("http://purl.uniprot.org" )){
-        			cells[2] = new StringCell(getCellFromJSON("_about",item));
-        			cells[3] = new StringCell(getCellFromJSON("Function_Annotation",item));
-        			cells[4] = new StringCell(getCellFromJSON("alternativeName",item));
-        			cells[5] = new StringCell(getCellFromJSON("classifiedWith",item));
-        			cells[6] = new StringCell(getCellFromJSON("existence",item));
-        			cells[7] = new StringCell(getCellFromJSON("organism",item));
-        			cells[8] = new StringCell(getCellFromJSON("sequence",item));
-        		} else if(item.containsValue("http://linkedlifedata.com/resource/drugbank" )){
-        			cells[9] = new StringCell(getCellFromJSON("_about",item));
-        			cells[10] = new StringCell(getCellFromJSON("cellularLocation",item));
-        			cells[11] = new StringCell(getCellFromJSON("molecularWeight",item));
-        			cells[12] = new StringCell(getCellFromJSON("numberOfResidues",item));
-        			cells[13] = new StringCell(getCellFromJSON("theoreticalPi",item));		
-        		} else if(item.containsValue("http://data.kasabi.com/dataset/chembl-rdf" )){
-        			cells[14] = new StringCell(getCellFromJSON("_about",item));
-        			cells[15] = new StringCell(getCellFromJSON("description",item));
-        			cells[16] = new StringCell(getCellFromJSON("keyword",item));
-        			cells[17] = new StringCell(getCellFromJSON("subClassOf",item));	
-        		}
+    			}
+    			JSONObject onAssay = item.getJSONObject("onAssay");
+    			if(onAssay !=null){
+    				cells[16] = new StringCell(getCellFromJSON("_about",onAssay));
+        			cells[17] = new StringCell(getCellFromJSON("description",onAssay));
+        			
+        			String target = onAssay.getString("target").toString();
+        			if(target!=null){
+        				cells[18]= new StringCell(target);
+        			}
+        			cells[19] = new StringCell(getCellFromJSON("organism",onAssay));
+    			}
+    			cells[20] = new StringCell(getCellFromJSON("relation",item));
+    			cells[21] = new StringCell(getCellFromJSON("standardUnits",item));
+    			cells[22] = new StringCell(getCellFromJSON("standardValue",item));
+    			cells[23] = new StringCell(getCellFromJSON("activity_type",item));
+    			cells[24] = new StringCell(getCellFromJSON("activity_value",item));
     		}
-    		
-    		
-
+    		cells[25] =  new StringCell(getCellFromJSON("first",result));
+        	cells[26] =  new StringCell(getCellFromJSON("next",result));
+            DataRow row = new DefaultRow(key, cells);
+            container.addRowToTable(row);
     	}
-        DataRow row = new DefaultRow(key, cells);
-        container.addRowToTable(row);
+    	
         container.close();
         BufferedDataTable out = container.getTable();
        
@@ -253,11 +299,22 @@ public class OPS_compound_pharmacology_pagesNodeModel extends NodeModel {
     @Override
     protected void saveSettingsTo(final NodeSettingsWO settings) {
 
-
     	api_settings.saveSettingsTo(settings);
     	app_id_settings.saveSettingsTo(settings);
     	app_key_settings.saveSettingsTo(settings);
     	uri_settings.saveSettingsTo(settings);
+    	assay_organism_settings.saveSettingsTo(settings);
+    	tray_organism_settings.saveSettingsTo(settings);
+    	activity_type_settings.saveSettingsTo(settings);
+    	activity_value_settings.saveSettingsTo(settings);
+    	min_activity_value_settings.saveSettingsTo(settings);
+    	min_ex_activity_value_settings.saveSettingsTo(settings);
+    	max_activity_value_settings.saveSettingsTo(settings);
+    	max_ex_activity_value_settings.saveSettingsTo(settings);
+    	activity_unit_settings.saveSettingsTo(settings);
+    	page_settings.saveSettingsTo(settings);
+    	page_size_settings.saveSettingsTo(settings);
+    	order_by_settings.saveSettingsTo(settings);
        
 
     }
@@ -273,6 +330,18 @@ public class OPS_compound_pharmacology_pagesNodeModel extends NodeModel {
     	app_id_settings.loadSettingsFrom(settings);
     	app_key_settings.loadSettingsFrom(settings);
     	uri_settings.loadSettingsFrom(settings);
+    	assay_organism_settings.loadSettingsFrom(settings);
+    	tray_organism_settings.loadSettingsFrom(settings);
+    	activity_type_settings.loadSettingsFrom(settings);
+    	activity_value_settings.loadSettingsFrom(settings);
+    	min_activity_value_settings.loadSettingsFrom(settings);
+    	min_ex_activity_value_settings.loadSettingsFrom(settings);
+    	max_activity_value_settings.loadSettingsFrom(settings);
+    	max_ex_activity_value_settings.loadSettingsFrom(settings);
+    	activity_unit_settings.loadSettingsFrom(settings);
+    	page_settings.loadSettingsFrom(settings);
+    	page_size_settings.loadSettingsFrom(settings);
+    	order_by_settings.loadSettingsFrom(settings);
 
 
     }
@@ -292,14 +361,22 @@ public class OPS_compound_pharmacology_pagesNodeModel extends NodeModel {
        // m_count.validateSettings(settings);
     	
     	//System.out.println("validating settings");
-    	
     	api_settings.validateSettings(settings);
     	app_id_settings.validateSettings(settings);
     	app_key_settings.validateSettings(settings);
     	uri_settings.validateSettings(settings);
-
-    	
-    	
+    	assay_organism_settings.validateSettings(settings);
+    	tray_organism_settings.validateSettings(settings);
+    	activity_type_settings.validateSettings(settings);
+    	activity_value_settings.validateSettings(settings);
+    	min_activity_value_settings.validateSettings(settings);
+    	min_ex_activity_value_settings.validateSettings(settings);
+    	max_activity_value_settings.validateSettings(settings);
+    	max_ex_activity_value_settings.validateSettings(settings);
+    	activity_unit_settings.validateSettings(settings);
+    	page_settings.validateSettings(settings);
+    	page_size_settings.validateSettings(settings);
+    	order_by_settings.validateSettings(settings);
     }
     
     /**
@@ -320,20 +397,10 @@ public class OPS_compound_pharmacology_pagesNodeModel extends NodeModel {
     }
     protected URL buildRequestURL() throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
     {
-    	//"http://ops.few.vu.nl/target/enzyme/pharmacology/pages?uri=http%3A%2F%2Fpurl.uniprot.org%2Fenzyme%2F1.1.-.-&activity_type=Potency&maxEx-activity_value=10&minEx-activity_value=4&assay_organism=Homo%20sapiens&_page=1";
-        
-    	URI hosturi = new URI(api_settings.getStringValue());
-    	
-    	String app_id = URLEncoder.encode(app_id_settings.getStringValue(),"UTF-8"); 
-    	//String family = family_settings.getStringValue();
-    	
-
-    	String queryStr = "app_id=" + app_id + "&";
-    	queryStr = queryStr + "app_key=" + app_key_settings.getStringValue() +"&";
-    	queryStr = queryStr + "uri=" + URLEncoder.encode(uri_settings.getStringValue(),"UTF-8");
-    	//queryStr = queryStr + "_page=1";
-    	
-    	String url_str = "https://" + hosturi.getHost() + "/target?" + queryStr;
+       	URI hosturi = new URI(api_settings.getStringValue());
+       	String app_id_string =  "app_id="+app_id_settings.getStringValue();
+    	    	
+    	String url_str = "https://" + hosturi.getHost() + "/compound/pharmacology/pages?" + app_id_string+getURIParams();
     	
    
     	
@@ -343,7 +410,42 @@ public class OPS_compound_pharmacology_pagesNodeModel extends NodeModel {
     }
     
     
-    
+    private String getURIParams(){
+    	String result ="";
+    	
+    	result += getURIParam(app_key_settings);
+    	result += getURIParam(uri_settings);
+    	result += getURIParam(assay_organism_settings);
+    	result += getURIParam(tray_organism_settings);
+    	result += getURIParam(activity_type_settings);
+    	result += getURIParam(activity_value_settings);
+    	result += getURIParam(min_activity_value_settings);
+    	result += getURIParam(min_ex_activity_value_settings);
+    	result += getURIParam(max_activity_value_settings);
+    	result += getURIParam(max_ex_activity_value_settings);
+    	result += getURIParam(activity_unit_settings);
+    	result += getURIParamInteger(page_settings);
+    	result += getURIParam(page_size_settings);
+    	result += getURIParam(order_by_settings);
+
+    	return result;
+    }
+    private String getURIParam(SettingsModelString setting){
+    	
+    	String result = "";
+    	if(!(setting.getStringValue().equals(""))){
+    		return "&"+setting.getKey()+"="+URLEncoder.encode(setting.getStringValue());
+    	}
+    	return "";
+    }
+    private String getURIParamInteger(SettingsModelInteger setting){
+    	
+    	String result = "";
+    	if(!(setting.getIntValue() >=1)){
+    		return "&"+setting.getKey()+"="+URLEncoder.encode(""+ setting.getIntValue());
+    	}
+    	return "";
+    }
     protected JSONObject grabSomeJson(URL url) throws IOException
     {
     	String str="";
