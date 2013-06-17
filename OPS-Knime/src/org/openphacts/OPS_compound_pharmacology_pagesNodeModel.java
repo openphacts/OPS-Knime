@@ -1,0 +1,386 @@
+package org.openphacts;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLEncoder;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
+
+import org.knime.core.data.DataCell;
+import org.knime.core.data.DataColumnSpec;
+import org.knime.core.data.DataColumnSpecCreator;
+import org.knime.core.data.DataRow;
+import org.knime.core.data.DataTableSpec;
+import org.knime.core.data.RowKey;
+import org.knime.core.data.def.DefaultRow;
+import org.knime.core.data.def.StringCell;
+import org.knime.core.node.BufferedDataContainer;
+import org.knime.core.node.BufferedDataTable;
+import org.knime.core.node.CanceledExecutionException;
+import org.knime.core.node.ExecutionContext;
+import org.knime.core.node.ExecutionMonitor;
+import org.knime.core.node.InvalidSettingsException;
+import org.knime.core.node.NodeModel;
+import org.knime.core.node.NodeSettingsRO;
+import org.knime.core.node.NodeSettingsWO;
+import org.knime.core.node.defaultnodesettings.SettingsModelInteger;
+import org.knime.core.node.defaultnodesettings.SettingsModelString;
+
+/**
+ * This is the model implementation of OPS_compound_pharmacology_pages.
+ * A page of items corresponding to acitivity values in the LDC for a given compound
+ *
+ * @author openphacts
+ */
+public class OPS_compound_pharmacology_pagesNodeModel extends NodeModel {
+    
+    public static final String API_URL = "uri";
+	public static final String DEFAULT_API_URL = "https://beta.openphacts.org";
+	public static final String APP_ID_DEFAULT = "15a18100";
+	public static final String APP_ID = "app_id";
+	public static final String APP_KEY_DEFAULT = "528a8272f1cd961d215f318a0315dd3d";
+	public static final String APP_KEY = "app_key";
+	public static final String URI_DEFAULT = "http://www.conceptwiki.org/concept/38932552-111f-4a4e-a46a-4ed1d7bdf9d5";
+	public static final String URI = "uri";
+	public static final String ASSAY_ORGANISM = "assay_organism";
+	public static final String ASSAY_ORGANISM_DEFAULT = "";
+	public static final String TRAY_ORGANISM = "tray_organism";
+	public static final String TRAY_ORGANISM_DEFAULT = "";
+	public static final String ACTIVITY_TYPE_DEFAULT = "";
+	public static final String ACTIVITY_TYPE = "activity_type";
+	public static final String ACTIVITY_VALUE_DEFAULT = "";
+	public static final String ACTIVITY_VALUE = "activity_value";
+	public static final String MIN_ACTIVITY_VALUE = "min_activity_value";
+	public static final String MIN_ACTIVITY_VALUE_DEFAULT = "";
+	public static final String MIN_EX_ACTIVITY_VALUE = "min_ex_activity_value";
+	public static final String MIN_EX_ACTIVITY_VALUE_DEFAULT = "";
+	public static final String MAX_ACTIVITY_VALUE_DEFAULT = "";
+	public static final String MAX_ACTIVITY_VALUE = "max_activity_value";
+	public static final String MAX_EX_ACTIVITY_VALUE_DEFAULT = "";
+	public static final String MAX_EX_ACTIVITY_VALUE = "max_ex_activity_value";
+	public static final String ACTIVITY_UNIT = "activity_unit";
+	public static final String ACTIVITY_UNIT_DEFAULT = "";
+	public static final String PAGE = "_page";
+	public static final int PAGE_DEFAULT = 1;
+	public static final String PAGE_SIZE = "_pageSize";
+	public static final String PAGE_SIZE_DEFAULT = "all";
+	public static final String ORDER_BY_DEFAULT = "";
+	public static final String ORDER_BY = "_orderBy";
+
+	private final SettingsModelString api_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.API_URL, OPS_compound_pharmacology_pagesNodeModel.DEFAULT_API_URL);
+	private final SettingsModelString app_id_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.APP_ID, OPS_compound_pharmacology_pagesNodeModel.APP_ID_DEFAULT);
+	private final SettingsModelString app_key_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.APP_KEY, OPS_compound_pharmacology_pagesNodeModel.APP_KEY_DEFAULT);
+	private final SettingsModelString uri_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.API_URL, OPS_compound_pharmacology_pagesNodeModel.DEFAULT_API_URL);
+	private final SettingsModelString assay_organism_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.ASSAY_ORGANISM, OPS_compound_pharmacology_pagesNodeModel.ASSAY_ORGANISM_DEFAULT);
+	private final SettingsModelString tray_organism_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.TRAY_ORGANISM, OPS_compound_pharmacology_pagesNodeModel.TRAY_ORGANISM_DEFAULT);
+	private final SettingsModelString activity_type_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.ACTIVITY_TYPE, OPS_compound_pharmacology_pagesNodeModel.ACTIVITY_TYPE_DEFAULT);
+	private final SettingsModelString activity_value_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.ACTIVITY_VALUE, OPS_compound_pharmacology_pagesNodeModel.ACTIVITY_TYPE_DEFAULT);
+	private final SettingsModelString min_activity_value_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.MIN_ACTIVITY_VALUE, OPS_compound_pharmacology_pagesNodeModel.MIN_ACTIVITY_VALUE_DEFAULT);
+	private final SettingsModelString min_ex_activity_value_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.MIN_EX_ACTIVITY_VALUE, OPS_compound_pharmacology_pagesNodeModel.MIN_EX_ACTIVITY_VALUE_DEFAULT);
+	private final SettingsModelString max_activity_value_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.MAX_ACTIVITY_VALUE, OPS_compound_pharmacology_pagesNodeModel.MAX_ACTIVITY_VALUE_DEFAULT);
+	private final SettingsModelString max_ex_activity_value_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.MAX_EX_ACTIVITY_VALUE, OPS_compound_pharmacology_pagesNodeModel.MAX_EX_ACTIVITY_VALUE_DEFAULT);
+	private final SettingsModelString activity_unit_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.ACTIVITY_UNIT, OPS_compound_pharmacology_pagesNodeModel.ACTIVITY_UNIT_DEFAULT);
+	private final SettingsModelInteger page_settings = new SettingsModelInteger(OPS_compound_pharmacology_pagesNodeModel.PAGE, OPS_compound_pharmacology_pagesNodeModel.PAGE_DEFAULT);
+	private final SettingsModelString page_size_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.PAGE_SIZE, OPS_compound_pharmacology_pagesNodeModel.PAGE_SIZE_DEFAULT);
+	private final SettingsModelString order_by_settings = new SettingsModelString(OPS_compound_pharmacology_pagesNodeModel.ORDER_BY, OPS_compound_pharmacology_pagesNodeModel.ORDER_BY_DEFAULT);
+
+	/**
+     * Constructor for the node model.
+     */
+    protected OPS_compound_pharmacology_pagesNodeModel() {
+    
+        // TODO: Specify the amount of input and output ports needed.
+        super(0, 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
+            final ExecutionContext exec) throws Exception {
+        DataColumnSpec[] allColSpecs = new DataColumnSpec[18];
+        allColSpecs[0] = 
+            new DataColumnSpecCreator("_about", StringCell.TYPE).createSpec();
+        allColSpecs[1] = 
+            new DataColumnSpecCreator("prefLabel_en", StringCell.TYPE).createSpec();
+        allColSpecs[2] = 
+            new DataColumnSpecCreator("UniProtURI", StringCell.TYPE).createSpec();  
+        allColSpecs[3] = 
+                new DataColumnSpecCreator("Function_Annotation", StringCell.TYPE).createSpec();
+        allColSpecs[4] = 
+            new DataColumnSpecCreator("alternativeName(s)", StringCell.TYPE).createSpec();  
+        allColSpecs[5] = 
+            new DataColumnSpecCreator("classifiedWith", StringCell.TYPE).createSpec();
+        allColSpecs[6] = 
+            new DataColumnSpecCreator("existence", StringCell.TYPE).createSpec();
+        allColSpecs[7] = 
+            new DataColumnSpecCreator("organism", StringCell.TYPE).createSpec();
+        allColSpecs[8] = 
+            new DataColumnSpecCreator("sequence", StringCell.TYPE).createSpec();
+        allColSpecs[9] = 
+            new DataColumnSpecCreator("DrugBankURI", StringCell.TYPE).createSpec();
+        allColSpecs[10] = 
+            new DataColumnSpecCreator("cellularLocation", StringCell.TYPE).createSpec();
+        allColSpecs[11] = 
+            new DataColumnSpecCreator("molecularWeight", StringCell.TYPE).createSpec();
+        allColSpecs[12] = 
+            new DataColumnSpecCreator("numberOfResidues", StringCell.TYPE).createSpec();
+        allColSpecs[13] = 
+            new DataColumnSpecCreator("theoreticalPi", StringCell.TYPE).createSpec();
+        allColSpecs[14] = 
+            new DataColumnSpecCreator("ChemblURI", StringCell.TYPE).createSpec();
+        allColSpecs[15] = 
+            new DataColumnSpecCreator("description", StringCell.TYPE).createSpec();
+        allColSpecs[16] = 
+                new DataColumnSpecCreator("keyword", StringCell.TYPE).createSpec();
+        allColSpecs[17] = 
+                new DataColumnSpecCreator("subClassOf", StringCell.TYPE).createSpec();
+
+       
+        DataTableSpec outputSpec = new DataTableSpec(allColSpecs);
+        // the execution context will provide us with storage capacity, in this
+        // case a data container to which we will add rows sequentially
+        // Note, this container can also handle arbitrary big data tables, it
+        // will buffer to disc if necessary.
+        BufferedDataContainer container = exec.createDataContainer(outputSpec);
+        URL requestURL = buildRequestURL();
+        JSONObject json = this.grabSomeJson(requestURL);
+        
+        System.out.println(json.toString());
+        JSONObject result = (JSONObject)  json.get("result");
+        
+        JSONObject primaryTopic = (JSONObject)  result.get("primaryTopic");
+        
+        RowKey key = new RowKey("result");
+		DataCell[] cells = new DataCell[18];
+		cells[0] = new StringCell(getCellFromJSON("_about",primaryTopic));
+
+		cells[1] = new StringCell(getCellFromJSON("prefLabel_en",primaryTopic));
+    	JSONArray items = (JSONArray)  primaryTopic.get("exactMatch");
+    	
+    	
+    	
+    	for (int i = 0; i < items.size(); i++) {
+    		
+    	
+    		if(items.get(i).getClass().getName().equals("net.sf.json.JSONObject")){
+    			JSONObject item = items.getJSONObject(i);
+
+        		if(item.containsValue("http://purl.uniprot.org" )){
+        			cells[2] = new StringCell(getCellFromJSON("_about",item));
+        			cells[3] = new StringCell(getCellFromJSON("Function_Annotation",item));
+        			cells[4] = new StringCell(getCellFromJSON("alternativeName",item));
+        			cells[5] = new StringCell(getCellFromJSON("classifiedWith",item));
+        			cells[6] = new StringCell(getCellFromJSON("existence",item));
+        			cells[7] = new StringCell(getCellFromJSON("organism",item));
+        			cells[8] = new StringCell(getCellFromJSON("sequence",item));
+        		} else if(item.containsValue("http://linkedlifedata.com/resource/drugbank" )){
+        			cells[9] = new StringCell(getCellFromJSON("_about",item));
+        			cells[10] = new StringCell(getCellFromJSON("cellularLocation",item));
+        			cells[11] = new StringCell(getCellFromJSON("molecularWeight",item));
+        			cells[12] = new StringCell(getCellFromJSON("numberOfResidues",item));
+        			cells[13] = new StringCell(getCellFromJSON("theoreticalPi",item));		
+        		} else if(item.containsValue("http://data.kasabi.com/dataset/chembl-rdf" )){
+        			cells[14] = new StringCell(getCellFromJSON("_about",item));
+        			cells[15] = new StringCell(getCellFromJSON("description",item));
+        			cells[16] = new StringCell(getCellFromJSON("keyword",item));
+        			cells[17] = new StringCell(getCellFromJSON("subClassOf",item));	
+        		}
+    		}
+    		
+    		
+
+    	}
+        DataRow row = new DefaultRow(key, cells);
+        container.addRowToTable(row);
+        container.close();
+        BufferedDataTable out = container.getTable();
+       
+        return new BufferedDataTable[]{out};
+    }
+
+    private String getCellFromJSON(String key,JSONObject item){
+    	String result = "";
+    	System.out.println("item: "+ item.toString());
+    	if(item.get(key)!=null && !(item.get(key).getClass().getName().equals("net.sf.json.JSONArray")||item.get(key).getClass().getName().equals("net.sf.json.JSONObject"))){
+    		return item.getString(key);
+    	}else if(item.get(key)!=null){
+    		
+    		return item.get(key).toString();
+    	}
+	    return result;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void reset() {
+        // TODO Code executed on reset.
+        // Models build during execute are cleared here.
+        // Also data handled in load/saveInternals will be erased here.
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
+            throws InvalidSettingsException {
+        
+        // TODO: check if user settings are available, fit to the incoming
+        // table structure, and the incoming types are feasible for the node
+        // to execute. If the node can execute in its current state return
+        // the spec of its output data table(s) (if you can, otherwise an array
+        // with null elements), or throw an exception with a useful user message
+
+        return new DataTableSpec[]{null};
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void saveSettingsTo(final NodeSettingsWO settings) {
+
+
+    	api_settings.saveSettingsTo(settings);
+    	app_id_settings.saveSettingsTo(settings);
+    	app_key_settings.saveSettingsTo(settings);
+    	uri_settings.saveSettingsTo(settings);
+       
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
+            throws InvalidSettingsException {
+            
+    	api_settings.loadSettingsFrom(settings);
+    	app_id_settings.loadSettingsFrom(settings);
+    	app_key_settings.loadSettingsFrom(settings);
+    	uri_settings.loadSettingsFrom(settings);
+
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void validateSettings(final NodeSettingsRO settings)
+            throws InvalidSettingsException {
+            
+        // TODO check if the settings could be applied to our model
+        // e.g. if the count is in a certain range (which is ensured by the
+        // SettingsModel).
+        // Do not actually set any values of any member variables.
+
+       // m_count.validateSettings(settings);
+    	
+    	//System.out.println("validating settings");
+    	
+    	api_settings.validateSettings(settings);
+    	app_id_settings.validateSettings(settings);
+    	app_key_settings.validateSettings(settings);
+    	uri_settings.validateSettings(settings);
+
+    	
+    	
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void loadInternals(final File internDir,
+            final ExecutionMonitor exec) throws IOException,
+            CanceledExecutionException {
+        
+        // TODO load internal data. 
+        // Everything handed to output ports is loaded automatically (data
+        // returned by the execute method, models loaded in loadModelContent,
+        // and user settings set through loadSettingsFrom - is all taken care 
+        // of). Load here only the other internals that need to be restored
+        // (e.g. data used by the views).
+
+    }
+    protected URL buildRequestURL() throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
+    {
+    	//"http://ops.few.vu.nl/target/enzyme/pharmacology/pages?uri=http%3A%2F%2Fpurl.uniprot.org%2Fenzyme%2F1.1.-.-&activity_type=Potency&maxEx-activity_value=10&minEx-activity_value=4&assay_organism=Homo%20sapiens&_page=1";
+        
+    	URI hosturi = new URI(api_settings.getStringValue());
+    	
+    	String app_id = URLEncoder.encode(app_id_settings.getStringValue(),"UTF-8"); 
+    	//String family = family_settings.getStringValue();
+    	
+
+    	String queryStr = "app_id=" + app_id + "&";
+    	queryStr = queryStr + "app_key=" + app_key_settings.getStringValue() +"&";
+    	queryStr = queryStr + "uri=" + URLEncoder.encode(uri_settings.getStringValue(),"UTF-8");
+    	//queryStr = queryStr + "_page=1";
+    	
+    	String url_str = "https://" + hosturi.getHost() + "/target?" + queryStr;
+    	
+   
+    	
+    	System.out.println("URL " + url_str);
+    	URI uri = new URI(url_str);
+    	return uri.toURL();
+    }
+    
+    
+    
+    protected JSONObject grabSomeJson(URL url) throws IOException
+    {
+    	String str="";
+    	URL x = url;
+    	BufferedReader in = new BufferedReader(
+    	new InputStreamReader(x.openStream()));
+
+    	String inputLine;
+
+    	while ((inputLine = in.readLine()) != null)
+    	 str+=inputLine+"\n";
+    	in.close(); 
+    	
+    	//System.out.println(str);
+    	JSONObject jo = (JSONObject) JSONSerializer.toJSON( str);
+    	
+    	return jo;
+
+    }
+    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void saveInternals(final File internDir,
+            final ExecutionMonitor exec) throws IOException,
+            CanceledExecutionException {
+       
+        // TODO save internal models. 
+        // Everything written to output ports is saved automatically (data
+        // returned by the execute method, models saved in the saveModelContent,
+        // and user settings saved through saveSettingsTo - is all taken care 
+        // of). Save here only the other internals that need to be preserved
+        // (e.g. data used by the views).
+
+    }
+
+}
+

@@ -36,19 +36,13 @@ chemspider:inchikey ?inchiKey ;
      drugbank:toxicity ?toxicity ;
      drugbank:meltingPoint ?meltingPoint ;
      void:inDataset &lt;http://linkedlifedata.com/resource/drugbank&gt;
-
 </pre>
-
 		</intro>
-        
-        
         <option name="Server URL"> Location of the openphacts services</option>
         <option name="App ID">Your application ID</option>
         <option name="App KEY">Your application key</option>
         <option name="Your query">Provide a compound URI</option>
-       
     </fullDescription>
-    
     <ports>
             <outPort index="0" name="Table with compound info">    	ConceptWikiURI,biotransformation,description,meltingPoint,proteinBinding,toxicity,prefLabel_en,prefLabel,ChemspiderURI,inchi,inchikey,smiles,hba,hbd,logp,psa,ro5_violations,ChemblURI,full_mwt,molform,mw_freebase,rtb,DrugBankURI
 </outPort>
