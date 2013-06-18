@@ -16,12 +16,12 @@
    -->
    
    <extension point="org.knime.workbench.repository.nodes">
-      <node category-path="/" factory-class="org.openphacts.OpenPhactsDataNodeFactory" id="org.openphacts.OpenPhactsDataNodeFactory"/>
-   <node category-path="/" factory-class="org.openphacts.OpenPhactsCompoundNodeFactory" id="org.openphacts.OpenPhactsCompoundNodeFactory"/>
 <node category-path="/" factory-class="org.openphacts.OPS_search_freetextNodeFactory" id="org.openphacts.OPS_search_freetextNodeFactory"/>
 <node category-path="/" factory-class="org.openphacts.OPS_compoundNodeFactory" id="org.openphacts.OPS_compoundNodeFactory"/>
 <node category-path="/" factory-class="org.openphacts.OPS_pathwayNodeFactory" id="org.openphacts.OPS_pathwayNodeFactory"/>
 <node category-path="/" factory-class="org.openphacts.OPS_targetNodeFactory" id="org.openphacts.OPS_targetNodeFactory"/>
+<node category-path="/" factory-class="org.openphacts.OPS_compound_pharmacology_pagesNodeFactory" id="org.openphacts.OPS_compound_pharmacology_pagesNodeFactory"/>
+<node category-path="/" factory-class="org.openphacts.OPS_target_pharmacology_pagesNodeFactory" id="org.openphacts.OPS_target_pharmacology_pagesNodeFactory"/>
 </extension>
    
 </plugin>

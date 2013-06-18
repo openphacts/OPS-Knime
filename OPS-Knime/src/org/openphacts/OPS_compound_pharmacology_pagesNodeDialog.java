@@ -53,7 +53,7 @@ public class OPS_compound_pharmacology_pagesNodeDialog extends DefaultNodeSettin
           addDialogComponent(new DialogComponentString(new SettingsModelString(
             		OPS_compound_pharmacology_pagesNodeModel.ACTIVITY_UNIT, OPS_compound_pharmacology_pagesNodeModel.ACTIVITY_UNIT_DEFAULT), " The unit in which {activity_value} is given. See /pharmacology/filters/units/{activity_type} for allowed valued. For e.g. IC50: /pharmacology/filters/units/IC50 "));
           addDialogComponent(new DialogComponentNumber(new SettingsModelInteger(
-            		OPS_compound_pharmacology_pagesNodeModel.PAGE, 3), " A number; the page that should be viewed ", 1));       
+            		OPS_compound_pharmacology_pagesNodeModel.PAGE, 1), " A number; the page that should be viewed ", 1));       
           addDialogComponent(new DialogComponentString(new SettingsModelString(
             		OPS_compound_pharmacology_pagesNodeModel.PAGE_SIZE, OPS_compound_pharmacology_pagesNodeModel.PAGE_SIZE_DEFAULT), "The desired page size. Set to all to retrieve all results in a single page. "));
           addDialogComponent(new DialogComponentStringSelection(
