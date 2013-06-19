@@ -81,7 +81,7 @@ public class OPS_search_freetextNodeModel extends NodeModel {
     private final SettingsModelString api_settings = new SettingsModelString(OPS_search_freetextNodeModel.API_URL, OPS_search_freetextNodeModel.DEFAULT_API_URL);
     private final SettingsModelString app_id_settings = new SettingsModelString(OPS_search_freetextNodeModel.APP_ID, OPS_search_freetextNodeModel.APP_ID_DEFAULT);
     private final SettingsModelString app_key_settings = new SettingsModelString(OPS_search_freetextNodeModel.APP_KEY, OPS_search_freetextNodeModel.APP_KEY_DEFAULT);
-    private final SettingsModelString query_settings = new SettingsModelString(OPS_search_freetextNodeModel.QUERY, OPS_search_freetextNodeModel.QUERY_DEFAULT);
+ //   private final SettingsModelString query_settings = new SettingsModelString(OPS_search_freetextNodeModel.QUERY, OPS_search_freetextNodeModel.QUERY_DEFAULT);
 
     private final SettingsModelInteger limit_settings = new SettingsModelInteger(OPS_search_freetextNodeModel.LIMIT, OPS_search_freetextNodeModel.LIMIT_DEFAULT);
     private final SettingsModelString branch_settings = new SettingsModelString(OPS_search_freetextNodeModel.BRANCH, OPS_search_freetextNodeModel.BRANCH_DEFAULT);
@@ -94,7 +94,7 @@ public class OPS_search_freetextNodeModel extends NodeModel {
 
     	
         // TODO one incoming port and one outgoing port is assumed
-        super(0, 1);
+        super(1, 1);
     	branchMap.put("Community", "1");
     	branchMap.put("UMLS", "2");
     	branchMap.put("SwissProt", "3");
@@ -131,7 +131,8 @@ public class OPS_search_freetextNodeModel extends NodeModel {
         // Note, this container can also handle arbitrary big data tables, it
         // will buffer to disc if necessary.
         BufferedDataContainer container = exec.createDataContainer(outputSpec);
-        URL requestURL = buildRequestURL();
+        String q= inData[0].iterator().next().getCell(0).toString(); // ugly...needs definitely some array bound checks here
+        URL requestURL = buildRequestURL(q);
         JSONObject json = this.grabSomeJson(requestURL);
         
         System.out.println(json.toString());
@@ -239,7 +240,7 @@ public class OPS_search_freetextNodeModel extends NodeModel {
     	app_key_settings.saveSettingsTo(settings);
     	limit_settings.saveSettingsTo(settings);
     	branch_settings.saveSettingsTo(settings);
-    	query_settings.saveSettingsTo(settings);
+//    	query_settings.saveSettingsTo(settings);
        
 
     }
@@ -256,7 +257,7 @@ public class OPS_search_freetextNodeModel extends NodeModel {
     	app_key_settings.loadSettingsFrom(settings);
     	limit_settings.loadSettingsFrom(settings);
     	branch_settings.loadSettingsFrom(settings);
-    	query_settings.loadSettingsFrom(settings);
+ //   	query_settings.loadSettingsFrom(settings);
 
 
     }
@@ -303,7 +304,7 @@ public class OPS_search_freetextNodeModel extends NodeModel {
         // (e.g. data used by the views).
 
     }
-    protected URL buildRequestURL() throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
+    protected URL buildRequestURL(String q) throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
     {
     	//"http://ops.few.vu.nl/target/enzyme/pharmacology/pages?uri=http%3A%2F%2Fpurl.uniprot.org%2Fenzyme%2F1.1.-.-&activity_type=Potency&maxEx-activity_value=10&minEx-activity_value=4&assay_organism=Homo%20sapiens&_page=1";
         
@@ -315,7 +316,7 @@ public class OPS_search_freetextNodeModel extends NodeModel {
 
     	String queryStr = "app_id=" + app_id + "&";
     	queryStr = queryStr + "app_key=" + app_key_settings.getStringValue() +"&";
-    	queryStr = queryStr + "q=" + query_settings.getStringValue() +"&";
+    	queryStr = queryStr + "q=" + q +"&";
     	queryStr = queryStr + "limit=" + limit_settings.getIntValue()+ "&";
     	queryStr = queryStr + "branch="+ branchMap.get(branch_settings.getStringValue());
     	//queryStr = queryStr + "_page=1";
