@@ -24,6 +24,7 @@
 <node category-path="/" factory-class="org.openphacts.OPS_target_pharmacology_pagesNodeFactory" id="org.openphacts.OPS_target_pharmacology_pagesNodeFactory"/>
 <node category-path="/" factory-class="org.openphacts.OPS_InchiKeyToChemSpiderURLNodeFactory" id="org.openphacts.OPS_InchiKeyToChemSpiderURLNodeFactory"/>
 <node category-path="/" factory-class="org.openphacts.OPS_InchiStringToChemSpiderURLNodeFactory" id="org.openphacts.OPS_InchiStringToChemSpiderURLNodeFactory"/>
+<node category-path="/" factory-class="org.openphacts.OPS_SMILESToChemSpiderURLNodeFactory" id="org.openphacts.OPS_SMILESToChemSpiderURLNodeFactory"/>
 </extension>
    
 </plugin>
