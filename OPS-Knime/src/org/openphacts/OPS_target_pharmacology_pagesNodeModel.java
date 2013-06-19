@@ -85,7 +85,7 @@ public class OPS_target_pharmacology_pagesNodeModel extends NodeModel {
 		private final SettingsModelString app_key_settings = new SettingsModelString(OPS_target_pharmacology_pagesNodeModel.APP_KEY, OPS_target_pharmacology_pagesNodeModel.APP_KEY_DEFAULT);
 		private final SettingsModelString uri_settings = new SettingsModelString(OPS_target_pharmacology_pagesNodeModel.URI, OPS_target_pharmacology_pagesNodeModel.URI_DEFAULT);
 		private final SettingsModelString assay_organism_settings = new SettingsModelString(OPS_target_pharmacology_pagesNodeModel.ASSAY_ORGANISM, OPS_target_pharmacology_pagesNodeModel.ASSAY_ORGANISM_DEFAULT);
-		private final SettingsModelString TARGET_ORGANISM_settings = new SettingsModelString(OPS_target_pharmacology_pagesNodeModel.TARGET_ORGANISM, OPS_target_pharmacology_pagesNodeModel.TARGET_ORGANISM_DEFAULT);
+		private final SettingsModelString target_organism_settings = new SettingsModelString(OPS_target_pharmacology_pagesNodeModel.TARGET_ORGANISM, OPS_target_pharmacology_pagesNodeModel.TARGET_ORGANISM_DEFAULT);
 		private final SettingsModelString activity_type_settings = new SettingsModelString(OPS_target_pharmacology_pagesNodeModel.ACTIVITY_TYPE, OPS_target_pharmacology_pagesNodeModel.ACTIVITY_TYPE_DEFAULT);
 		private final SettingsModelString activity_value_settings = new SettingsModelString(OPS_target_pharmacology_pagesNodeModel.ACTIVITY_VALUE, OPS_target_pharmacology_pagesNodeModel.ACTIVITY_TYPE_DEFAULT);
 		private final SettingsModelString min_activity_value_settings = new SettingsModelString(OPS_target_pharmacology_pagesNodeModel.MIN_ACTIVITY_VALUE, OPS_target_pharmacology_pagesNodeModel.MIN_ACTIVITY_VALUE_DEFAULT);
@@ -308,7 +308,7 @@ public class OPS_target_pharmacology_pagesNodeModel extends NodeModel {
 	    	app_key_settings.saveSettingsTo(settings);
 	    	uri_settings.saveSettingsTo(settings);
 	    	assay_organism_settings.saveSettingsTo(settings);
-	    	TARGET_ORGANISM_settings.saveSettingsTo(settings);
+	    	target_organism_settings.saveSettingsTo(settings);
 	    	activity_type_settings.saveSettingsTo(settings);
 	    	activity_value_settings.saveSettingsTo(settings);
 	    	min_activity_value_settings.saveSettingsTo(settings);
@@ -335,7 +335,7 @@ public class OPS_target_pharmacology_pagesNodeModel extends NodeModel {
 	    	app_key_settings.loadSettingsFrom(settings);
 	    	uri_settings.loadSettingsFrom(settings);
 	    	assay_organism_settings.loadSettingsFrom(settings);
-	    	TARGET_ORGANISM_settings.loadSettingsFrom(settings);
+	    	target_organism_settings.loadSettingsFrom(settings);
 	    	activity_type_settings.loadSettingsFrom(settings);
 	    	activity_value_settings.loadSettingsFrom(settings);
 	    	min_activity_value_settings.loadSettingsFrom(settings);
@@ -370,7 +370,7 @@ public class OPS_target_pharmacology_pagesNodeModel extends NodeModel {
 	    	app_key_settings.validateSettings(settings);
 	    	uri_settings.validateSettings(settings);
 	    	assay_organism_settings.validateSettings(settings);
-	    	TARGET_ORGANISM_settings.validateSettings(settings);
+	    	target_organism_settings.validateSettings(settings);
 	    	activity_type_settings.validateSettings(settings);
 	    	activity_value_settings.validateSettings(settings);
 	    	min_activity_value_settings.validateSettings(settings);
@@ -420,7 +420,7 @@ public class OPS_target_pharmacology_pagesNodeModel extends NodeModel {
 	    	result += getURIParam(app_key_settings);
 	    	result += getURIParam(uri_settings);
 	    	result += getURIParam(assay_organism_settings);
-	    	result += getURIParam(TARGET_ORGANISM_settings);
+	    	result += getURIParam(target_organism_settings);
 	    	result += getURIParam(activity_type_settings);
 	    	result += getURIParam(activity_value_settings);
 	    	result += getURIParam(min_activity_value_settings);

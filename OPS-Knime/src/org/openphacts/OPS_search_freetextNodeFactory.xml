@@ -37,11 +37,11 @@
     </fullDescription>
     
     <ports>
+             <inPort index="0" name="query">Table with one cell that has your query in column 'q'. E.g. "water"</inPort>
        
         <!-- possibly more input ports here-->
         <outPort index="0" name="Out-Port name">Table with conceptwiki_uri, Match-name, Alt. label in english, semantic tags and exact-match mappings</outPort>
-       <outPort index="1" name="Out-Port name2">Table with conceptwiki_uri, Match-name, Alt. label in english, semantic tags and exact-match mappings</outPort>
-  
+   
         <!-- possibly more output ports here-->
     </ports>    
     <views>

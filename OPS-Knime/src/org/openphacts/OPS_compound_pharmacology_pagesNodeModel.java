@@ -43,7 +43,7 @@ import org.knime.core.node.defaultnodesettings.SettingsModelString;
  */
 public class OPS_compound_pharmacology_pagesNodeModel extends NodeModel {
     
-    public static final String API_URL = "uri";
+    public static final String API_URL = "server_uri";
 	public static final String DEFAULT_API_URL = "https://beta.openphacts.org";
 	public static final String APP_ID_DEFAULT = "15a18100";
 	public static final String APP_ID = "app_id";
@@ -100,7 +100,7 @@ public class OPS_compound_pharmacology_pagesNodeModel extends NodeModel {
     protected OPS_compound_pharmacology_pagesNodeModel() {
     
         // TODO: Specify the amount of input and output ports needed.
-        super(0, 1);
+        super(1, 1);
     }
 
     /**
@@ -173,7 +173,9 @@ public class OPS_compound_pharmacology_pagesNodeModel extends NodeModel {
         // Note, this container can also handle arbitrary big data tables, it
         // will buffer to disc if necessary.
         BufferedDataContainer container = exec.createDataContainer(outputSpec);
-        URL requestURL = buildRequestURL();
+        String compoundUri= inData[0].iterator().next().getCell(0).toString(); // ugly...needs definitely some array bound checks here
+
+        URL requestURL = buildRequestURL(compoundUri);
         System.out.println(requestURL.toString());
         JSONObject json = this.grabSomeJson(requestURL);
         
@@ -395,12 +397,12 @@ public class OPS_compound_pharmacology_pagesNodeModel extends NodeModel {
         // (e.g. data used by the views).
 
     }
-    protected URL buildRequestURL() throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
+    protected URL buildRequestURL(String compoundUri) throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
     {
        	URI hosturi = new URI(api_settings.getStringValue());
        	String app_id_string =  "app_id="+app_id_settings.getStringValue();
     	    	
-    	String url_str = "https://" + hosturi.getHost() + "/compound/pharmacology/pages?" + app_id_string+getURIParams();
+    	String url_str = "https://" + hosturi.getHost() + "/compound/pharmacology/pages?" + app_id_string+getURIParams()+"&uri="+URLEncoder.encode(compoundUri);
     	
    
     	
@@ -414,7 +416,7 @@ public class OPS_compound_pharmacology_pagesNodeModel extends NodeModel {
     	String result ="";
     	
     	result += getURIParam(app_key_settings);
-    	result += getURIParam(uri_settings);
+    //	result += getURIParam(uri_settings); //moved dialog option to input parameter
     	result += getURIParam(assay_organism_settings);
     	result += getURIParam(tray_organism_settings);
     	result += getURIParam(activity_type_settings);

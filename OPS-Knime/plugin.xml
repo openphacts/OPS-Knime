@@ -25,6 +25,7 @@
 <node category-path="/" factory-class="org.openphacts.OPS_InchiKeyToChemSpiderURLNodeFactory" id="org.openphacts.OPS_InchiKeyToChemSpiderURLNodeFactory"/>
 <node category-path="/" factory-class="org.openphacts.OPS_InchiStringToChemSpiderURLNodeFactory" id="org.openphacts.OPS_InchiStringToChemSpiderURLNodeFactory"/>
 <node category-path="/" factory-class="org.openphacts.OPS_SMILESToChemSpiderURLNodeFactory" id="org.openphacts.OPS_SMILESToChemSpiderURLNodeFactory"/>
+<node category-path="/" factory-class="org.openphacts.OPS_chemical_structure_similarity_searchNodeFactory" id="org.openphacts.OPS_chemical_structure_similarity_searchNodeFactory"/>
 </extension>
    
 </plugin>

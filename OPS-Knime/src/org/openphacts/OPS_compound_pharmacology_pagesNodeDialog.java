@@ -32,8 +32,8 @@ public class OPS_compound_pharmacology_pagesNodeDialog extends DefaultNodeSettin
           		OPS_compound_pharmacology_pagesNodeModel.APP_ID, OPS_compound_pharmacology_pagesNodeModel.APP_ID_DEFAULT), "Your application ID:"));
           addDialogComponent(new DialogComponentString(new SettingsModelString(
           		OPS_compound_pharmacology_pagesNodeModel.APP_KEY, OPS_compound_pharmacology_pagesNodeModel.APP_KEY_DEFAULT), "Your application key:"));
-          addDialogComponent(new DialogComponentString(new SettingsModelString(
-          		OPS_compound_pharmacology_pagesNodeModel.URI, OPS_compound_pharmacology_pagesNodeModel.URI_DEFAULT), "A compound URI. e.g.: http://www.conceptwiki.org/concept/38932552-111f-4a4e-a46a-4ed1d7bdf9d5"));
+          //addDialogComponent(new DialogComponentString(new SettingsModelString(
+          	//	OPS_compound_pharmacology_pagesNodeModel.URI, OPS_compound_pharmacology_pagesNodeModel.URI_DEFAULT), "A compound URI. e.g.: http://www.conceptwiki.org/concept/38932552-111f-4a4e-a46a-4ed1d7bdf9d5"));
           addDialogComponent(new DialogComponentString(new SettingsModelString(
             		OPS_compound_pharmacology_pagesNodeModel.ASSAY_ORGANISM, OPS_compound_pharmacology_pagesNodeModel.ASSAY_ORGANISM_DEFAULT), " A literal organism in ChEMBL. "));
           addDialogComponent(new DialogComponentString(new SettingsModelString(
