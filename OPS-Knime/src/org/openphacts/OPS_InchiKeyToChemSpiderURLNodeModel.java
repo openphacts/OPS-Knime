@@ -49,14 +49,11 @@ public class OPS_InchiKeyToChemSpiderURLNodeModel extends NodeModel {
 		public static final String APP_ID = "app_id";
 		public static final String APP_KEY_DEFAULT = "528a8272f1cd961d215f318a0315dd3d";
 		public static final String APP_KEY = "app_key";
-		public static final String INCHI_KEY_DEFAULT = "BSYNRYMUTXBXSQ-UHFFFAOYSA-N";
-		public static final String INCHI_KEY = "inchi_key";
 		
 
 		private final SettingsModelString api_settings = new SettingsModelString(OPS_InchiKeyToChemSpiderURLNodeModel.API_URL, OPS_InchiKeyToChemSpiderURLNodeModel.DEFAULT_API_URL);
 		private final SettingsModelString app_id_settings = new SettingsModelString(OPS_InchiKeyToChemSpiderURLNodeModel.APP_ID, OPS_InchiKeyToChemSpiderURLNodeModel.APP_ID_DEFAULT);
 		private final SettingsModelString app_key_settings = new SettingsModelString(OPS_InchiKeyToChemSpiderURLNodeModel.APP_KEY, OPS_InchiKeyToChemSpiderURLNodeModel.APP_KEY_DEFAULT);
-		private final SettingsModelString inchi_key_settings = new SettingsModelString(OPS_InchiKeyToChemSpiderURLNodeModel.INCHI_KEY, OPS_InchiKeyToChemSpiderURLNodeModel.INCHI_KEY_DEFAULT);
 		
 
 		/**
@@ -84,7 +81,9 @@ public class OPS_InchiKeyToChemSpiderURLNodeModel extends NodeModel {
 	        // Note, this container can also handle arbitrary big data tables, it
 	        // will buffer to disc if necessary.
 	        BufferedDataContainer container = exec.createDataContainer(outputSpec);
-	        URL requestURL = buildRequestURL();
+	        String inchi_key= inData[0].iterator().next().getCell(0).toString(); // ugly...needs definitely some array bound checks here
+
+	        URL requestURL = buildRequestURL(inchi_key);
 	        System.out.println(requestURL.toString());
 	        JSONObject json = this.grabSomeJson(requestURL);
 	        DataCell[] cells = new DataCell[1];
@@ -153,7 +152,6 @@ public class OPS_InchiKeyToChemSpiderURLNodeModel extends NodeModel {
 	    	api_settings.saveSettingsTo(settings);
 	    	app_id_settings.saveSettingsTo(settings);
 	    	app_key_settings.saveSettingsTo(settings);
-	    	inchi_key_settings.saveSettingsTo(settings);
 	       
 
 	    }
@@ -168,8 +166,6 @@ public class OPS_InchiKeyToChemSpiderURLNodeModel extends NodeModel {
 	    	api_settings.loadSettingsFrom(settings);
 	    	app_id_settings.loadSettingsFrom(settings);
 	    	app_key_settings.loadSettingsFrom(settings);
-	    	inchi_key_settings.loadSettingsFrom(settings);
-
 
 	    }
 
@@ -191,7 +187,6 @@ public class OPS_InchiKeyToChemSpiderURLNodeModel extends NodeModel {
 	    	api_settings.validateSettings(settings);
 	    	app_id_settings.validateSettings(settings);
 	    	app_key_settings.validateSettings(settings);
-	    	inchi_key_settings.validateSettings(settings);
 	    }
 	    
 	    /**
@@ -210,12 +205,12 @@ public class OPS_InchiKeyToChemSpiderURLNodeModel extends NodeModel {
 	        // (e.g. data used by the views).
 
 	    }
-	    protected URL buildRequestURL() throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
+	    protected URL buildRequestURL(String inchi_key) throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
 	    {
 	       	URI hosturi = new URI(api_settings.getStringValue());
 	       	String app_id_string =  "app_id="+app_id_settings.getStringValue();
 	    	    	
-	    	String url_str = "https://" + hosturi.getHost() + "/structure?" + app_id_string+getURIParams();
+	    	String url_str = "https://" + hosturi.getHost() + "/structure?" + app_id_string+getURIParams()+"&inchi_key="+URLEncoder.encode(inchi_key);
 	    	
 	   
 	    	
@@ -229,7 +224,6 @@ public class OPS_InchiKeyToChemSpiderURLNodeModel extends NodeModel {
 	    	String result ="";
 	    	
 	    	result += getURIParam(app_key_settings);
-	    	result += getURIParam(inchi_key_settings);
 
 	    	return result;
 	    }

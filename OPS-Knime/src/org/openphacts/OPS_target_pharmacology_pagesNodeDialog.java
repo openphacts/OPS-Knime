@@ -34,8 +34,6 @@ public class OPS_target_pharmacology_pagesNodeDialog extends DefaultNodeSettings
           addDialogComponent(new DialogComponentString(new SettingsModelString(
           		OPS_target_pharmacology_pagesNodeModel.APP_KEY, OPS_target_pharmacology_pagesNodeModel.APP_KEY_DEFAULT), "Your application key:"));
           addDialogComponent(new DialogComponentString(new SettingsModelString(
-          		OPS_target_pharmacology_pagesNodeModel.URI, OPS_target_pharmacology_pagesNodeModel.URI_DEFAULT), "A target URI. e.g.: http://www.conceptwiki.org/concept/00059958-a045-4581-9dc5-e5a08bb0c291 "));
-          addDialogComponent(new DialogComponentString(new SettingsModelString(
             		OPS_target_pharmacology_pagesNodeModel.ASSAY_ORGANISM, OPS_target_pharmacology_pagesNodeModel.ASSAY_ORGANISM_DEFAULT), " A literal organism in ChEMBL. "));
           addDialogComponent(new DialogComponentString(new SettingsModelString(
             		OPS_target_pharmacology_pagesNodeModel.TARGET_ORGANISM, OPS_target_pharmacology_pagesNodeModel.TARGET_ORGANISM_DEFAULT), " A literal target organism in ChEMBL. "));

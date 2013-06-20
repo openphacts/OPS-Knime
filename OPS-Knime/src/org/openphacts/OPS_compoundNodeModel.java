@@ -64,15 +64,12 @@ public class OPS_compoundNodeModel extends NodeModel {
 	public static final String APP_KEY = "app_key";
 	public static final String APP_KEY_DEFAULT = "08731c119b4abbf8ea95128c3e4264a8";
 
-	public static final String URI = "uri";
-	public static final String URI_DEFAULT = "http://www.conceptwiki.org/concept/38932552-111f-4a4e-a46a-4ed1d7bdf9d5";
 	
 	
     private final SettingsModelString api_settings = new SettingsModelString(OPS_compoundNodeModel.API_URL, OPS_compoundNodeModel.DEFAULT_API_URL);
     private final SettingsModelString app_id_settings = new SettingsModelString(OPS_compoundNodeModel.APP_ID, OPS_compoundNodeModel.APP_ID_DEFAULT);
     private final SettingsModelString app_key_settings = new SettingsModelString(OPS_compoundNodeModel.APP_KEY, OPS_compoundNodeModel.APP_KEY_DEFAULT);
-    private final SettingsModelString uri_settings = new SettingsModelString(OPS_compoundNodeModel.URI, OPS_compoundNodeModel.URI_DEFAULT);
-
+ 
 
     /**
      * Constructor for the node model.
@@ -81,7 +78,7 @@ public class OPS_compoundNodeModel extends NodeModel {
 
     	
         // TODO one incoming port and one outgoing port is assumed
-        super(0, 1);
+        super(1, 1);
 
     }
 
@@ -144,7 +141,9 @@ public class OPS_compoundNodeModel extends NodeModel {
         // Note, this container can also handle arbitrary big data tables, it
         // will buffer to disc if necessary.
         BufferedDataContainer container = exec.createDataContainer(outputSpec);
-        URL requestURL = buildRequestURL();
+        String compoundUri= inData[0].iterator().next().getCell(0).toString(); // ugly...needs definitely some array bound checks here
+
+        URL requestURL = buildRequestURL(compoundUri);
         JSONObject json = this.grabSomeJson(requestURL);
         
         System.out.println(json.toString());
@@ -250,7 +249,6 @@ public class OPS_compoundNodeModel extends NodeModel {
     	api_settings.saveSettingsTo(settings);
     	app_id_settings.saveSettingsTo(settings);
     	app_key_settings.saveSettingsTo(settings);
-    	uri_settings.saveSettingsTo(settings);
        
 
     }
@@ -265,8 +263,7 @@ public class OPS_compoundNodeModel extends NodeModel {
     	api_settings.loadSettingsFrom(settings);
     	app_id_settings.loadSettingsFrom(settings);
     	app_key_settings.loadSettingsFrom(settings);
-    	uri_settings.loadSettingsFrom(settings);
-
+ 
 
     }
 
@@ -289,8 +286,7 @@ public class OPS_compoundNodeModel extends NodeModel {
     	api_settings.validateSettings(settings);
     	app_id_settings.validateSettings(settings);
     	app_key_settings.validateSettings(settings);
-    	uri_settings.validateSettings(settings);
-
+ 
     	
     	
     }
@@ -311,7 +307,7 @@ public class OPS_compoundNodeModel extends NodeModel {
         // (e.g. data used by the views).
 
     }
-    protected URL buildRequestURL() throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
+    protected URL buildRequestURL(String compoundUri) throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
     {
     	//"http://ops.few.vu.nl/target/enzyme/pharmacology/pages?uri=http%3A%2F%2Fpurl.uniprot.org%2Fenzyme%2F1.1.-.-&activity_type=Potency&maxEx-activity_value=10&minEx-activity_value=4&assay_organism=Homo%20sapiens&_page=1";
         
@@ -323,7 +319,7 @@ public class OPS_compoundNodeModel extends NodeModel {
 
     	String queryStr = "app_id=" + app_id + "&";
     	queryStr = queryStr + "app_key=" + app_key_settings.getStringValue() +"&";
-    	queryStr = queryStr + "uri=" + URLEncoder.encode(uri_settings.getStringValue(),"UTF-8");
+    	queryStr = queryStr + "uri=" + URLEncoder.encode(compoundUri,"UTF-8");
     	//queryStr = queryStr + "_page=1";
     	
     	String url_str = "https://" + hosturi.getHost() + "/compound?" + queryStr;

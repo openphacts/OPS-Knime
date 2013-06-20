@@ -24,15 +24,10 @@ import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.RowKey;
 import org.knime.core.data.def.DefaultRow;
-import org.knime.core.data.def.DoubleCell;
-import org.knime.core.data.def.IntCell;
 import org.knime.core.data.def.StringCell;
 import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
-import org.knime.core.node.defaultnodesettings.SettingsModelInteger;
-import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
-import org.knime.core.node.defaultnodesettings.SettingsModelString;
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.ExecutionMonitor;
 import org.knime.core.node.InvalidSettingsException;
@@ -40,48 +35,58 @@ import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
-
+import org.knime.core.node.defaultnodesettings.SettingsModelDouble;
+import org.knime.core.node.defaultnodesettings.SettingsModelInteger;
+import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
 /**
- * This is the model implementation of OPS_pathway.
- * 
+ * This is the model implementation of OPS_chemical_structure_substructure_search.
+ * Returns a set of ChemSpider compound URLs that contain the specified structure. Driven by ChemSpider.
  *
- * @author openphacts
+ * @author Ronald Siebes - VUA
  */
-public class OPS_pathwayNodeModel extends NodeModel {
+public class OPS_chemical_structure_substructure_searchNodeModel extends NodeModel {
     
     // the logger instance
     private static final NodeLogger logger = NodeLogger
-            .getLogger(OPS_pathwayNodeModel.class);
+            .getLogger(OPS_chemical_structure_substructure_searchNodeModel.class);
         
-    
-	public static final String API_URL = "OpenPhactsURL";
-    public static final String DEFAULT_API_URL = "https://beta.openphacts.org";
-    
+    /** the settings key which is used to retrieve and 
+        store the settings (from the dialog or from a settings file)    
+       (package visibility to be usable from the dialog). */
+	static final String CFGKEY_COUNT = "Count";
+
+    /** initial default count value. */
+    static final int DEFAULT_COUNT = 100;
+
+    public static final String API_URL = "uri";
+	public static final String DEFAULT_API_URL = "https://beta.openphacts.org";
+	public static final String APP_ID_DEFAULT = "15a18100";
 	public static final String APP_ID = "app_id";
-	public static final String APP_ID_DEFAULT = "69ac6ae3";
-
+	public static final String APP_KEY_DEFAULT = "528a8272f1cd961d215f318a0315dd3d";
 	public static final String APP_KEY = "app_key";
-	public static final String APP_KEY_DEFAULT = "08731c119b4abbf8ea95128c3e4264a8";
+	public static final String LIMIT = "resultOptions.Limit";
+	public static final String START = "resultOptions.Start";
+	public static final String LENGTH = "resultOptions.Length";
+	public static final double THRESHOLD_DEFAULT = 0.2;
+	public static final int LIMIT_DEFAULT = 20;
+	public static final int START_DEFAULT = 0;
+	public static final int LENGTH_DEFAULT = 10;
 
-	public static final String URI = "uri";
-	public static final String URI_DEFAULT = "http://rdf.wikipathways.org/WP1019_r48131";
-	
-	
-    private final SettingsModelString api_settings = new SettingsModelString(OPS_pathwayNodeModel.API_URL, OPS_pathwayNodeModel.DEFAULT_API_URL);
-    private final SettingsModelString app_id_settings = new SettingsModelString(OPS_pathwayNodeModel.APP_ID, OPS_pathwayNodeModel.APP_ID_DEFAULT);
-    private final SettingsModelString app_key_settings = new SettingsModelString(OPS_pathwayNodeModel.APP_KEY, OPS_pathwayNodeModel.APP_KEY_DEFAULT);
- 
+	private final SettingsModelString api_settings = new SettingsModelString(OPS_chemical_structure_substructure_searchNodeModel.API_URL, OPS_chemical_structure_substructure_searchNodeModel.DEFAULT_API_URL);
+	private final SettingsModelString app_id_settings = new SettingsModelString(OPS_chemical_structure_substructure_searchNodeModel.APP_ID, OPS_chemical_structure_substructure_searchNodeModel.APP_ID_DEFAULT);
+	private final SettingsModelString app_key_settings = new SettingsModelString(OPS_chemical_structure_substructure_searchNodeModel.APP_KEY, OPS_chemical_structure_substructure_searchNodeModel.APP_KEY_DEFAULT);
+	private final SettingsModelInteger limit_settings = new SettingsModelInteger(OPS_chemical_structure_substructure_searchNodeModel.LIMIT, OPS_chemical_structure_substructure_searchNodeModel.LIMIT_DEFAULT);
+	private final SettingsModelInteger start_settings = new SettingsModelInteger(OPS_chemical_structure_substructure_searchNodeModel.START, OPS_chemical_structure_substructure_searchNodeModel.START_DEFAULT);
+	private final SettingsModelInteger length_settings = new SettingsModelInteger(OPS_chemical_structure_substructure_searchNodeModel.LENGTH, OPS_chemical_structure_substructure_searchNodeModel.LENGTH_DEFAULT);
 
-    /**
+	/**
      * Constructor for the node model.
      */
-    protected OPS_pathwayNodeModel() {
-
-    	
-        // TODO one incoming port and one outgoing port is assumed
-        super(1, 2);
-
+    protected OPS_chemical_structure_substructure_searchNodeModel() {
+    
+        // TODO: Specify the amount of input and output ports needed.
+        super(1, 1);
     }
 
     /**
@@ -90,21 +95,10 @@ public class OPS_pathwayNodeModel extends NodeModel {
     @Override
     protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
             final ExecutionContext exec) throws Exception {
-        DataColumnSpec[] allColSpecs = new DataColumnSpec[7];
+        DataColumnSpec[] allColSpecs = new DataColumnSpec[1];
         allColSpecs[0] = 
-            new DataColumnSpecCreator("WikiPathwaysURI", StringCell.TYPE).createSpec();
-        allColSpecs[1] = 
-            new DataColumnSpecCreator("identifier", StringCell.TYPE).createSpec();
-        allColSpecs[2] = 
-            new DataColumnSpecCreator("title_en", StringCell.TYPE).createSpec();  
-        allColSpecs[3] = 
-            new DataColumnSpecCreator("title", StringCell.TYPE).createSpec();
-        allColSpecs[4] = 
-            new DataColumnSpecCreator("description", StringCell.TYPE).createSpec();
-        allColSpecs[5] = 
-            new DataColumnSpecCreator("organism_about", StringCell.TYPE).createSpec();
-        allColSpecs[6] = 
-            new DataColumnSpecCreator("organism_label", StringCell.TYPE).createSpec();
+                new DataColumnSpecCreator("ChemSpiderURL", StringCell.TYPE).createSpec();
+     
        
         DataTableSpec outputSpec = new DataTableSpec(allColSpecs);
         // the execution context will provide us with storage capacity, in this
@@ -112,63 +106,35 @@ public class OPS_pathwayNodeModel extends NodeModel {
         // Note, this container can also handle arbitrary big data tables, it
         // will buffer to disc if necessary.
         BufferedDataContainer container = exec.createDataContainer(outputSpec);
-        
-        
-        DataColumnSpec[] allColSpecs2 = new DataColumnSpec[2];
-        allColSpecs2[0] = 
-            new DataColumnSpecCreator("_about", StringCell.TYPE).createSpec();
-        allColSpecs2[1] = 
-            new DataColumnSpecCreator("type", StringCell.TYPE).createSpec();
+        String compoundUri= inData[0].iterator().next().getCell(0).toString(); // ugly...needs definitely some array bound checks here
 
-       
-        DataTableSpec outputSpec2 = new DataTableSpec(allColSpecs2);
-        // the execution context will provide us with storage capacity, in this
-        // case a data container to which we will add rows sequentially
-        // Note, this container can also handle arbitrary big data tables, it
-        // will buffer to disc if necessary.
-        BufferedDataContainer container2 = exec.createDataContainer(outputSpec2);
-        String c_uri= inData[0].iterator().next().getCell(0).toString(); // ugly...needs definitely some array bound checks here
-
-        URL requestURL = buildRequestURL(c_uri);
+        URL requestURL = buildRequestURL(compoundUri);
+        System.out.println(requestURL.toString());
         JSONObject json = this.grabSomeJson(requestURL);
         
         System.out.println(json.toString());
         JSONObject result = (JSONObject)  json.get("result");
-        
-        JSONObject primaryTopic = (JSONObject)  result.get("primaryTopic");
-        
-        RowKey key = new RowKey("result");
-		DataCell[] cells = new DataCell[7];
-		cells[0] = new StringCell(getCellFromJSON("_about",primaryTopic));
-		
-		cells[1] = new StringCell(getCellFromJSON("identifier",primaryTopic));
-		cells[2] = new StringCell(getCellFromJSON("title_en",primaryTopic));
-		cells[3] = new StringCell(getCellFromJSON("title",primaryTopic));
-		cells[4] = new StringCell(getCellFromJSON("description",primaryTopic));
-    	JSONObject organism = (JSONObject)  primaryTopic.get("organism");
-		cells[5] = new StringCell(getCellFromJSON("_about",organism));
-		cells[6] = new StringCell(getCellFromJSON("type",organism));
-	    JSONArray items2 = (JSONArray)  primaryTopic.get("hasPart");
-
-    	for (int i = 0; i < items2.size(); i++) {
-    		RowKey key2 = new RowKey("hasPart_"+i);
-    		DataCell[] cells2 = new DataCell[2];
-    		cells2[0] = new StringCell(((JSONObject)items2.getJSONObject(i)).getString("_about"));
-    		cells2[1] = new StringCell(((JSONObject)items2.getJSONObject(i)).getString("type"));
-    		 DataRow row2 = new DefaultRow(key2, cells2);
-    		 container2.addRowToTable(row2);
-    		
-    		
-
-    	}
-    	 DataRow row = new DefaultRow(key, cells);
-		 container.addRowToTable(row);
-         container.close();
-        container2.close();
+        DataCell[] cells = new DataCell[1];
+        if(result !=null){
+        	JSONObject primaryTopic = result.getJSONObject("primaryTopic");
+        	if(primaryTopic !=null){
+        		JSONArray chemSpiderURLs = primaryTopic.getJSONArray("result");
+        		if(chemSpiderURLs !=null){
+        			RowKey key =null;
+        	    	for (int i = 0; i < chemSpiderURLs.size(); i++) {
+        	    		key =   new RowKey("chemSpiderURL_"+i);
+        	    		cells[0] = new StringCell(chemSpiderURLs.getString(i));
+        	    		DataRow row = new DefaultRow(key, cells);
+        	    		container.addRowToTable(row);
+        	    	}
+        		}
+        	}
+        }
+    	
+        container.close();
         BufferedDataTable out = container.getTable();
-        BufferedDataTable out2 = container2.getTable();
        
-        return new BufferedDataTable[]{out,out2};
+        return new BufferedDataTable[]{out};
     }
 
     private String getCellFromJSON(String key,JSONObject item){
@@ -176,6 +142,9 @@ public class OPS_pathwayNodeModel extends NodeModel {
     	System.out.println("item: "+ item.toString());
     	if(item.get(key)!=null && !(item.get(key).getClass().getName().equals("net.sf.json.JSONArray")||item.get(key).getClass().getName().equals("net.sf.json.JSONObject"))){
     		return item.getString(key);
+    	}else if(item.get(key)!=null){
+    		
+    		return item.get(key).toString();
     	}
 	    return result;
     }
@@ -203,7 +172,7 @@ public class OPS_pathwayNodeModel extends NodeModel {
         // the spec of its output data table(s) (if you can, otherwise an array
         // with null elements), or throw an exception with a useful user message
 
-        return new DataTableSpec[]{null,null};
+        return new DataTableSpec[]{null};
     }
 
     /**
@@ -212,10 +181,14 @@ public class OPS_pathwayNodeModel extends NodeModel {
     @Override
     protected void saveSettingsTo(final NodeSettingsWO settings) {
 
-
     	api_settings.saveSettingsTo(settings);
     	app_id_settings.saveSettingsTo(settings);
     	app_key_settings.saveSettingsTo(settings);
+    	limit_settings.saveSettingsTo(settings);
+    	start_settings.saveSettingsTo(settings);
+    	length_settings.saveSettingsTo(settings);
+       
+
     }
 
     /**
@@ -228,7 +201,12 @@ public class OPS_pathwayNodeModel extends NodeModel {
     	api_settings.loadSettingsFrom(settings);
     	app_id_settings.loadSettingsFrom(settings);
     	app_key_settings.loadSettingsFrom(settings);
-     }
+    	limit_settings.loadSettingsFrom(settings);
+    	start_settings.loadSettingsFrom(settings);
+    	length_settings.loadSettingsFrom(settings);
+
+
+    }
 
     /**
      * {@inheritDoc}
@@ -245,10 +223,12 @@ public class OPS_pathwayNodeModel extends NodeModel {
        // m_count.validateSettings(settings);
     	
     	//System.out.println("validating settings");
-    	
     	api_settings.validateSettings(settings);
     	app_id_settings.validateSettings(settings);
     	app_key_settings.validateSettings(settings);
+    	limit_settings.validateSettings(settings);
+    	start_settings.validateSettings(settings);
+    	length_settings.validateSettings(settings);
     }
     
     /**
@@ -267,22 +247,12 @@ public class OPS_pathwayNodeModel extends NodeModel {
         // (e.g. data used by the views).
 
     }
-    protected URL buildRequestURL(String c_uri) throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
+    protected URL buildRequestURL(String smiles) throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
     {
-    	//"http://ops.few.vu.nl/target/enzyme/pharmacology/pages?uri=http%3A%2F%2Fpurl.uniprot.org%2Fenzyme%2F1.1.-.-&activity_type=Potency&maxEx-activity_value=10&minEx-activity_value=4&assay_organism=Homo%20sapiens&_page=1";
-        
-    	URI hosturi = new URI(api_settings.getStringValue());
-    	
-    	String app_id = URLEncoder.encode(app_id_settings.getStringValue(),"UTF-8"); 
-    	//String family = family_settings.getStringValue();
-    	
-
-    	String queryStr = "app_id=" + app_id + "&";
-    	queryStr = queryStr + "app_key=" + app_key_settings.getStringValue() +"&";
-    	queryStr = queryStr + "uri=" + URLEncoder.encode(c_uri,"UTF-8");
-    	//queryStr = queryStr + "_page=1";
-    	
-    	String url_str = "https://" + hosturi.getHost() + "/pathway?" + queryStr;
+       	URI hosturi = new URI(api_settings.getStringValue());
+       	String app_id_string =  "app_id="+app_id_settings.getStringValue();
+    	    	
+    	String url_str = "https://" + hosturi.getHost() + "/structure/similarity?" + app_id_string+getURIParams()+"&searchOptions.Molecule="+URLEncoder.encode(smiles);
     	
    
     	
@@ -292,7 +262,32 @@ public class OPS_pathwayNodeModel extends NodeModel {
     }
     
     
+    private String getURIParams(){
+    	String result ="";
+    	
+    	result += getURIParam(app_key_settings);
+    	//result += getURIParam(molecule_settings);//moved dialog option to input parameter
+    	result += getURIParamInteger(limit_settings);
+    	result += getURIParamInteger(start_settings);
+    	result += getURIParamInteger(length_settings);
+
+    	return result;
     
+    }
+    private String getURIParam(SettingsModelString setting){
+    	
+    	String result = "";
+    	if(!(setting.getStringValue().equals(""))){
+    		return "&"+setting.getKey()+"="+URLEncoder.encode(setting.getStringValue());
+    	}
+    	return "";
+    }
+    private String getURIParamInteger(SettingsModelInteger setting){
+    	return "&"+setting.getKey()+"="+ setting.getIntValue();
+    }
+    private String getURIParamDouble(SettingsModelDouble setting){
+    	return "&"+setting.getKey()+"="+ setting.getDoubleValue();
+    }
     protected JSONObject grabSomeJson(URL url) throws IOException
     {
     	String str="";

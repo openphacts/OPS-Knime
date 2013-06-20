@@ -53,8 +53,6 @@ public class OPS_target_pharmacology_pagesNodeModel extends NodeModel {
 		public static final String APP_ID = "app_id";
 		public static final String APP_KEY_DEFAULT = "528a8272f1cd961d215f318a0315dd3d";
 		public static final String APP_KEY = "app_key";
-		public static final String URI_DEFAULT = "http://www.conceptwiki.org/concept/38932552-111f-4a4e-a46a-4ed1d7bdf9d5";
-		public static final String URI = "uri";
 		public static final String ASSAY_ORGANISM = "assay_organism";
 		public static final String ASSAY_ORGANISM_DEFAULT = "";
 		public static final String TARGET_ORGANISM = "target_organism";
@@ -83,7 +81,6 @@ public class OPS_target_pharmacology_pagesNodeModel extends NodeModel {
 		private final SettingsModelString api_settings = new SettingsModelString(OPS_target_pharmacology_pagesNodeModel.API_URL, OPS_target_pharmacology_pagesNodeModel.DEFAULT_API_URL);
 		private final SettingsModelString app_id_settings = new SettingsModelString(OPS_target_pharmacology_pagesNodeModel.APP_ID, OPS_target_pharmacology_pagesNodeModel.APP_ID_DEFAULT);
 		private final SettingsModelString app_key_settings = new SettingsModelString(OPS_target_pharmacology_pagesNodeModel.APP_KEY, OPS_target_pharmacology_pagesNodeModel.APP_KEY_DEFAULT);
-		private final SettingsModelString uri_settings = new SettingsModelString(OPS_target_pharmacology_pagesNodeModel.URI, OPS_target_pharmacology_pagesNodeModel.URI_DEFAULT);
 		private final SettingsModelString assay_organism_settings = new SettingsModelString(OPS_target_pharmacology_pagesNodeModel.ASSAY_ORGANISM, OPS_target_pharmacology_pagesNodeModel.ASSAY_ORGANISM_DEFAULT);
 		private final SettingsModelString target_organism_settings = new SettingsModelString(OPS_target_pharmacology_pagesNodeModel.TARGET_ORGANISM, OPS_target_pharmacology_pagesNodeModel.TARGET_ORGANISM_DEFAULT);
 		private final SettingsModelString activity_type_settings = new SettingsModelString(OPS_target_pharmacology_pagesNodeModel.ACTIVITY_TYPE, OPS_target_pharmacology_pagesNodeModel.ACTIVITY_TYPE_DEFAULT);
@@ -104,7 +101,7 @@ public class OPS_target_pharmacology_pagesNodeModel extends NodeModel {
 	    protected OPS_target_pharmacology_pagesNodeModel() {
 	    
 	        // TODO: Specify the amount of input and output ports needed.
-	        super(0, 1);
+	        super(1, 1);
 	    }
 
 	    /**
@@ -177,7 +174,9 @@ public class OPS_target_pharmacology_pagesNodeModel extends NodeModel {
 	        // Note, this container can also handle arbitrary big data tables, it
 	        // will buffer to disc if necessary.
 	        BufferedDataContainer container = exec.createDataContainer(outputSpec);
-	        URL requestURL = buildRequestURL();
+	        String c_uri= inData[0].iterator().next().getCell(0).toString(); // ugly...needs definitely some array bound checks here
+
+	        URL requestURL = buildRequestURL(c_uri);
 	        System.out.println(requestURL.toString());
 	        JSONObject json = this.grabSomeJson(requestURL);
 	        
@@ -306,7 +305,6 @@ public class OPS_target_pharmacology_pagesNodeModel extends NodeModel {
 	    	api_settings.saveSettingsTo(settings);
 	    	app_id_settings.saveSettingsTo(settings);
 	    	app_key_settings.saveSettingsTo(settings);
-	    	uri_settings.saveSettingsTo(settings);
 	    	assay_organism_settings.saveSettingsTo(settings);
 	    	target_organism_settings.saveSettingsTo(settings);
 	    	activity_type_settings.saveSettingsTo(settings);
@@ -333,7 +331,6 @@ public class OPS_target_pharmacology_pagesNodeModel extends NodeModel {
 	    	api_settings.loadSettingsFrom(settings);
 	    	app_id_settings.loadSettingsFrom(settings);
 	    	app_key_settings.loadSettingsFrom(settings);
-	    	uri_settings.loadSettingsFrom(settings);
 	    	assay_organism_settings.loadSettingsFrom(settings);
 	    	target_organism_settings.loadSettingsFrom(settings);
 	    	activity_type_settings.loadSettingsFrom(settings);
@@ -368,7 +365,6 @@ public class OPS_target_pharmacology_pagesNodeModel extends NodeModel {
 	    	api_settings.validateSettings(settings);
 	    	app_id_settings.validateSettings(settings);
 	    	app_key_settings.validateSettings(settings);
-	    	uri_settings.validateSettings(settings);
 	    	assay_organism_settings.validateSettings(settings);
 	    	target_organism_settings.validateSettings(settings);
 	    	activity_type_settings.validateSettings(settings);
@@ -399,12 +395,12 @@ public class OPS_target_pharmacology_pagesNodeModel extends NodeModel {
 	        // (e.g. data used by the views).
 
 	    }
-	    protected URL buildRequestURL() throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
+	    protected URL buildRequestURL(String c_uri) throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
 	    {
 	       	URI hosturi = new URI(api_settings.getStringValue());
 	       	String app_id_string =  "app_id="+app_id_settings.getStringValue();
 	    	    	
-	    	String url_str = "https://" + hosturi.getHost() + "/compound/pharmacology/pages?" + app_id_string+getURIParams();
+	    	String url_str = "https://" + hosturi.getHost() + "/compound/pharmacology/pages?" + app_id_string+getURIParams()+"&uri="+c_uri;
 	    	
 	   
 	    	
@@ -418,7 +414,6 @@ public class OPS_target_pharmacology_pagesNodeModel extends NodeModel {
 	    	String result ="";
 	    	
 	    	result += getURIParam(app_key_settings);
-	    	result += getURIParam(uri_settings);
 	    	result += getURIParam(assay_organism_settings);
 	    	result += getURIParam(target_organism_settings);
 	    	result += getURIParam(activity_type_settings);

@@ -71,7 +71,6 @@ public class OPS_targetNodeModel extends NodeModel {
     private final SettingsModelString api_settings = new SettingsModelString(OPS_targetNodeModel.API_URL, OPS_targetNodeModel.DEFAULT_API_URL);
     private final SettingsModelString app_id_settings = new SettingsModelString(OPS_targetNodeModel.APP_ID, OPS_targetNodeModel.APP_ID_DEFAULT);
     private final SettingsModelString app_key_settings = new SettingsModelString(OPS_targetNodeModel.APP_KEY, OPS_targetNodeModel.APP_KEY_DEFAULT);
-    private final SettingsModelString uri_settings = new SettingsModelString(OPS_targetNodeModel.URI, OPS_targetNodeModel.URI_DEFAULT);
 
 
     /**
@@ -81,7 +80,7 @@ public class OPS_targetNodeModel extends NodeModel {
 
     	
         // TODO one incoming port and one outgoing port is assumed
-        super(0, 1);
+        super(1, 1);
 
     }
 
@@ -136,7 +135,9 @@ public class OPS_targetNodeModel extends NodeModel {
         // Note, this container can also handle arbitrary big data tables, it
         // will buffer to disc if necessary.
         BufferedDataContainer container = exec.createDataContainer(outputSpec);
-        URL requestURL = buildRequestURL();
+        String c_uri= inData[0].iterator().next().getCell(0).toString(); // ugly...needs definitely some array bound checks here
+
+        URL requestURL = buildRequestURL(c_uri);
         JSONObject json = this.grabSomeJson(requestURL);
         
         System.out.println(json.toString());
@@ -240,9 +241,6 @@ public class OPS_targetNodeModel extends NodeModel {
     	api_settings.saveSettingsTo(settings);
     	app_id_settings.saveSettingsTo(settings);
     	app_key_settings.saveSettingsTo(settings);
-    	uri_settings.saveSettingsTo(settings);
-       
-
     }
 
     /**
@@ -255,10 +253,7 @@ public class OPS_targetNodeModel extends NodeModel {
     	api_settings.loadSettingsFrom(settings);
     	app_id_settings.loadSettingsFrom(settings);
     	app_key_settings.loadSettingsFrom(settings);
-    	uri_settings.loadSettingsFrom(settings);
-
-
-    }
+     }
 
     /**
      * {@inheritDoc}
@@ -279,10 +274,6 @@ public class OPS_targetNodeModel extends NodeModel {
     	api_settings.validateSettings(settings);
     	app_id_settings.validateSettings(settings);
     	app_key_settings.validateSettings(settings);
-    	uri_settings.validateSettings(settings);
-
-    	
-    	
     }
     
     /**
@@ -301,7 +292,7 @@ public class OPS_targetNodeModel extends NodeModel {
         // (e.g. data used by the views).
 
     }
-    protected URL buildRequestURL() throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
+    protected URL buildRequestURL(String c_uri) throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
     {
     	//"http://ops.few.vu.nl/target/enzyme/pharmacology/pages?uri=http%3A%2F%2Fpurl.uniprot.org%2Fenzyme%2F1.1.-.-&activity_type=Potency&maxEx-activity_value=10&minEx-activity_value=4&assay_organism=Homo%20sapiens&_page=1";
         
@@ -313,7 +304,7 @@ public class OPS_targetNodeModel extends NodeModel {
 
     	String queryStr = "app_id=" + app_id + "&";
     	queryStr = queryStr + "app_key=" + app_key_settings.getStringValue() +"&";
-    	queryStr = queryStr + "uri=" + URLEncoder.encode(uri_settings.getStringValue(),"UTF-8");
+    	queryStr = queryStr + "uri=" + URLEncoder.encode(c_uri,"UTF-8");
     	//queryStr = queryStr + "_page=1";
     	
     	String url_str = "https://" + hosturi.getHost() + "/target?" + queryStr;

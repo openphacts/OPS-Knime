@@ -28,9 +28,7 @@ public class OPS_InchiKeyToChemSpiderURLNodeDialog extends DefaultNodeSettingsPa
           		OPS_InchiKeyToChemSpiderURLNodeModel.APP_ID, OPS_InchiKeyToChemSpiderURLNodeModel.APP_ID_DEFAULT), "Your application ID:"));
           addDialogComponent(new DialogComponentString(new SettingsModelString(
           		OPS_InchiKeyToChemSpiderURLNodeModel.APP_KEY, OPS_InchiKeyToChemSpiderURLNodeModel.APP_KEY_DEFAULT), "Your application key:"));
-          addDialogComponent(new DialogComponentString(new SettingsModelString(
-          		OPS_InchiKeyToChemSpiderURLNodeModel.INCHI_KEY, OPS_InchiKeyToChemSpiderURLNodeModel.INCHI_KEY_DEFAULT), "An InChIKey string. E.g. BSYNRYMUTXBXSQ-UHFFFAOYSA-N "));
-
+ 
     }
 }
 

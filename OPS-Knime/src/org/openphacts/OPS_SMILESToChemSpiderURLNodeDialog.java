@@ -28,8 +28,6 @@ public class OPS_SMILESToChemSpiderURLNodeDialog extends DefaultNodeSettingsPane
          		OPS_SMILESToChemSpiderURLNodeModel.APP_ID, OPS_SMILESToChemSpiderURLNodeModel.APP_ID_DEFAULT), "Your application ID:"));
          addDialogComponent(new DialogComponentString(new SettingsModelString(
          		OPS_SMILESToChemSpiderURLNodeModel.APP_KEY, OPS_SMILESToChemSpiderURLNodeModel.APP_KEY_DEFAULT), "Your application key:"));
-         addDialogComponent(new DialogComponentString(new SettingsModelString(
-         		OPS_SMILESToChemSpiderURLNodeModel.SMILES_STRING, OPS_SMILESToChemSpiderURLNodeModel.SMILES_STRING_DEFAULT), "A SMILES string. E.g. CC(=O)Oc1ccccc1C(=O)O"));
 
     }
 }

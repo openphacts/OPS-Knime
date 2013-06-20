@@ -46,15 +46,11 @@ public class OPS_SMILESToChemSpiderURLNodeModel extends NodeModel {
 		public static final String APP_ID_DEFAULT = "15a18100";
 		public static final String APP_ID = "app_id";
 		public static final String APP_KEY_DEFAULT = "528a8272f1cd961d215f318a0315dd3d";
-		public static final String APP_KEY = "app_key";
-		public static final String SMILES_STRING_DEFAULT = "CC(=O)Oc1ccccc1C(=O)O";
-		public static final String SMILES_STRING = "smiles";
-		
+		public static final String APP_KEY = "app_key";		
 
 		private final SettingsModelString api_settings = new SettingsModelString(OPS_SMILESToChemSpiderURLNodeModel.API_URL, OPS_SMILESToChemSpiderURLNodeModel.DEFAULT_API_URL);
 		private final SettingsModelString app_id_settings = new SettingsModelString(OPS_SMILESToChemSpiderURLNodeModel.APP_ID, OPS_SMILESToChemSpiderURLNodeModel.APP_ID_DEFAULT);
 		private final SettingsModelString app_key_settings = new SettingsModelString(OPS_SMILESToChemSpiderURLNodeModel.APP_KEY, OPS_SMILESToChemSpiderURLNodeModel.APP_KEY_DEFAULT);
-		private final SettingsModelString smiles_string_settings = new SettingsModelString(OPS_SMILESToChemSpiderURLNodeModel.SMILES_STRING, OPS_SMILESToChemSpiderURLNodeModel.SMILES_STRING_DEFAULT);
 		
 
 		/**
@@ -63,7 +59,7 @@ public class OPS_SMILESToChemSpiderURLNodeModel extends NodeModel {
 	    protected OPS_SMILESToChemSpiderURLNodeModel() {
 	    
 	        // TODO: Specify the amount of input and output ports needed.
-	        super(0, 1);
+	        super(1, 1);
 	    }
 
 	    /**
@@ -82,7 +78,9 @@ public class OPS_SMILESToChemSpiderURLNodeModel extends NodeModel {
 	        // Note, this container can also handle arbitrary big data tables, it
 	        // will buffer to disc if necessary.
 	        BufferedDataContainer container = exec.createDataContainer(outputSpec);
-	        URL requestURL = buildRequestURL();
+	        String smiles= inData[0].iterator().next().getCell(0).toString(); // ugly...needs definitely some array bound checks here
+
+	        URL requestURL = buildRequestURL(smiles);
 	        System.out.println(requestURL.toString());
 	        JSONObject json = this.grabSomeJson(requestURL);
 	        DataCell[] cells = new DataCell[1];
@@ -151,9 +149,6 @@ public class OPS_SMILESToChemSpiderURLNodeModel extends NodeModel {
 	    	api_settings.saveSettingsTo(settings);
 	    	app_id_settings.saveSettingsTo(settings);
 	    	app_key_settings.saveSettingsTo(settings);
-	    	smiles_string_settings.saveSettingsTo(settings);
-	       
-
 	    }
 
 	    /**
@@ -166,9 +161,6 @@ public class OPS_SMILESToChemSpiderURLNodeModel extends NodeModel {
 	    	api_settings.loadSettingsFrom(settings);
 	    	app_id_settings.loadSettingsFrom(settings);
 	    	app_key_settings.loadSettingsFrom(settings);
-	    	smiles_string_settings.loadSettingsFrom(settings);
-
-
 	    }
 
 	    /**
@@ -189,7 +181,6 @@ public class OPS_SMILESToChemSpiderURLNodeModel extends NodeModel {
 	    	api_settings.validateSettings(settings);
 	    	app_id_settings.validateSettings(settings);
 	    	app_key_settings.validateSettings(settings);
-	    	smiles_string_settings.validateSettings(settings);
 	    }
 	    
 	    /**
@@ -208,12 +199,12 @@ public class OPS_SMILESToChemSpiderURLNodeModel extends NodeModel {
 	        // (e.g. data used by the views).
 
 	    }
-	    protected URL buildRequestURL() throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
+	    protected URL buildRequestURL(String smiles) throws URISyntaxException, MalformedURLException, UnsupportedEncodingException  
 	    {
 	       	URI hosturi = new URI(api_settings.getStringValue());
 	       	String app_id_string =  "app_id="+app_id_settings.getStringValue();
 	    	    	
-	    	String url_str = "https://" + hosturi.getHost() + "/structure?" + app_id_string+getURIParams();
+	    	String url_str = "https://" + hosturi.getHost() + "/structure?" + app_id_string+getURIParams()+"&smiles="+smiles;
 	    	
 	   
 	    	
@@ -227,7 +218,6 @@ public class OPS_SMILESToChemSpiderURLNodeModel extends NodeModel {
 	    	String result ="";
 	    	
 	    	result += getURIParam(app_key_settings);
-	    	result += getURIParam(smiles_string_settings);
 
 	    	return result;
 	    }

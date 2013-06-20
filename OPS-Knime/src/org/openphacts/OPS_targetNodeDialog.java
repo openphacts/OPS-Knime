@@ -35,8 +35,6 @@ public class OPS_targetNodeDialog extends DefaultNodeSettingsPane {
         		OPS_targetNodeModel.APP_ID, OPS_targetNodeModel.APP_ID_DEFAULT), "Your application ID:"));
         addDialogComponent(new DialogComponentString(new SettingsModelString(
         		OPS_targetNodeModel.APP_KEY, OPS_targetNodeModel.APP_KEY_DEFAULT), "Your application key:"));
-        addDialogComponent(new DialogComponentString(new SettingsModelString(
-        		OPS_targetNodeModel.URI, OPS_targetNodeModel.URI_DEFAULT), "A compound URI. e.g.: http://www.conceptwiki.org/concept/38932552-111f-4a4e-a46a-4ed1d7bdf9d5 "));
                     
     }
 }
