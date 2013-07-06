@@ -6,7 +6,7 @@ where:<br/>
 <ul><li>OpenPHACTS is to reduce the barriers to drug discovery in industry, academia and for small businesses. </li>
 <li>
 Knime is a workflow system offering a low-barrier visual programming environment for researchers dependent on data and statistical data-crunching methods/algorithms.
-</li>
+</li> 
 </ul>
 OpenPHACTS gives pharmacologists easy access to a wide range of data relevant to their research. Knime allows scientists to partially automate their research workflows which
 are part of their research process.   
