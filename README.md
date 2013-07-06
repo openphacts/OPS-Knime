@@ -29,7 +29,7 @@ understands SWAGGER. and JSON.
 *  Enzyme Classification API
 * Target info
 * Compound info
-* Pathways info
+* Pathways info 
 * Text to conceptwiki
 
 
