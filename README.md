@@ -25,7 +25,7 @@ that the services require or which are optional to fine-tune the desired functio
 The OPS-Knime project is mainly concerned to give the Knime community easy access to the OpenPHACTS services. Given that the SWAGGER file already contains all information
 needed to invoke any service provided by OpenPHACTS and is in described in a standard, unambiguous format, JSON, it was quite straightforward to create two utility
 components for the KNIME community: 1) a SWAGGER node and a JSON serializer.
-
+ 
 
 JSON_to_KnimeTable
 ------------------
