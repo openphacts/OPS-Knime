@@ -27,25 +27,28 @@ needed to invoke any service provided by OpenPHACTS and is in described in a sta
 components for the KNIME community: 1) a SWAGGER node and a JSON serializer.
  
 
-JSON_to_KnimeTable
-------------------
+<ul><li><b>JSON_to_KnimeTable</b><br/>
+
 This node parses the JSON from a given url to a KNIME table by a recursive traversal through the JSON objects and JSON arrays. The column names
 are a concatenation of the keys found when walking through the hierarchical path. The resulting tables looks quite similar to an online JSON-to-CSV tool
 found <a href="http://json-csv.com"> here </a>.
  
-The JSON_Knime node can be downloaded here, and in order to use it, copy it to the 'plugins' folder of your KNIME installation.
-The source code of the node can be found here.
-
-
-SWAGGER_to_ServiceTemplates
+</li>
+<li><b>SWAGGER_to_ServiceTemplates</b><br/>
 ---------------------------
 The combination of these two KNIME nodes provides access to REST services accessible via HTTP-GET described by a SWAGGER file.
-This node is currently in alpha development. 
+</li></ul>
 
-The two nodes are bundled in a JAR file and can be downloaded here, and in order to use them, copy the jar file to the 'plugins' folder of your KNIME installation.
-The source code of the node can be found here.
 
-Installing the nodes
+
+Installing the JSON and SWAGGER nodes, the OpenPHACTS meta-nodes and some example workflows
+------------
+* <b> JSON and SWAGGER nodes</b>: Download "org.openphacts_1.0.0.zip" and unpack it in the plugins folder of your KNIME installation
+* <b> OpenPHACTS meta-nodes</b>: The previous step and the following two steps 1) download "metanodes.zip" and unpack it, 2) open KNIME and click "File>>Import workflow..." and select the metanode workflow
+
+
+
+Installing the JSON and SWAGGER nodes
 ------------
 * Download "org.openphacts_1.0.0.zip" and unpack it in the plugins folder of your KNIME installation
 
