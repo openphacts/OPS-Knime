@@ -35,22 +35,30 @@ found <a href="http://json-csv.com"> here </a>.
  
 </li>
 <li><b>SWAGGER_to_ServiceTemplates</b><br/>
----------------------------
 The combination of these two KNIME nodes provides access to REST services accessible via HTTP-GET described by a SWAGGER file.
 </li></ul>
 
 
+OpenPHACTS  meta nodes
+----------
+KNIME allows workflows to be wrapped as "meta nodes". In the "metanodes.zip" the functionality of the Swagger+JSON nodes is demonstrated by wrapping
+workflows that use these nodes to invoke an OpenPHACTS service. The more skilled user can 'zoom in' into the meta-node and change the settings according
+to his/her preferences.
 
-Installing the JSON and SWAGGER nodes, the OpenPHACTS meta-nodes and some example workflows
+Installing the JSON and SWAGGER nodes
 ------------
 * <b> JSON and SWAGGER nodes</b>: Download "org.openphacts_1.0.0.zip" and unpack it in the plugins folder of your KNIME installation
 * <b> OpenPHACTS meta-nodes</b>: The previous step and the following two steps 1) download "metanodes.zip" and unpack it, 2) open KNIME and click "File>>Import workflow..." and select the metanode workflow
 
+Installing the OpenPHACTS meta nodes
+----------
+Perform the previous step and do the following:
+* Download "metanodes.zip" and unpack it
+* Open your KNIME environment
+* Goto "file>>import workflow..."
+* select from the unpacked zip the workflow you need
 
 
-Installing the JSON and SWAGGER nodes
-------------
-* Download "org.openphacts_1.0.0.zip" and unpack it in the plugins folder of your KNIME installation
 
 
 Development - Source
@@ -62,3 +70,5 @@ TODO
 -------------
 * more nodes
 * better nodes
+
+for any questions or feedback, please send a mail to rm.siebes'''''AT'''''few.vu.nl
