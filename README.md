@@ -32,7 +32,7 @@ JSON_to_KnimeTable
 This node parses the JSON from a given url to a KNIME table by a recursive traversal through the JSON objects and JSON arrays. The column names
 are a concatenation of the keys found when walking through the hierarchical path. The resulting tables looks quite similar to an online JSON-to-CSV tool
 found <a href="http://json-csv.com"> here </a>.
-
+ 
 The JSON_Knime node can be downloaded here, and in order to use it, copy it to the 'plugins' folder of your KNIME installation.
 The source code of the node can be found here.
 
