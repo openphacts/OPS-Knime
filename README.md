@@ -47,8 +47,8 @@ to his/her preferences.
 
 Installing the JSON and SWAGGER nodes
 ------------
-* <b> JSON and SWAGGER nodes</b>: Download "org.openphacts_1.0.0.zip" and unpack it in the plugins folder of your KNIME installation
-* <b> OpenPHACTS meta-nodes</b>: The previous step and the following two steps 1) download "metanodes.zip" and unpack it, 2) open KNIME and click "File>>Import workflow..." and select the metanode workflow
+* Download "org.openphacts_1.0.0.zip" and 
+* unpack it in the plugins folder of your KNIME installation
 
 Installing the OpenPHACTS meta nodes
 ----------
