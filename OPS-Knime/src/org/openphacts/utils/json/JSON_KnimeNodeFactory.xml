@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE knimeNode PUBLIC "-//UNIKN//DTD KNIME Node 2.0//EN" "http://www.knime.org/Node.dtd">
+<knimeNode icon="./default.png" type="Manipulator">
+    <name>JSON_Knime</name>
+    
+    <shortDescription>
+    	Transforms JSON into a Knime-table
+            </shortDescription>
+    
+    <fullDescription>
+        <intro> 
+        Loads serialized JSON from a URL (specified in the first cell from a provided input table),
+         parses it into a JSONObject, converts its hierarchical structure into a flat 2D matrix and exports it as a Knime table. 
+        The generated matrix is similar to http://json-csv.com/. 
+         </intro>
+        
+       <option name="Input type select">Select what the input table (the first cell, that is the only one that matters) contains. It can
+     be a URL or a JSON String</option>
+    </fullDescription>
+    
+    <ports>
+        <inPort index="0" name="URL or JSON String ">A table, where the first cell contains a URL pointing to a  JSON file or a piece of JSON</inPort>
+        <!-- possibly more input ports here-->
+        <outPort index="0" name="Out-Port name">A table where each column has the hierarchical path as a header. The path is a concatenated set of
+        object identifiers delimited with "_"</outPort>
+        <!-- possibly more output ports here-->
+    </ports>    
+    <views>
+                <view index="0" name="TODO...">name of second view">TODO...</view>
+        <!--view index="1" name="name of second view">Description of second view...</view-->
+    </views>
+</knimeNode>

@@ -1,28 +1,23 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenPhactsData-Node extension for KNIME Workbench
-Bundle-SymbolicName: org.openphacts; singleton:=true
+Bundle-Name: JSON_Knime-Node extension for KNIME Workbench
+Bundle-SymbolicName: org.openphacts.utils.json; singleton:=true
 Bundle-Version: 1.0.0
-Bundle-ClassPath: openphactsdata.jar,
- lib/json-lib-2.4-jdk15.jar,
+Bundle-ClassPath: json_knime.jar,
  lib/commons-beanutils-1.8.3.jar,
  lib/commons-collections-3.2.1.jar,
  lib/commons-lang-2.6.jar,
  lib/commons-logging-1.1.1.jar,
  lib/commons-logging-adapters-1.1.1.jar,
  lib/commons-logging-api-1.1.1.jar,
- lib/ezmorph-1.0.6.jar
-Bundle-Activator: org.openphacts.OpenPhactsDataNodePlugin
-Bundle-Vendor: openphacts
+ lib/ezmorph-1.0.6.jar,
+ lib/json-lib-2.4-jdk15.jar
+Bundle-Activator: org.openphacts.utils.json.JSON_KnimeNodePlugin
+Bundle-Vendor: Ronald Siebes
 Require-Bundle: org.eclipse.core.runtime,
  org.knime.workbench.core,
  org.knime.workbench.repository,
  org.knime.base
 Bundle-ActivationPolicy: lazy
-Export-Package: org.openphacts;
-  uses:="org.eclipse.core.runtime,
-   org.knime.core.node,
-   org.osgi.framework,
-   net.sf.json,
-   org.knime.core.node.defaultnodesettings"
+Export-Package: org.openphacts.utils.json
 

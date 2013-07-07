@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE knimeNode PUBLIC "-//UNIKN//DTD KNIME Node 2.0//EN" "http://www.knime.org/Node.dtd">
+<knimeNode icon="./default.png" type="Source">
+    <name>SWAGGER_ServiceTemplatesNodeFactory</name>
+    
+    <shortDescription>
+        Creates a set of HTTP-GET url "templates" for each service described in a provided SWAGGER file.
+        This node is to be used together with the SWAGGER_GenerateGET_URL node.
+    </shortDescription>
+    
+    <fullDescription>
+        <intro> 
+
+SWAGGER is a specification and complete framework implementation for describing, producing, consuming, and visualizing RESTful web services.
+For more info on SWAGGER, please look here: https://developers.helloreverb.com/swagger.
+This Knime node parses the provided SWAGGER file and creates a set of HTTP-GET url templates. Each template represents a construct for a service
+where only the parameter values need to be filled out.  
+ The variables in the url are instantiated
+with the matching variable names from the input table. When you run the node, it takes the selected template, concatenates the variables
+with the matching values in the input table and generates an output table containing one cell that contains the REST url.
+ 
+</intro>
+        
+
+    
+    </fullDescription>
+       
+       
+    <ports>
+        <inPort index="0" name="Variable instance table">The url of the SWAGGER file</inPort>
+        <!-- possibly more input ports here-->
+        <outPort index="0" name="REST Url">A set of service url templates. Select one of those for the input of the SWAGGER_GenerateGET_URL node</outPort>
+        <!-- possibly more output ports here-->
+    </ports>    
+    <views>
+                   <view index="0" name="TODO...">TODO...</view>
+        <!--view index="1" name="name of second view">Description of second view...</view-->
+    </views>
+</knimeNode>

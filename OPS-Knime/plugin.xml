@@ -16,16 +16,9 @@
    -->
    
    <extension point="org.knime.workbench.repository.nodes">
-<node category-path="/" factory-class="org.openphacts.OPS_search_freetextNodeFactory" id="org.openphacts.OPS_search_freetextNodeFactory"/>
-<node category-path="/" factory-class="org.openphacts.OPS_compoundNodeFactory" id="org.openphacts.OPS_compoundNodeFactory"/>
-<node category-path="/" factory-class="org.openphacts.OPS_pathwayNodeFactory" id="org.openphacts.OPS_pathwayNodeFactory"/>
-<node category-path="/" factory-class="org.openphacts.OPS_targetNodeFactory" id="org.openphacts.OPS_targetNodeFactory"/>
-<node category-path="/" factory-class="org.openphacts.OPS_compound_pharmacology_pagesNodeFactory" id="org.openphacts.OPS_compound_pharmacology_pagesNodeFactory"/>
-<node category-path="/" factory-class="org.openphacts.OPS_target_pharmacology_pagesNodeFactory" id="org.openphacts.OPS_target_pharmacology_pagesNodeFactory"/>
-<node category-path="/" factory-class="org.openphacts.OPS_InchiKeyToChemSpiderURLNodeFactory" id="org.openphacts.OPS_InchiKeyToChemSpiderURLNodeFactory"/>
-<node category-path="/" factory-class="org.openphacts.OPS_InchiStringToChemSpiderURLNodeFactory" id="org.openphacts.OPS_InchiStringToChemSpiderURLNodeFactory"/>
-<node category-path="/" factory-class="org.openphacts.OPS_SMILESToChemSpiderURLNodeFactory" id="org.openphacts.OPS_SMILESToChemSpiderURLNodeFactory"/>
-<node category-path="/" factory-class="org.openphacts.OPS_chemical_structure_similarity_searchNodeFactory" id="org.openphacts.OPS_chemical_structure_similarity_searchNodeFactory"/>
+      <node category-path="/" factory-class="org.openphacts.utils.json.JSON_KnimeNodeFactory" id="org.openphacts.utils.json.JSON_KnimeNodeFactory"/>
+<node category-path="/" factory-class="org.openphacts.utils.swagger.SWAGGER_ServiceTemplatesNodeFactory" id="org.openphacts.utils.swagger.SWAGGER_ServiceTemplatesNodeFactory"/>
+<node category-path="/" factory-class="org.openphacts.utils.swagger.SWAGGER_GenerateGET_URLNodeFactory" id="org.openphacts.utils.swagger.SWAGGER_GenerateGET_URLNodeFactory"/>
 </extension>
    
 </plugin>
