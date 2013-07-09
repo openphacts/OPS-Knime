@@ -71,6 +71,8 @@ Development - Source
 The source code of the plugins are in the folder "OPS-Knime" folder which can be checked out as
 a java project in Knime-Eclipse.
 
+The source of the metanodes is in the 'metanodes' directory
+
 TODO
 -------------
 * more nodes
