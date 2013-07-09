@@ -11,6 +11,11 @@ Knime offers a workflow system by implementing a low-barrier visual programming 
 In other words: <b>OpenPHACTS</b> gives pharmacologists easy access to a wide range of data relevant to their research and <b>Knime</b> allows scientists to partially automate their research workflows which
 are part of their research process.   
 
+OpenPHACTS Services (metanodes)
+----------
+KNIME allows workflows to be wrapped as "meta nodes". In the "metanodes.zip" the functionality of the Swagger+JSON nodes is demonstrated by wrapping
+workflows that use these nodes to invoke an OpenPHACTS service. The more skilled user can 'zoom in' into the meta-node and change the settings according
+to his/her preferences.
 
 
 KNIME-UTILS: SWAGGER & JSON
@@ -38,12 +43,9 @@ found <a href="http://json-csv.com"> here </a>.
 The combination of these two KNIME nodes provides access to REST services accessible via HTTP-GET described by a SWAGGER file.
 </li></ul>
 
+##Installation
 
-OpenPHACTS  meta nodes
-----------
-KNIME allows workflows to be wrapped as "meta nodes". In the "metanodes.zip" the functionality of the Swagger+JSON nodes is demonstrated by wrapping
-workflows that use these nodes to invoke an OpenPHACTS service. The more skilled user can 'zoom in' into the meta-node and change the settings according
-to his/her preferences.
+Install both.
 
 Installing the JSON and SWAGGER nodes
 ------------
