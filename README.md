@@ -17,6 +17,9 @@ KNIME allows workflows to be wrapped as "meta nodes". In the "metanodes.zip" the
 workflows that use these nodes to invoke an OpenPHACTS service. The more skilled user can 'zoom in' into the meta-node and change the settings according
 to his/her preferences.
 
+The following metanodes are implemented and have an example workflow:
+<ul><li>OPS_activity_types</li><li>OPS_ChEBI_class_pharmacology_count</li><li>OPS_ChEBI_ontology_class_pharmacology_paginated</li><li>OPS_chemical_structure_exact_search</li><li>OPS_chemical_structure_similarity_search</li><li>OPS_chemical_structure_substructure_search</li><li>OPS_compound_information</li><li>OPS_compound_pharmacology_paginated</li><li>OPS_data_sources</li><li>OPS_enzyme_pharmacology_count</li><li>OPS_enzyme_pharmacology_paginated</li><li>OPS_get_ChEBI_ontology_class</li><li>OPS_get_ChEBI_ontology_class_members</li><li>OPS_get_ChEBI_ontology_root_classes</li><li>OPS_get_concept_description</li><li>OPS_get_enzyme_classification_class</li><li>OPS_get_enzyme_classification_class_members</li><li>OPS_get_enzyme_classification_root_classes</li><li>OPS_InChI_key_to_URL</li><li>OPS_InChI_to_URL</li><li>OPS_map_free_text_to_concept_URL_by_semantic_tag</li><li>OPS_map_URL</li><li>OPS_pathway_information</li><li>OPS_search_freetext</li><li>OPS_SMILES_to_URL</li><li>OPS_target_information</li><li>OPS_target_pharmacology_count</li><li>OPS_target_pharmacology_paginated</li><li>OPS_units_for_activity_type</li></ul>
+
 
 KNIME-UTILS: SWAGGER & JSON
 ----------
