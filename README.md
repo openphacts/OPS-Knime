@@ -46,9 +46,9 @@ found <a href="http://json-csv.com"> here </a>.
 The combination of these two KNIME nodes provides access to REST services accessible via HTTP-GET described by a SWAGGER file.
 </li></ul>
 
-##Installation
+#Installation
 
-Install both.
+To run the Open PHACTS nodes you need to install both the JSON+SWAGGER nodes and the metanodes. 
 
 Installing the JSON and SWAGGER nodes
 ------------
