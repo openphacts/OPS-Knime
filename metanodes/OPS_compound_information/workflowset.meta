@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<KNIMEMetaInfo nrOfElements="3">
+<element form="text" read-only="false" name="Author">Ronald Siebes - OpenPHACTS</element>
+<element form="date" name="Creation Date" read-only="false">9/6/2013</element>
+<element form="multiline" name="Comments" read-only="false">Returns information about a single compound that corresponds to {uri}.</element>
+</KNIMEMetaInfo>

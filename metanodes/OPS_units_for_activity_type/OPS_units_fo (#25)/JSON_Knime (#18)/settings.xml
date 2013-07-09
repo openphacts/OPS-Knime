@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="settings.xml">
+<entry key="factory" type="xstring" value="org.openphacts.utils.json.JSON_KnimeNodeFactory"/>
+<entry key="node-name" type="xstring" value="JSON_Knime"/>
+<entry key="node-bundle-name" type="xstring" value="JSON_Knime-Node extension for KNIME Workbench"/>
+<entry key="node-bundle-symbolic-name" type="xstring" value="org.openphacts.utils.json"/>
+<entry key="node-bundle-vendor" type="xstring" value="Ronald Siebes"/>
+<config key="factory_settings"/>
+<entry key="node_file" type="xstring" value="node.xml"/>
+<config key="flow_stack"/>
+<config key="internal_node_subsettings">
+<entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
+</config>
+<entry key="customDescription" type="xstring" isnull="true" value=""/>
+<entry key="state" type="xstring" value="CONFIGURED"/>
+<config key="node_message">
+<entry key="type" type="xstring" value="ERROR"/>
+<entry key="message" type="xstring" value="Execute failed: Illegal character in path at index 55: https://beta.openphacts.org/pharmacology/filters/units/{act_type}?app_id=15a18100&amp;app_key=528a8272f1cd961d215f318a0315dd3d&amp;act_type=Potency"/>
+</config>
+</config>
