@@ -52,8 +52,8 @@ Install both.
 
 Installing the JSON and SWAGGER nodes
 ------------
-* Download "org.openphacts_1.0.0.zip" and 
-* unpack it in the plugins folder of your KNIME installation
+* Download "org.openphacts.utils.json_1.0.0.jar" and put it in the plugins folder of your KNIME installation
+
 
 Installing the OpenPHACTS meta nodes
 ----------
