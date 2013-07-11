@@ -58,7 +58,7 @@ Installing the JSON and SWAGGER nodes
 Installing the OpenPHACTS meta nodes
 ----------
 Perform the previous step and do the following:
-* Download "metanodes.zip" and unpack it
+* Download "metanodes.zip" and unpack it 
 * Open your KNIME environment
 * Goto "file>>import workflow..."
 * select from the unpacked zip the workflow you need
