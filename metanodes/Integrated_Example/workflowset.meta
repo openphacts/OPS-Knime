@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<KNIMEMetaInfo nrOfElements="3">
-<element form="text" read-only="false" name="Author">Ronald Siebes - OpenPHACTS</element>
-<element form="date" name="Creation Date" read-only="false">9/6/2013</element>
-<element form="multiline" name="Comments" read-only="false">This workflow demonstrates how to combine two OpenPHACTS meta-nodes.
-
-By double-clicking the "Table Creator" node, the compound can be changed. For example "aspirine".</element>
-</KNIMEMetaInfo>

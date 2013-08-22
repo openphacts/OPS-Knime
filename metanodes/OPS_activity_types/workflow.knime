@@ -4,7 +4,7 @@
 <entry key="version" type="xstring" value="2.6.0"/>
 <entry key="name" type="xstring" isnull="true" value=""/>
 <entry key="customDescription" type="xstring" isnull="true" value=""/>
-<entry key="state" type="xstring" value="EXECUTED"/>
+<entry key="state" type="xstring" value="CONFIGURED"/>
 <config key="workflow_credentials"/>
 <config key="annotations">
 <config key="annotation_0">
@@ -44,7 +44,7 @@
 <entry key="array-size" type="xint" value="4"/>
 <entry key="0" type="xint" value="184"/>
 <entry key="1" type="xint" value="296"/>
-<entry key="2" type="xint" value="102"/>
+<entry key="2" type="xint" value="106"/>
 <entry key="3" type="xint" value="64"/>
 </config>
 </config>

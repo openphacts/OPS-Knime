@@ -5,10 +5,6 @@
 <entry key="name" type="xstring" isnull="true" value=""/>
 <entry key="customDescription" type="xstring" isnull="true" value=""/>
 <entry key="state" type="xstring" value="IDLE"/>
-<config key="node_message">
-<entry key="type" type="xstring" value="ERROR"/>
-<entry key="message" type="xstring" value="Error in sub flow."/>
-</config>
 <config key="workflow_credentials"/>
 <config key="annotations">
 <config key="annotation_0">
@@ -64,7 +60,7 @@
 <entry key="0" type="xint" value="350"/>
 <entry key="1" type="xint" value="538"/>
 <entry key="2" type="xint" value="156"/>
-<entry key="3" type="xint" value="80"/>
+<entry key="3" type="xint" value="64"/>
 </config>
 </config>
 </config>
