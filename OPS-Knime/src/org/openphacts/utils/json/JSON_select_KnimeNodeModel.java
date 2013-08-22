@@ -202,7 +202,6 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 		} 
 
 		resultContainer.close();
-		System.out.println(resultString);
 		
 		BufferedDataTable[] resultContainers = new BufferedDataTable[2];
 		resultContainers[0] = resultContainer.getTable();
@@ -432,7 +431,6 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 			Iterator<String> keys = jObject.keys();
 			String key = null;
 			while (keys.hasNext()) {
-				System.out.println("in here6");
 				key = keys.next();
 
 				Object object = jObject.get(key);
@@ -445,7 +443,6 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 						jsonSet.put(object, newMap);
 						currentJsonKey = object;
 					} else if (paramSet.containsKey(extPath)) {
-						System.out.println("extPAA" + extPath);
 						if (!jsonSet.get(currentJsonKey).containsKey(extPath)) {
 							Set<Object> agrObjects = new LinkedHashSet<Object>();
 							jsonSet.get(currentJsonKey).put(extPath, agrObjects);

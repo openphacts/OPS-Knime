@@ -8,7 +8,8 @@
     </shortDescription>
     
     <fullDescription>
-        <intro>In the first input table the <b>iterator  key</b> and <aggregation keys> are specified. <br\>
+        <intro>
+        In the first input table the <b>iterator  key</b> and <b>aggregation keys</b> are specified. <br/>
         
         The iterator key indicates which json key should be iterated over. The json-keys can be found as column headers in the serialized result table.
         The aggregation keys are optional. They are also json keys that can be found in the serialized result table. 
