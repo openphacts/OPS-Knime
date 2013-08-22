@@ -53,7 +53,7 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 	private static int rowIndex = 0;
 	private static Map<String, String> paramSet = new LinkedHashMap<String, String>();
 
-	private static Map<Object, Map<String, Set<Object>>> jsonSet = new LinkedHashMap<Object, Map<String, Set<Object>>>();
+	private static Map<Object, Map<String, Set<Object>>> jsonSet = null;
 	static String jsonKey = null;
 
 	/**
@@ -70,26 +70,80 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 	@Override
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
 			final ExecutionContext exec) throws Exception {
-		JSONObject json = null;
-		paramSet = new LinkedHashMap<String, String>();
-		String compoundUri = inData[1].iterator().next().getCell(0).toString(); // ugly...needs
-																				// definitely
-																				// some
-																				// array
-																				// bound
-																				// checks
+		jsonSet =new LinkedHashMap<Object, Map<String, Set<Object>>>();
+		paramSet = new HashMap<String, String>();
+		CloseableRowIterator cit = inData[0].iterator();
+		DataRow current;
+		while (cit.hasNext()) {
+			current = cit.next();
+			Iterator <DataCell> cellIt = current.iterator();
+			//first get the column key
+			if(cellIt.hasNext()){
+				DataCell first = cellIt.next();
+				String firstName = first.toString();
+				String secondName = first.toString(); //keep this if next part is empty
+				//second, get an eventual new name for the key
+				if(cellIt.hasNext()){
+					secondName = cellIt.next().toString();
+				}
+				paramSet.put(firstName, secondName);
+			}
+			
+		}
+		JSONObject json=null;
+    	
+	        String compoundUri= inData[1].iterator().next().getCell(0).toString(); // ugly...needs definitely some array bound checks here
+	
+	        URL requestURL = buildRequestURL(compoundUri);
+	        
+	        
+	        
+	        try{
+	         json = JSON_KnimeNodeModel.grabSomeJson(requestURL);
+	        } catch (IOException e){
+	        	
+	        	//the json is not valid (e.g. 404 page), therefore create two empty tables
+	        	
+	        	DataColumnSpec[] allColSpecs = new DataColumnSpec[paramSet.size()];
+	        	
+
+	        	String[] paramSetArray = paramSet.keySet().toArray(
+	    				new String[paramSet.size()]);
+	    		for (int i = 0; i < paramSetArray.length; i++) {
+
+	    			String colName = paramSet.get(paramSetArray[i]);
+
+	    			allColSpecs[i] = new DataColumnSpecCreator(colName,
+	    					StringCell.TYPE).createSpec();
+	    		}
+	        	
+
+	        	DataTableSpec outputSpec = new DataTableSpec(allColSpecs);
+
+	        	DataColumnSpec[] allColSpecs2 = new DataColumnSpec[0];
+	        	DataTableSpec outputSpec2 = new DataTableSpec(allColSpecs2);
+		   		 BufferedDataContainer container = exec.createDataContainer(outputSpec);
+		   		 container.close();
+		   		 BufferedDataContainer container2 = exec.createDataContainer(outputSpec2);
+		   		 container2.close();
+	        	return new BufferedDataTable[]{container.getTable(),container2.getTable()};  	
+	        }
+	        
+    	
+       
+		
+		
+	
+																	// checks
 		CloseableRowIterator it = inData[0].iterator();
 		if(it.hasNext()){
 			jsonKey = inData[0].iterator().next().getCell(0).toString();
 			// here
 		}
 		
-		URL requestURL = buildRequestURL(compoundUri);
-		json = JSON_select_KnimeNodeModel.grabSomeJson(requestURL);
-
 		BufferedDataTable jsonTable = makeTable(exec, inData[0], json);
-System.out.println("size"+paramSet.size());
 		DataColumnSpec[] resultColSpecs = new DataColumnSpec[paramSet.size()];
+		
 		String[] paramSetArray = paramSet.keySet().toArray(
 				new String[paramSet.size()]);
 		for (int i = 0; i < paramSetArray.length; i++) {
@@ -145,13 +199,14 @@ System.out.println("size"+paramSet.size());
 				resultContainer.addRowToTable(row);
 			}
 
-		}
+		} 
 
 		resultContainer.close();
 		System.out.println(resultString);
 		
-		BufferedDataTable[] resultContainers = new BufferedDataTable[] {
-				 resultContainer.getTable(),jsonTable };
+		BufferedDataTable[] resultContainers = new BufferedDataTable[2];
+		resultContainers[0] = resultContainer.getTable();
+		resultContainers[1] = jsonTable;
 		return resultContainers;
 		// TODO: Return a BufferedDataTable for each output port
 
@@ -173,7 +228,7 @@ System.out.println("size"+paramSet.size());
 			throws InvalidSettingsException {
 
 		// TODO: generated method stub
-		return new DataTableSpec[] { null };
+		return new DataTableSpec[] { null,null };
 	}
 
 	/**
@@ -228,27 +283,7 @@ System.out.println("size"+paramSet.size());
 	protected static BufferedDataTable makeTable(ExecutionContext exec,
 			BufferedDataTable params, JSONObject wholeObject) {
 
-		paramSet = new HashMap<String, String>();
-		CloseableRowIterator it = params.iterator();
-		DataRow current;
-		while (it.hasNext()) {
-			current = it.next();
-			if (current.getCell(1) != null) {
-				if (current.getCell(1).toString().length() > 0
-						&& !current.getCell(1).toString().equals("?")) {
-					paramSet.put(current.getCell(0).toString(), current
-							.getCell(1).toString());
-				} else {
-					paramSet.put(current.getCell(0).toString(), current
-							.getCell(0).toString());
-				}
-
-			} else {
-				paramSet.put(current.getCell(0).toString(), current.getCell(0)
-						.toString());
-
-			}
-		}
+		
 		DataColumnSpec[] resultColSpecs = new DataColumnSpec[paramSet.size()];
 		Iterator<String> paramSetIterator = paramSet.keySet().iterator();
 		int resultCounter = 0;
@@ -265,8 +300,6 @@ System.out.println("size"+paramSet.size());
 				.createDataContainer(resultSpec);
 		rowIndex = 0;
 		Map<String, Map<String, String>> resultTable = new LinkedHashMap<String, Map<String, String>>();
-		Map<String, Map<String, String>> selectTable = new LinkedHashMap<String, Map<String, String>>();
-		System.out.println("Start");
 		dim(resultTable, "", wholeObject); // recursion start
 		DataColumnSpec[] allColSpecs = new DataColumnSpec[resultTable.size()];
 
@@ -304,8 +337,6 @@ System.out.println("size"+paramSet.size());
 				String rowIndexString = rowIt.next();
 				int rowIndex = Integer.parseInt(rowIndexString);
 				String cellValue = col.get(rowIndexString);
-				System.out.println("adding  row:" + rowIndex + ",col :"
-						+ colIndex + ", value=" + cellValue);
 				valueArray[rowIndex][colIndex] = cellValue;
 			}
 			colIndex++;
@@ -344,7 +375,6 @@ System.out.println("size"+paramSet.size());
 				for (int j = 0; j < resultCells.length; j++) {
 					if (!resultCells[j].toString().equals("")) {
 						hasValues = true;
-						// System.out.println("hoho"+resultCells[j].toString());
 						break;
 					}
 				}
@@ -360,12 +390,8 @@ System.out.println("size"+paramSet.size());
 		}
 
 		container.close();
-		// container.getTableSpec().
 
 		resultContainer.close();
-		// BufferedDataTable[] resultContainers = new
-		// BufferedDataTable[]{container.getTable(),resultContainer.getTable()};
-		System.out.println("ready here");
 		return container.getTable();
 
 	}
@@ -378,7 +404,6 @@ System.out.println("size"+paramSet.size());
 		String type = currentJSON.getClass().getName();
 		// System.out.println(type);
 		if (type.equals("net.sf.json.JSONArray")) {
-			System.out.println("in there!");
 			JSONArray jArray = (JSONArray) currentJSON;
 
 			for (int i = 0; i < jArray.size(); i++) {
@@ -394,8 +419,6 @@ System.out.println("size"+paramSet.size());
 					}
 					Map<String, String> col = resultTable.get(extPath);
 					col.put("" + rowIndex, jArray.get(i).toString());
-					System.out.println("Row: " + rowIndex + ", Col: " + extPath
-							+ ", val:" + jArray.get(i).toString());
 					rowIndex += 1;
 				} else {
 
@@ -405,7 +428,6 @@ System.out.println("size"+paramSet.size());
 
 			}
 		} else if (type.equals("net.sf.json.JSONObject")) {
-			System.out.println("in here!");
 			JSONObject jObject = (JSONObject) currentJSON;
 			Iterator<String> keys = jObject.keys();
 			String key = null;
@@ -416,40 +438,27 @@ System.out.println("size"+paramSet.size());
 				Object object = jObject.get(key);
 				String objectType = object.getClass().getName();
 				String extPath = currentPath + ".." + key;
-				System.out.println("in here7" + jsonKey + "," + extPath);
 
 				if(jsonKey!=null){
 					if (jsonKey.equals(extPath)) {
-						System.out.println("in here!4");
 						Map<String, Set<Object>> newMap = new LinkedHashMap<String, Set<Object>>();
-						System.out.println("in here!5");
 						jsonSet.put(object, newMap);
-						System.out.println("in here!6");
 						currentJsonKey = object;
 					} else if (paramSet.containsKey(extPath)) {
 						System.out.println("extPAA" + extPath);
 						if (!jsonSet.get(currentJsonKey).containsKey(extPath)) {
-							System.out.println("in here!1");
 							Set<Object> agrObjects = new LinkedHashSet<Object>();
-							System.out.println("in here!2");
 							jsonSet.get(currentJsonKey).put(extPath, agrObjects);
-							System.out.println("in here!3");
 						}
-						System.out.println("in here9!");
 						jsonSet.get(currentJsonKey).get(extPath).add(object);
-						System.out.println("in here10!");
 	
 					}
 				}
 
-				System.out.println("in here12!");
 				if (objectType.equals("net.sf.json.JSONArray")
 						|| objectType.equals("net.sf.json.JSONObject")) {
-					System.out.println("in here!10");
 					dim(resultTable, extPath, object);
-					System.out.println("in here!11");
 				} else {
-					System.out.println("over theeeere");
 					if (resultTable.get(extPath) == null) {
 						Map<String, String> newCol = new LinkedHashMap<String, String>();
 						resultTable.put(extPath, newCol);
@@ -457,8 +466,6 @@ System.out.println("size"+paramSet.size());
 					Map<String, String> col = resultTable.get(extPath);
 					if (object.toString() != null) {
 						col.put("" + rowIndex, object.toString());
-						System.out.println("Row: " + rowIndex + ", Col: "
-								+ extPath + ", val:" + object.toString());
 					} else {
 						// error
 						System.out

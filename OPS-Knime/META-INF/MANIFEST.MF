@@ -20,4 +20,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.knime.base
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openphacts.utils.json
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 

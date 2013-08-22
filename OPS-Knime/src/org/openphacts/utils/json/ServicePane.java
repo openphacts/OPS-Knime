@@ -1,11 +1,8 @@
 package org.openphacts.utils.json;
 
 import java.awt.BorderLayout;
-import java.awt.TextComponent;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.JPanel;
 
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeDialogPane;

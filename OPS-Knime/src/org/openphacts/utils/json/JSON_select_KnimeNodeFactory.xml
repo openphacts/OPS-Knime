@@ -4,11 +4,17 @@
     <name>JSON_select_Knime</name>
     
     <shortDescription>
-        Generates a table representing the result from a json url according to a specified list of keys-headers
+        Generates two tables: one with a serialized json representation and one that contains a filtered aggregated version
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
+        <intro>In the first input table the <b>iterator  key</b> and <aggregation keys> are specified. <br\>
+        
+        The iterator key indicates which json key should be iterated over. The json-keys can be found as column headers in the serialized result table.
+        The aggregation keys are optional. They are also json keys that can be found in the serialized result table. 
+        An aggregation key is added as a column in the filtered result table with the matches for each iteration.
+
+        </intro>
         
         
         <option name="short name of first option (like in the dialog)">description of first option</option>

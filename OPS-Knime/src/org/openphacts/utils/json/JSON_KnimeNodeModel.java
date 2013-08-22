@@ -70,7 +70,16 @@ public class JSON_KnimeNodeModel extends NodeModel {
 	        String compoundUri= inData[0].iterator().next().getCell(0).toString(); // ugly...needs definitely some array bound checks here
 	
 	        URL requestURL = buildRequestURL(compoundUri);
+	        try{
 	         json = JSON_KnimeNodeModel.grabSomeJson(requestURL);
+	        } catch (IOException e){
+	        	//the json is not valid (e.g. 404 page), therefore create an empty table
+	        	DataColumnSpec[] allColSpecs = new DataColumnSpec[0];
+	        	DataTableSpec outputSpec = new DataTableSpec(allColSpecs);
+	   		 BufferedDataContainer container = exec.createDataContainer(outputSpec);
+	   		 container.close();
+	        	return new BufferedDataTable[]{container.getTable()};
+	        }
 	        
     	}else{
     		
