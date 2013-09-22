@@ -234,28 +234,36 @@ public class SWAGGER_ServiceTemplatesNodeModel extends NodeModel {
 				swaggerObject = grabSomeJson(swaggerURL);
 				
 				String basePath = swaggerObject.getString("basePath");
+				if(basePath.endsWith("/")){
+					basePath = basePath.substring(0, basePath.length()-1);
+				}
 				
 				JSONArray servicesJSON = swaggerObject.getJSONArray("apis");
 				JSONObject currentService=null;
 				
 				for(int i=0;i<servicesJSON.size();i++){
 					currentService = servicesJSON.getJSONObject(i);
-					String path = currentService.getString("path");
-					JSONArray operations = currentService.getJSONArray("operations");
-					for(int j=0;j<operations.size();j++){
-						String urlTemplate = basePath+path+"?";
-						JSONObject operation = operations.getJSONObject(j);
-						JSONArray parameters = operation.getJSONArray("parameters");
-						for(int k=0;k<parameters.size();k++){
-							JSONObject parameter = parameters.getJSONObject(k);
-							urlTemplate += "["+(parameter.getString("name")+"="+parameter.getString("name"));
-							if(k+2 <= parameters.size() ){
-								urlTemplate+="&]";
-							}else{
-								urlTemplate+="]";
+					if(currentService.has("path")){
+						String path = currentService.getString("path");
+						JSONArray operations = currentService.getJSONArray("operations");
+						for(int j=0;j<operations.size();j++){
+							String urlTemplate = basePath+path+"?";
+							JSONObject operation = operations.getJSONObject(j);
+							JSONArray parameters = operation.getJSONArray("parameters");
+							for(int k=0;k<parameters.size();k++){
+								JSONObject parameter = parameters.getJSONObject(k);
+								if(parameter.has("name")){
+									urlTemplate += "["+(parameter.getString("name")+"="+parameter.getString("name"));
+									if(k+2 <= parameters.size() ){
+										urlTemplate+="&]";
+									}else{
+										urlTemplate+="]";
+								}
+								}
 							}
+							urlTemplates.add(urlTemplate);
+							System.out.println(urlTemplate);
 						}
-						urlTemplates.add(urlTemplate);
 					}
 				}
 				
