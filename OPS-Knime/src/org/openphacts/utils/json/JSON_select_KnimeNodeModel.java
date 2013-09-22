@@ -436,9 +436,11 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 				Object object = jObject.get(key);
 				String objectType = object.getClass().getName();
 				String extPath = currentPath + ".." + key;
-
+				//System.out.println(extPath);
+				try {
 				if(jsonKey!=null){
 					if (jsonKey.equals(extPath)) {
+						
 						Map<String, Set<Object>> newMap = new LinkedHashMap<String, Set<Object>>();
 						jsonSet.put(object, newMap);
 						currentJsonKey = object;
@@ -451,7 +453,9 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 	
 					}
 				}
-
+				}catch (Exception e){
+					e.printStackTrace();
+				}
 				if (objectType.equals("net.sf.json.JSONArray")
 						|| objectType.equals("net.sf.json.JSONObject")) {
 					dim(resultTable, extPath, object);
