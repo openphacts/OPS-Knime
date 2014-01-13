@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -27,6 +28,8 @@ import org.knime.core.data.DataColumnSpecCreator;
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.RowKey;
+import org.knime.core.data.collection.CollectionCellFactory;
+import org.knime.core.data.collection.ListCell;
 import org.knime.core.data.container.CloseableRowIterator;
 import org.knime.core.data.def.DefaultRow;
 import org.knime.core.data.def.StringCell;
@@ -112,9 +115,13 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 	    		for (int i = 0; i < paramSetArray.length; i++) {
 
 	    			String colName = paramSet.get(paramSetArray[i]);
-
-	    			allColSpecs[i] = new DataColumnSpecCreator(colName,
-	    					StringCell.TYPE).createSpec();
+	    			if(i==0){
+	    				allColSpecs[i] = new DataColumnSpecCreator(colName, StringCell.TYPE).createSpec();
+	    				
+	    			}else {//the rest are ListCells with Strings
+	    				allColSpecs[i] = new DataColumnSpecCreator(colName, ListCell.getCollectionType(StringCell.TYPE)).createSpec();
+	    			}
+	    			
 	    		}
 	        	
 
@@ -149,9 +156,13 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 		for (int i = 0; i < paramSetArray.length; i++) {
 
 			String colName = paramSet.get(paramSetArray[i]);
-
-			resultColSpecs[i] = new DataColumnSpecCreator(colName,
-					StringCell.TYPE).createSpec();
+			//first one is the iteration key, always a String
+			if(i==0){
+				resultColSpecs[i] = new DataColumnSpecCreator(colName, StringCell.TYPE).createSpec();
+				
+			}else {//the rest are ListCells with Strings
+				resultColSpecs[i] = new DataColumnSpecCreator(colName, ListCell.getCollectionType(StringCell.TYPE)).createSpec();
+			}
 		}
 		DataTableSpec resultSpec = new DataTableSpec(resultColSpecs);
 		BufferedDataContainer resultContainer = exec
@@ -166,34 +177,44 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 			RowKey key = new RowKey("Row" + (resultRowCount + 1));
 			DataCell[] cells = new DataCell[paramSet.size()];
 			for (int i = 0; i < paramSet.size(); i++) {
-				cells[i] = new StringCell("");
+				if(i==0){
+					cells[i] = new StringCell("");
+					
+				}else{
+					cells[i] = CollectionCellFactory.createListCell(new ArrayList<StringCell>());
+				}
 			}
-			cells[0] = new StringCell(jsonSetKeyObj.toString());
 			Iterator<String> jsonSetAgrIt = jsonSet.get(jsonSetKeyObj).keySet()
 					.iterator();
 			String agrString = "";
+			
+			
 			while (jsonSetAgrIt.hasNext()) {
 				String currentAgrKey = jsonSetAgrIt.next();
 				Iterator<Object> currentAgrValueSet = jsonSet
 						.get(jsonSetKeyObj).get(currentAgrKey).iterator();
-				String valueSetString = "";
+					//String valueSetString = "";
+				ArrayList<StringCell> al = new ArrayList<StringCell>();
 				while (currentAgrValueSet.hasNext()) {
-					if (valueSetString.equals("")) {
-						valueSetString += currentAgrValueSet.next();
-					} else {
-						valueSetString += "," + currentAgrValueSet.next();
-					}
+					al.add(new StringCell(currentAgrValueSet.next().toString()));
+					
 				}
-				cells[resultSpec.findColumnIndex(paramSet.get(currentAgrKey))] = new StringCell(
-						valueSetString);
-				agrString += currentAgrKey + ":" + valueSetString;
+				if(resultSpec.findColumnIndex(paramSet.get(currentAgrKey))==0){
+					cells[0] = new StringCell(al.toString());
+				}else{
+					cells[resultSpec.findColumnIndex(paramSet.get(currentAgrKey))] = CollectionCellFactory.createListCell(al);
+				}
+				
+
+				
+
 			}
 			
 			if(jsonKey!=null && paramSet.get(jsonKey)!=null){
-				cells[resultSpec.findColumnIndex(paramSet.get(jsonKey))] = new StringCell(
-						jsonSetKeyObj.toString());
+				//cells[resultSpec.findColumnIndex(paramSet.get(jsonKey))] = new StringCell(
+				//		jsonSetKeyObj.toString());
 				
-				resultString += jsonSetKeyObj + "::" + agrString + "\n";
+				//resultString += jsonSetKeyObj + "::" + agrString + "\n";
 				resultRowCount += 1;
 				DataRow row = new DefaultRow(key, cells);
 				resultContainer.addRowToTable(row);
@@ -436,7 +457,7 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 				Object object = jObject.get(key);
 				String objectType = object.getClass().getName();
 				String extPath = currentPath + ".." + key;
-				//System.out.println(extPath);
+				System.out.println(extPath);
 				try {
 				if(jsonKey!=null){
 					if (jsonKey.equals(extPath)) {
