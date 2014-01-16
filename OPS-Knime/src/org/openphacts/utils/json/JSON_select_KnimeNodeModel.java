@@ -74,7 +74,7 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
 			final ExecutionContext exec) throws Exception {
 		jsonSet =new LinkedHashMap<Object, Map<String, Set<Object>>>();
-		paramSet = new HashMap<String, String>();
+		paramSet = new LinkedHashMap<String, String>();
 		CloseableRowIterator cit = inData[0].iterator();
 		DataRow current;
 		while (cit.hasNext()) {
@@ -176,13 +176,12 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 			Object jsonSetKeyObj = jsonSetKeyIt.next();
 			RowKey key = new RowKey("Row" + (resultRowCount + 1));
 			DataCell[] cells = new DataCell[paramSet.size()];
-			for (int i = 0; i < paramSet.size(); i++) {
-				if(i==0){
-					cells[i] = new StringCell("");
-					
-				}else{
+			cells[0] = new StringCell(jsonSetKeyObj.toString());
+			
+			for (int i = 1; i < paramSet.size(); i++) {
+
 					cells[i] = CollectionCellFactory.createListCell(new ArrayList<StringCell>());
-				}
+				
 			}
 			Iterator<String> jsonSetAgrIt = jsonSet.get(jsonSetKeyObj).keySet()
 					.iterator();
@@ -193,33 +192,35 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 				String currentAgrKey = jsonSetAgrIt.next();
 				Iterator<Object> currentAgrValueSet = jsonSet
 						.get(jsonSetKeyObj).get(currentAgrKey).iterator();
-					//String valueSetString = "";
-				ArrayList<StringCell> al = new ArrayList<StringCell>();
+
 				while (currentAgrValueSet.hasNext()) {
-					al.add(new StringCell(currentAgrValueSet.next().toString()));
+					ArrayList<StringCell> al = new ArrayList<StringCell>();
+					Object jsonObject= currentAgrValueSet.next();
+					if(jsonObject.getClass().getName().equals("net.sf.json.JSONArray")){
+						
+						JSONArray array = (JSONArray)jsonObject;
+						
+						Iterator arrayIt = array.iterator();
+						while(arrayIt.hasNext()){
+							al.add(new StringCell(arrayIt.next().toString()));
+						}
+						
+					} else
+					{
+						
+						al.add(new StringCell(jsonObject.toString()));
+					}
+					
+					cells[resultSpec.findColumnIndex(paramSet.get(currentAgrKey))] = CollectionCellFactory.createListCell(al);	
+					
 					
 				}
-				if(resultSpec.findColumnIndex(paramSet.get(currentAgrKey))==0){
-					cells[0] = new StringCell(al.toString());
-				}else{
-					cells[resultSpec.findColumnIndex(paramSet.get(currentAgrKey))] = CollectionCellFactory.createListCell(al);
-				}
-				
-
-				
-
 			}
-			
 			if(jsonKey!=null && paramSet.get(jsonKey)!=null){
-				//cells[resultSpec.findColumnIndex(paramSet.get(jsonKey))] = new StringCell(
-				//		jsonSetKeyObj.toString());
-				
-				//resultString += jsonSetKeyObj + "::" + agrString + "\n";
 				resultRowCount += 1;
 				DataRow row = new DefaultRow(key, cells);
 				resultContainer.addRowToTable(row);
 			}
-
 		} 
 
 		resultContainer.close();
