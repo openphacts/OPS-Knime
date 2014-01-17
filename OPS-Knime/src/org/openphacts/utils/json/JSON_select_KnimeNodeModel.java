@@ -10,13 +10,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -73,121 +71,125 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 	@Override
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
 			final ExecutionContext exec) throws Exception {
-		jsonSet =new LinkedHashMap<Object, Map<String, Set<Object>>>();
+		jsonSet = new LinkedHashMap<Object, Map<String, Set<Object>>>();
 		paramSet = new LinkedHashMap<String, String>();
 		CloseableRowIterator cit = inData[0].iterator();
 		DataRow current;
 		while (cit.hasNext()) {
 			current = cit.next();
-			Iterator <DataCell> cellIt = current.iterator();
-			//first get the column key
-			if(cellIt.hasNext()){
+			Iterator<DataCell> cellIt = current.iterator();
+			// first get the column key
+			if (cellIt.hasNext()) {
 				DataCell first = cellIt.next();
 				String firstName = first.toString();
-				String secondName = first.toString(); //keep this if next part is empty
-				//second, get an eventual new name for the key
-				if(cellIt.hasNext()){
+				String secondName = first.toString(); // keep this if next part
+				// is empty
+				// second, get an eventual new name for the key
+				if (cellIt.hasNext()) {
 					secondName = cellIt.next().toString();
 				}
 				paramSet.put(firstName, secondName);
 			}
-			
+
 		}
-		JSONObject json=null;
-    	
-	        String compoundUri= inData[1].iterator().next().getCell(0).toString(); // ugly...needs definitely some array bound checks here
-	
-	        URL requestURL = buildRequestURL(compoundUri);
-	        
-	        
-	        
-	        try{
-	         json = JSON_KnimeNodeModel.grabSomeJson(requestURL);
-	        } catch (IOException e){
-	        	
-	        	//the json is not valid (e.g. 404 page), therefore create two empty tables
-	        	
-	        	DataColumnSpec[] allColSpecs = new DataColumnSpec[paramSet.size()];
-	        	
+		JSONObject json = null;
 
-	        	String[] paramSetArray = paramSet.keySet().toArray(
-	    				new String[paramSet.size()]);
-	    		for (int i = 0; i < paramSetArray.length; i++) {
+		String compoundUri = inData[1].iterator().next().getCell(0).toString(); // ugly...needs
+		// definitely
+		// some
+		// array
+		// bound
+		// checks
+		// here
 
-	    			String colName = paramSet.get(paramSetArray[i]);
-	    			if(i==0){
-	    				allColSpecs[i] = new DataColumnSpecCreator(colName, StringCell.TYPE).createSpec();
-	    				
-	    			}else {//the rest are ListCells with Strings
-	    				allColSpecs[i] = new DataColumnSpecCreator(colName, ListCell.getCollectionType(StringCell.TYPE)).createSpec();
-	    			}
-	    			
-	    		}
-	        	
+		URL requestURL = buildRequestURL(compoundUri);
 
-	        	DataTableSpec outputSpec = new DataTableSpec(allColSpecs);
+		try {
+			json = JSON_KnimeNodeModel.grabSomeJson(requestURL);
+		} catch (IOException e) {
 
-	        	DataColumnSpec[] allColSpecs2 = new DataColumnSpec[0];
-	        	DataTableSpec outputSpec2 = new DataTableSpec(allColSpecs2);
-		   		 BufferedDataContainer container = exec.createDataContainer(outputSpec);
-		   		 container.close();
-		   		 BufferedDataContainer container2 = exec.createDataContainer(outputSpec2);
-		   		 container2.close();
-	        	return new BufferedDataTable[]{container.getTable(),container2.getTable()};  	
-	        }
-	        
-    	
-       
-		
-		
-	
-																	// checks
+			// the json is not valid (e.g. 404 page), therefore create two empty
+			// tables
+
+			DataColumnSpec[] allColSpecs = new DataColumnSpec[paramSet.size()];
+
+			String[] paramSetArray = paramSet.keySet().toArray(
+					new String[paramSet.size()]);
+			for (int i = 0; i < paramSetArray.length; i++) {
+
+				String colName = paramSet.get(paramSetArray[i]);
+				if (i == 0) {
+					allColSpecs[i] = new DataColumnSpecCreator(colName,
+							StringCell.TYPE).createSpec();
+
+				} else {// the rest are ListCells with Strings
+					allColSpecs[i] = new DataColumnSpecCreator(colName,
+							ListCell.getCollectionType(StringCell.TYPE))
+					.createSpec();
+				}
+
+			}
+
+			DataTableSpec outputSpec = new DataTableSpec(allColSpecs);
+
+			DataColumnSpec[] allColSpecs2 = new DataColumnSpec[0];
+			DataTableSpec outputSpec2 = new DataTableSpec(allColSpecs2);
+			BufferedDataContainer container = exec
+					.createDataContainer(outputSpec);
+			container.close();
+			BufferedDataContainer container2 = exec
+					.createDataContainer(outputSpec2);
+			container2.close();
+			return new BufferedDataTable[] { container.getTable(),
+					container2.getTable() };
+		}
+
+		// checks
 		CloseableRowIterator it = inData[0].iterator();
-		if(it.hasNext()){
+		if (it.hasNext()) {
 			jsonKey = inData[0].iterator().next().getCell(0).toString();
 			// here
 		}
-		
+
 		BufferedDataTable jsonTable = makeTable(exec, inData[0], json);
 		DataColumnSpec[] resultColSpecs = new DataColumnSpec[paramSet.size()];
-		
+
 		String[] paramSetArray = paramSet.keySet().toArray(
 				new String[paramSet.size()]);
 		for (int i = 0; i < paramSetArray.length; i++) {
 
 			String colName = paramSet.get(paramSetArray[i]);
-			//first one is the iteration key, always a String
-			if(i==0){
-				resultColSpecs[i] = new DataColumnSpecCreator(colName, StringCell.TYPE).createSpec();
-				
-			}else {//the rest are ListCells with Strings
-				resultColSpecs[i] = new DataColumnSpecCreator(colName, ListCell.getCollectionType(StringCell.TYPE)).createSpec();
+			// first one is the iteration key, always a String
+			if (i == 0) {
+				resultColSpecs[i] = new DataColumnSpecCreator(colName,
+						StringCell.TYPE).createSpec();
+
+			} else {// the rest are ListCells with Strings
+				resultColSpecs[i] = new DataColumnSpecCreator(colName,
+						ListCell.getCollectionType(StringCell.TYPE))
+				.createSpec();
 			}
 		}
 		DataTableSpec resultSpec = new DataTableSpec(resultColSpecs);
 		BufferedDataContainer resultContainer = exec
 				.createDataContainer(resultSpec);
 
-
 		Iterator<Object> jsonSetKeyIt = jsonSet.keySet().iterator();
-		String resultString = "";
 		int resultRowCount = 0;
 		while (jsonSetKeyIt.hasNext()) {
 			Object jsonSetKeyObj = jsonSetKeyIt.next();
 			RowKey key = new RowKey("Row" + (resultRowCount + 1));
 			DataCell[] cells = new DataCell[paramSet.size()];
 			cells[0] = new StringCell(jsonSetKeyObj.toString());
-			
+
 			for (int i = 1; i < paramSet.size(); i++) {
 
-					cells[i] = CollectionCellFactory.createListCell(new ArrayList<StringCell>());
-				
+				cells[i] = CollectionCellFactory
+						.createListCell(new ArrayList<StringCell>());
+
 			}
 			Iterator<String> jsonSetAgrIt = jsonSet.get(jsonSetKeyObj).keySet()
 					.iterator();
-			String agrString = "";
-			
-			
 			while (jsonSetAgrIt.hasNext()) {
 				String currentAgrKey = jsonSetAgrIt.next();
 				Iterator<Object> currentAgrValueSet = jsonSet
@@ -195,36 +197,37 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 
 				while (currentAgrValueSet.hasNext()) {
 					ArrayList<StringCell> al = new ArrayList<StringCell>();
-					Object jsonObject= currentAgrValueSet.next();
-					if(jsonObject.getClass().getName().equals("net.sf.json.JSONArray")){
-						
-						JSONArray array = (JSONArray)jsonObject;
-						
-						Iterator arrayIt = array.iterator();
-						while(arrayIt.hasNext()){
+					Object jsonObject = currentAgrValueSet.next();
+					if (jsonObject.getClass().getName()
+							.equals("net.sf.json.JSONArray")) {
+
+						JSONArray array = (JSONArray) jsonObject;
+
+						Iterator<Object> arrayIt = array.iterator();
+						while (arrayIt.hasNext()) {
 							al.add(new StringCell(arrayIt.next().toString()));
 						}
-						
-					} else
-					{
-						
+
+					} else {
+
 						al.add(new StringCell(jsonObject.toString()));
 					}
-					
-					cells[resultSpec.findColumnIndex(paramSet.get(currentAgrKey))] = CollectionCellFactory.createListCell(al);	
-					
-					
+
+					cells[resultSpec.findColumnIndex(paramSet
+							.get(currentAgrKey))] = CollectionCellFactory
+							.createListCell(al);
+
 				}
 			}
-			if(jsonKey!=null && paramSet.get(jsonKey)!=null){
+			if (jsonKey != null && paramSet.get(jsonKey) != null) {
 				resultRowCount += 1;
 				DataRow row = new DefaultRow(key, cells);
 				resultContainer.addRowToTable(row);
 			}
-		} 
+		}
 
 		resultContainer.close();
-		
+
 		BufferedDataTable[] resultContainers = new BufferedDataTable[2];
 		resultContainers[0] = resultContainer.getTable();
 		resultContainers[1] = jsonTable;
@@ -249,7 +252,7 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 			throws InvalidSettingsException {
 
 		// TODO: generated method stub
-		return new DataTableSpec[] { null,null };
+		return new DataTableSpec[] { null, null };
 	}
 
 	/**
@@ -304,7 +307,6 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 	protected static BufferedDataTable makeTable(ExecutionContext exec,
 			BufferedDataTable params, JSONObject wholeObject) {
 
-		
 		DataColumnSpec[] resultColSpecs = new DataColumnSpec[paramSet.size()];
 		Iterator<String> paramSetIterator = paramSet.keySet().iterator();
 		int resultCounter = 0;
@@ -344,7 +346,7 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 		for (int i = 0; i < rowIndex + 1; i++) {
 			for (int j = 0; j < resultTable.size(); j++) {
 				valueArray[i][j] = "";// every cell needs a string, and not null
-										// even if the string is ""
+				// even if the string is ""
 			}
 		}
 
@@ -423,7 +425,6 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 			String currentPath, Object currentJSON) {
 
 		String type = currentJSON.getClass().getName();
-		// System.out.println(type);
 		if (type.equals("net.sf.json.JSONArray")) {
 			JSONArray jArray = (JSONArray) currentJSON;
 
@@ -458,24 +459,26 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 				Object object = jObject.get(key);
 				String objectType = object.getClass().getName();
 				String extPath = currentPath + ".." + key;
-				System.out.println(extPath);
 				try {
-				if(jsonKey!=null){
-					if (jsonKey.equals(extPath)) {
-						
-						Map<String, Set<Object>> newMap = new LinkedHashMap<String, Set<Object>>();
-						jsonSet.put(object, newMap);
-						currentJsonKey = object;
-					} else if (paramSet.containsKey(extPath)) {
-						if (!jsonSet.get(currentJsonKey).containsKey(extPath)) {
-							Set<Object> agrObjects = new LinkedHashSet<Object>();
-							jsonSet.get(currentJsonKey).put(extPath, agrObjects);
+					if (jsonKey != null) {
+						if (jsonKey.equals(extPath)) {
+
+							Map<String, Set<Object>> newMap = new LinkedHashMap<String, Set<Object>>();
+							jsonSet.put(object, newMap);
+							currentJsonKey = object;
+						} else if (paramSet.containsKey(extPath)) {
+							if (!jsonSet.get(currentJsonKey).containsKey(
+									extPath)) {
+								Set<Object> agrObjects = new LinkedHashSet<Object>();
+								jsonSet.get(currentJsonKey).put(extPath,
+										agrObjects);
+							}
+							jsonSet.get(currentJsonKey).get(extPath)
+							.add(object);
+
 						}
-						jsonSet.get(currentJsonKey).get(extPath).add(object);
-	
 					}
-				}
-				}catch (Exception e){
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				if (objectType.equals("net.sf.json.JSONArray")
@@ -492,12 +495,12 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 					} else {
 						// error
 						System.out
-								.println("ERROR: Wanted to add something to Row: "
-										+ rowIndex
-										+ ", Col: "
-										+ extPath
-										+ ", val:"
-										+ object.getClass().getName());
+						.println("ERROR: Wanted to add something to Row: "
+								+ rowIndex
+								+ ", Col: "
+								+ extPath
+								+ ", val:"
+								+ object.getClass().getName());
 					}
 				}
 
@@ -526,7 +529,6 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 			str += inputLine + "\n";
 		in.close();
 
-		// System.out.println(str);
 		JSONObject jo = (JSONObject) JSONSerializer.toJSON(str);
 
 		return jo;
