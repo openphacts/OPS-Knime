@@ -22,9 +22,7 @@ public class JSON_KnimeNodeDialog extends DefaultNodeSettingsPane {
      */
     protected JSON_KnimeNodeDialog() {
     	super();
-    	addDialogComponent(new DialogComponentStringSelection(
-                new SettingsModelString(JSON_KnimeNodeModel.TYPE, JSON_KnimeNodeModel.TYPE_DEFAULT),
-                "Input table is a url or a json-string:", "URL", "JSON-String" ));
+    	
 
     }
 }

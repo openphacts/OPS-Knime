@@ -98,19 +98,24 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
 		urlDialog = new DialogComponentString(swaggerUrl,
 				"Swagger URL: ");
 		urlDialog.setSizeComponents(700, 40);
+		urlDialog.getComponentPanel().setEnabled(false);
+		//urlDialog.setSizeComponents(500, 100);
 		addDialogComponent(urlDialog);
+		
 		
 		resultDialog = new DialogComponentString(resultUrl,
 				"Result URL: ");
 		resultDialog.setSizeComponents(700, 40);
+		resultDialog.getComponentPanel().setSize(700, 40);
 		
 		final DialogComponentButton loadSwagger = new DialogComponentButton(
 				"Fetch") {
 
 		};
 		addDialogComponent(loadSwagger);
-		addDialogComponent(resultDialog);
 		this.setHorizontalPlacement(false);
+		addDialogComponent(resultDialog);
+		
 		addDialogComponent(templateDialog);
 		templateDialog.getModel().setEnabled(false);
 		
@@ -222,7 +227,7 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
 							}
 							tooltipMap.put(parameter.getString("name"),parameter.getString("description"));
 							
-							
+							System.out.println(parameter.getString("name"));
 							/*
 							if (k + 2 <= parameters.size()) {
 								urlTemplate += "&]";

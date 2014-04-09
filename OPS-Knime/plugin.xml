@@ -21,6 +21,8 @@
 <node category-path="/" factory-class="org.openphacts.utils.swagger.SWAGGER_GenerateGET_URLNodeFactory" id="org.openphacts.utils.swagger.SWAGGER_GenerateGET_URLNodeFactory"/>
 <node category-path="/" factory-class="org.openphacts.utils.json.JSON_select_KnimeNodeFactory" id="org.openphacts.utils.json.JSON_select_KnimeNodeFactory"/>
 <node category-path="/" factory-class="org.openphacts.utils.RegExFilterNodeFactory" id="org.openphacts.utils.RegExFilterNodeFactory"/>
+<node category-path="/" factory-class="org.openphacts.utils.swagger.OPS_SwaggerNodeFactory" id="org.openphacts.utils.swagger.OPS_SwaggerNodeFactory"/>
+<node category-path="/" factory-class="org.openphacts.utils.json.OPS_JSONNodeFactory" id="org.openphacts.utils.json.OPS_JSONNodeFactory"/>
 </extension>
    
 </plugin>

@@ -46,8 +46,8 @@ public class OPS_SwaggerNodeModel extends NodeModel {
         
 
 
-	static final String SWAGGER_URL_DEFAULT = "https://raw.github.com/openphacts/OPS_LinkedDataApi/1.3.1/api-config-files/swagger.json";
-
+	//static final String SWAGGER_URL_DEFAULT = "https://raw.githubusercontent.com/openphacts/OPS_LinkedDataApi/1.4.0/api-config-files/swagger.json";
+	static final String SWAGGER_URL_DEFAULT = "https://raw.githubusercontent.com/openphacts/OPS_LinkedDataApi/1.3.1/api-config-files/swagger.json";
 	static final String SWAGGER_URL = "swagger";
 
 	public static final String SWAGGER_RESULT = "swaggerResult";
@@ -136,7 +136,7 @@ public class OPS_SwaggerNodeModel extends NodeModel {
 
     	DataColumnSpec[] allColSpecs = new DataColumnSpec[1];
         allColSpecs[0] = 
-                new DataColumnSpecCreator("URL", StringCell.TYPE).createSpec();
+                new DataColumnSpecCreator("url", StringCell.TYPE).createSpec();
         
         DataTableSpec outputSpec = new DataTableSpec(allColSpecs);
      //   System.out.println("calling execute"+resultUrl.getStringValue());
@@ -152,7 +152,8 @@ public class OPS_SwaggerNodeModel extends NodeModel {
 	DataTableSpec dts = inData[0].getDataTableSpec();
 	String[] colNames = dts.getColumnNames();
 	
-	while(varIt.hasNext()){
+	if(varIt.hasNext()){
+	//while(varIt.hasNext()){
 		
 		DataRow current = varIt.next();
 		Iterator<DataCell> cellIt = current.iterator();
@@ -162,28 +163,33 @@ public class OPS_SwaggerNodeModel extends NodeModel {
 			DataCell currentCell= cellIt.next();
 			String curVar =  colNames[colCount];
 			String curVal = currentCell.toString();
-		//	System.out.println("curvar:"+curVar+", curval:"+curVal+", urlTemplate:"+urlTemplate);
+			//System.out.println("curvar:"+curVar+", curval:"+curVal+", urlTemplate:"+urlTemplate);
 			
 				if(urlTemplate.indexOf(curVar)==-1){
-					
+					System.out.println("1curvar:"+curVar+", curval:"+curVal+", urlTemplate:"+urlTemplate);
 					urlTemplate = urlTemplate+"&"+curVar+"="+URLEncoder.encode(currentCell.toString(),"UTF-8");
+					System.out.println("2curvar:"+curVar+", curval:"+curVal+", urlTemplate:"+urlTemplate);
 				}else{
+					System.out.println("3curvar:"+curVar+", curval:"+curVal+", urlTemplate:"+urlTemplate);
 					String configValue = urlTemplate.substring(urlTemplate.indexOf(curVar)+curVar.length()+1,urlTemplate.indexOf("]",urlTemplate.indexOf(curVar)));
 					
-					
+					System.out.println("4curvar:"+curVar+", curval:"+curVal+", urlTemplate:"+urlTemplate);
 					if(configValue.endsWith("&")){
 						configValue = configValue.substring(0,configValue.length()-1); //get rid of the &
 					}
 					if(colCount==0){
 						urlTemplate +="&";
 					}
+					System.out.println("5curvar:"+curVar+", curval:"+curVal+", urlTemplate:"+urlTemplate);
 					if(!configValue.equals("")){
-					//	System.out.println("config var: "+curVar+" with configValue:"+ configValue+ ", is overwritten with value: "+currentCell.toString()  );
+						System.out.println("6curvar:"+curVar+", curval:"+curVal+", urlTemplate:"+urlTemplate);
+						System.out.println("config var: "+curVar+" with configValue:"+ configValue+ ", is overwritten with value: "+currentCell.toString()  );
 						urlTemplate = urlTemplate.replaceAll(Pattern.quote("["+curVar+"="+configValue+"&]"), curVar+"="+URLEncoder.encode(currentCell.toString(),"UTF-8")+"&");
 						urlTemplate = urlTemplate.replaceAll(Pattern.quote("["+curVar+"="+configValue+"]"), curVar+"="+URLEncoder.encode(currentCell.toString(),"UTF-8"));
 						
 					}else{
 						//System.out.println("now we are here");
+						System.out.println("7curvar:"+curVar+", curval:"+curVal+", urlTemplate:"+urlTemplate);
 						String doubleStr= urlTemplate.toString();
 						urlTemplate = urlTemplate.replaceAll(Pattern.quote("["+curVar+"="+configValue+"&]"), curVar+"="+URLEncoder.encode(currentCell.toString(),"UTF-8")+"&");
 						urlTemplate = urlTemplate.replaceAll(Pattern.quote("["+curVar+"="+configValue+"]"), curVar+"="+URLEncoder.encode(currentCell.toString(),"UTF-8"));
@@ -202,12 +208,12 @@ public class OPS_SwaggerNodeModel extends NodeModel {
 		
 		
 	}
-	//System.out.println("yy:"+urlTemplate);
+	System.out.println("yy:"+urlTemplate);
 	
 	//urlTemplate =urlTemplate.replaceAll("\\[.*?\\]", "");
 	urlTemplate =urlTemplate.replaceAll("\\[", "");
 	urlTemplate =urlTemplate.replaceAll("\\]", "");
-	urlTemplate = urlTemplate.substring(0, urlTemplate.length()-1);
+	//urlTemplate = urlTemplate.substring(0, urlTemplate.length()-1);
 	//System.out.println("urlTemplate became "+urlTemplate);
 	cells[0] = new StringCell(urlTemplate);
 	  DataRow row = new DefaultRow("aboutCell", cells);

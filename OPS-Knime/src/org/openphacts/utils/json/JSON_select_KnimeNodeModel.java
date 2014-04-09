@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -51,6 +52,8 @@ import org.knime.core.node.NodeSettingsWO;
 public class JSON_select_KnimeNodeModel extends NodeModel {
 
 	public static final String TYPE_DEFAULT = "URL";
+	
+	private static String[][] valueArray =null;
 	private static int rowIndex = 0;
 	private static Map<String, String> paramSet = new LinkedHashMap<String, String>();
 
@@ -152,6 +155,8 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 		}
 
 		BufferedDataTable jsonTable = makeTable(exec, inData[0], json);
+		
+		
 		DataColumnSpec[] resultColSpecs = new DataColumnSpec[paramSet.size()];
 
 		String[] paramSetArray = paramSet.keySet().toArray(
@@ -177,7 +182,9 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 		Iterator<Object> jsonSetKeyIt = jsonSet.keySet().iterator();
 		int resultRowCount = 0;
 		while (jsonSetKeyIt.hasNext()) {
+			
 			Object jsonSetKeyObj = jsonSetKeyIt.next();
+			//System.out.println("cell: "+ jsonSetKeyObj.toString());
 			RowKey key = new RowKey("Row" + (resultRowCount + 1));
 			DataCell[] cells = new DataCell[paramSet.size()];
 			cells[0] = new StringCell(jsonSetKeyObj.toString());
@@ -205,7 +212,9 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 
 						Iterator<Object> arrayIt = array.iterator();
 						while (arrayIt.hasNext()) {
-							al.add(new StringCell(arrayIt.next().toString()));
+							String item = arrayIt.next().toString();
+							//System.out.println("ITEM: "+item);
+							al.add(new StringCell(item));
 						}
 
 					} else {
@@ -331,7 +340,10 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 		// Note, this container can also handle arbitrary big data tables, it
 		// will buffer to disc if necessary.
 
+			
+		
 		Iterator<String> colNames = resultTable.keySet().iterator();
+		
 		int counter = 0;
 		while (colNames.hasNext()) {
 			String colName = colNames.next();
@@ -341,30 +353,35 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 			counter++;
 
 		}
-
-		String[][] valueArray = new String[rowIndex + 1][resultTable.size()];
+	
+		valueArray = new String[rowIndex + 1][resultTable.size()];
 		for (int i = 0; i < rowIndex + 1; i++) {
 			for (int j = 0; j < resultTable.size(); j++) {
 				valueArray[i][j] = "";// every cell needs a string, and not null
 				// even if the string is ""
 			}
 		}
-
+	
 		Iterator<Map<String, String>> colIt = resultTable.values().iterator();
 		int colIndex = 0;
 		while (colIt.hasNext()) {
 			Map<String, String> col = colIt.next();
 			Iterator<String> rowIt = col.keySet().iterator();
+			//int previousCol
 			while (rowIt.hasNext()) {
 
 				String rowIndexString = rowIt.next();
 				int rowIndex = Integer.parseInt(rowIndexString);
 				String cellValue = col.get(rowIndexString);
+				
 				valueArray[rowIndex][colIndex] = cellValue;
+				
+				//System.out.print("row:"+rowIndex+", col:"+colIndex+", value: "+ cellValue);
 			}
+			System.out.println();
 			colIndex++;
 		}
-
+		
 		DataTableSpec outputSpec = new DataTableSpec(allColSpecs);
 		BufferedDataContainer container = exec.createDataContainer(outputSpec);
 
@@ -374,7 +391,7 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 			DataCell[] resultCells = new DataCell[paramSet.size()];
 			boolean found = false;
 			for (int j = 0; j < resultTable.size(); j++) {
-				// System.out.println("adding  row:"+j+",col :"+i+", value="+valueArray[i][j]);
+				// System.out.println("adding  col:"+j+",row :"+i+", value="+valueArray[i][j]);
 				if (valueArray[i][j].length() == 0) {
 
 				}
@@ -413,12 +430,102 @@ public class JSON_select_KnimeNodeModel extends NodeModel {
 		}
 
 		container.close();
+		
+		
+		
 
 		resultContainer.close();
+
+		
+		
+		filterResultTable(resultTable);
+		
 		return container.getTable();
 
 	}
 
+	private static Map<String,Map<String,String>> filterResultTable(Map<String,Map<String,String>> fullTable){
+		
+		//Only keep the columns specified in the paramset (provided as knime input table by user)
+		Vector<String> removeCandidates = new Vector();
+		Iterator<String> cIt = fullTable.keySet().iterator();
+		while (cIt.hasNext()){
+			String key = cIt.next();
+			if(!paramSet.containsKey(key)){
+				//removeCandidates.add(key);
+			}
+		}
+		for(int i=0;i<removeCandidates.size();i++){
+			fullTable.remove(removeCandidates.get(i));
+			
+		}
+		valueArray = new String[rowIndex + 1][fullTable.size()];
+		for (int i = 0; i < rowIndex + 1; i++) {
+			for (int j = 0; j < fullTable.size(); j++) {
+				valueArray[i][j] = "";// every cell needs a string, and not null
+				// even if the string is ""
+			}
+		}
+
+		Iterator<Map<String, String>> colIt = fullTable.values().iterator();
+		int colIndex = 0;
+		int rowCounter=0;
+		while (colIt.hasNext()) {
+			Map<String, String> col = colIt.next();
+			Iterator<String> rowIt = col.keySet().iterator();
+			int firstRowIndex = -1;
+			String concatValues = "";
+			while (rowIt.hasNext()) {
+
+				String rowIndexString = rowIt.next();
+				int rowIndex = Integer.parseInt(rowIndexString);
+				if(firstRowIndex==-1){
+					firstRowIndex = rowIndex;
+				}
+				String cellValue = col.get(rowIndexString);
+				//concatValues = concatValues+"||"+cellValue;
+				valueArray[rowIndex][colIndex] = cellValue;
+				//System.out.println("row:"+rowCounter+", col:"+colIndex+", val:"+cellValue);
+				rowCounter++;
+			}
+			//valueArray[firstRowIndex][colIndex]=concatValues;
+			colIndex++;
+		}
+		Vector<Integer> rowsToDelete = new Vector<Integer>();
+		for (int i=0;i<valueArray.length;i++){
+			for (int j=0;j<valueArray[i].length;j++){
+				if(!valueArray[i][j].equals("")){
+					boolean singleValue = true;
+					for (int k=0;k<valueArray[i].length;k++){
+						if(!valueArray[i][k].equals("") && k!=j){
+							singleValue =false;
+							break;
+						}
+					}
+					if (singleValue && j>0){
+						boolean notFound = true;
+						int indexCount=1;
+						
+						while(notFound &&indexCount<100000){ //we don't want to stay in an indefinate loop when something is wrong with the table (bit ugly)
+							if(valueArray[i-indexCount][j].equals("") ){
+								indexCount++;
+							}else{
+								notFound = false;
+							}
+						}
+						//System.out.println("hiho");
+						valueArray[i-indexCount][j]=valueArray[i-indexCount][j]+","+valueArray[i][j];
+						System.out.println(valueArray[i-indexCount][j]);
+						valueArray[i][j]="";
+						rowsToDelete.add(new Integer(i));
+						
+					}
+				}
+			}
+		}
+		
+		return fullTable;
+	}
 	static Object currentJsonKey = null;
 
 	protected static void dim(Map<String, Map<String, String>> resultTable,
