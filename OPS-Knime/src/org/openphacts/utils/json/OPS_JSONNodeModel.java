@@ -10,9 +10,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -104,7 +107,7 @@ public class OPS_JSONNodeModel extends NodeModel {
     protected OPS_JSONNodeModel() {
     
         // TODO one incoming port and two outgoing ports are assumed
-        super(1, 1);
+        super(1, 2);
     }
 
     /**
@@ -124,11 +127,15 @@ public class OPS_JSONNodeModel extends NodeModel {
         JSONObject jsonObject = grabSomeJson(jsonURL);
         Map<String, Map<String, String>> resultTable = getResultTable(jsonObject);
         
+        
+        Vector<String> mySelectionParams = new Vector<String>();
+		mySelectionParams.addAll(Arrays.asList(selection_parameters.getStringArrayValue()));
         /** FIRST WE CREATE THE TABLE WITH THE COMPLETE JSON RESULT **/
 
         /** Create the column specs, and a lookup map **/
 		DataColumnSpec[] allColSpecs = new DataColumnSpec[resultTable.keySet().size()];
-		Map<String,Integer> allColIndex = new HashMap<String,Integer>();
+		Map<Integer,String> allColIndex = new LinkedHashMap<Integer,String>();
+		Set<Integer> selCols = new LinkedHashSet<Integer>();
 		Iterator<String> allColNameIt = resultTable.keySet().iterator();
 		int allCollCounter=0;
 		while( allColNameIt.hasNext()){
@@ -137,9 +144,18 @@ public class OPS_JSONNodeModel extends NodeModel {
 		  			new DataColumnSpecCreator(colName ,
 							ListCell.getCollectionType(StringCell.TYPE))
 					.createSpec();
-		  	allColIndex.put(colName, new Integer(allCollCounter));
+		  	//System.out.println(colName+",contains it?:"+mySelectionParams.contains(colName));
+		  	//
+		  		allColIndex.put(new Integer(allCollCounter),colName);
+		  		if(mySelectionParams.contains(colName)){
+		  			selCols.add(new Integer(allCollCounter));
+		  		}
+		  		System.out.println("allColIndex:"+allCollCounter+", colName:"+colName);
+		  		allCollCounter++;
+		  	//}
+		  		
 		  	System.out.println("colName:"+colName+", colIndex:"+allCollCounter+", allColIndex.size:"+allColIndex.size());
-		  	allCollCounter++;
+		  	
 		}
 		DataTableSpec completeOutputSpec = new DataTableSpec(allColSpecs);
 		BufferedDataContainer completeContainer = exec.createDataContainer(completeOutputSpec);
@@ -152,7 +168,7 @@ public class OPS_JSONNodeModel extends NodeModel {
 		
 		/** create String[][] with the resulttable **/
 		
-		String[][] resultArray = new String[rowIndex+1][resultTable.keySet().size()];
+		String[][] resultArray = new String[rowIndex][resultTable.keySet().size()];
 		System.out.println("maxrows:"+rowIndex+",maxcols:"+resultTable.keySet().size());
 		Iterator<String> allResultKeyIt = resultTable.keySet().iterator();
 		int colCounter = 0;
@@ -170,6 +186,52 @@ public class OPS_JSONNodeModel extends NodeModel {
 			colCounter++;
 		}
 		
+		String[][] compressArray = compressArray(resultArray);
+		Vector<Vector<String>> selectionVector = new Vector<Vector<String>>();
+		
+		
+		
+		for(int i=0;i<compressArray.length;i++){
+			
+			Vector<String> rowVals =new Vector<String>();
+			boolean atLeastOneCellValueInRow=false;
+			for(int j=0;j<compressArray[i].length;j++){
+				
+				if(selCols.contains(new Integer(j))){
+					
+					if(compressArray[i][j] !=""){
+						System.out.println("we want col"+j+", with value "+compressArray[i][j]+", in row"+selectionVector.size());
+						rowVals.add(compressArray[i][j]);
+						atLeastOneCellValueInRow = true;
+					}else{
+						
+
+						rowVals.add("");
+					}
+					//rowVals.add("");
+					
+				}
+			}
+			if(atLeastOneCellValueInRow){
+				selectionVector.add(rowVals);
+				System.out.println("rowvalsize:"+rowVals.size());
+				
+			}
+			
+			
+		}
+		
+		Iterator<Vector<String>> test = selectionVector.iterator();
+		while(test.hasNext()){
+			Vector<String> next = test.next();
+			Iterator<String> testRows = next.iterator();
+			System.out.print("SELECTION ROW:");
+			while(testRows.hasNext()){
+				System.out.print(testRows.next()+",");
+			}
+			System.out.println();
+		}
+		
 		/** CREATE THE FULL OUTPUT TABLE **/
 		
 		for(int i=0;i<resultArray.length;i++){
@@ -181,6 +243,15 @@ public class OPS_JSONNodeModel extends NodeModel {
 				if(resultArray[i][j]==null){
 					cellValue.add(new StringCell(""));
 				}else{
+					String cellVal = resultArray[i][j];
+	        		if(cellVal.indexOf(";;")>=0){
+	        			String [] splitCell = cellVal.split(";;");
+	        			for(int k =0;k<splitCell.length;k++){
+	        				cellValue.add(new StringCell(splitCell[k]));
+	        			}
+	        		}else{
+	        			cellValue.add(new StringCell(cellVal));
+	        		}
 					cellValue.add(new StringCell(resultArray[i][j]));
 				}
 				resultCells[j]=CollectionCellFactory
@@ -195,6 +266,7 @@ public class OPS_JSONNodeModel extends NodeModel {
 			
 		}
 		/** NOW WE CREATE A SMALLER TABLE CONTAINING THE SELECTION MADE BY THE USER **/ 
+		
 		System.out.println("are we here?");
 	
         DataColumnSpec[] selectedColSpecs = new DataColumnSpec[selection_customized_names.getStringArrayValue().length];
@@ -206,15 +278,53 @@ public class OPS_JSONNodeModel extends NodeModel {
         }
    
         DataTableSpec selectedOutputSpec = new DataTableSpec(selectedColSpecs);
+        System.out.println("Length:"+selectedOutputSpec.getColumnNames().length);
         BufferedDataContainer selectionContainer = exec.createDataContainer(selectedOutputSpec);
    
+        Iterator<Vector<String>> selectionRowIt = selectionVector.iterator();
+        int selectionRowCounter = 0;
+        while(selectionRowIt.hasNext()){
+        	Vector<String> currentRow = selectionRowIt.next();
+        	RowKey key = new RowKey("Row" + (selectionRowCounter));
+        	DataCell[] resultCells = new DataCell[currentRow.size()];
+        	System.out.println("sais:"+ currentRow.size());
+        	Iterator<String> cellIt = currentRow.iterator();
+        	int cellCounter = 0;
+        	while(cellIt.hasNext()){
+        	
+        		
+        		ArrayList<StringCell> cellValues = new ArrayList<StringCell>();
+        		String cellValue = cellIt.next();
+        		if(cellValue.indexOf(";;")>=0){
+        			String [] splitCell = cellValue.split(";;");
+        			for(int i =0;i<splitCell.length;i++){
+        				cellValues.add(new StringCell(splitCell[i]));
+        			}
+        		}else{
+        			cellValues.add(new StringCell(cellValue));
+        		}
+        		resultCells[cellCounter]=CollectionCellFactory
+						.createListCell(cellValues);
+        		cellCounter++;
+        	}
+        	selectionRowCounter++;
+        	//System.out.println("")
+			DataRow row = new DefaultRow(key, resultCells);
+			//allRows.put(key.getString(), row);
+			System.out.println("adding selectionrow:"+key.getString()+", with row:"+row);
+			//allCells.put(row, resultCells);
+			selectionContainer.addRowToTable(row);
+        	
+        	
+        }
         // once we are done, we close the containers and return its tables
         selectionContainer.close();
+        
         completeContainer.close();
-        BufferedDataTable selectionComplete = selectionContainer.getTable();
+       BufferedDataTable selectionComplete = selectionContainer.getTable();
         BufferedDataTable outComplete = completeContainer.getTable();
-        //return new BufferedDataTable[]{selectionComplete,outComplete};
-        return new BufferedDataTable[]{outComplete};
+        return new BufferedDataTable[]{selectionComplete,outComplete};
+        //return new BufferedDataTable[]{ outComplete};
 
     }
 
@@ -230,6 +340,117 @@ public class OPS_JSONNodeModel extends NodeModel {
         // Also data handled in load/saveInternals will be erased here.
     }
 
+    
+    private String[][] compressArray(String[][] fullArray){
+    	//System.out.println("starting bla");
+    	String[][] compressArray = new String[fullArray.length][fullArray[0].length];//dangerous
+    	
+    	for(int i=0;i<fullArray.length;i++){
+    		for(int j=0;j<fullArray[i].length;j++){
+    			if(fullArray[i][j]==null){
+    				fullArray[i][j]="";
+    				compressArray[i][j]="";
+    			}else{
+    				compressArray[i][j]=fullArray[i][j];
+    			}
+    			
+    			
+    			
+    		}
+    	}
+    	
+    	int latestRowUpdate = 0;
+    	for(int i=1;i<fullArray.length;i++){
+    		boolean replacedNastyCell = false;
+    		for(int j=1;j<fullArray[i].length;j++){
+    			if(!fullArray[i][j].equals("")){
+    				
+    				int rightmostField = 0;
+    				int nrOfNonBlankCells = 0;
+    				for(int k=0;k<compressArray[i].length;k++){
+    					
+    					if(!compressArray[latestRowUpdate][k].equals("")){
+    						nrOfNonBlankCells++;
+    						System.out.println("rightmostField row:"+latestRowUpdate+", col:"+k+", val:"+compressArray[latestRowUpdate][k]);
+    						rightmostField = k;
+    					}
+    				}
+    				
+    				int previousChild=-1;
+    				for(int k=0;k<compressArray[i].length;k++){
+    					
+    					if(!compressArray[k][j].equals("")&&k<i){
+    						System.out.println("previousChild row:"+k+", col:"+j+", val:"+compressArray[k][j]);
+    						previousChild = k;
+    					}
+    				}
+    				if(previousChild==-1){
+    					System.out.println("previousChild non exist for:"+i+", col:"+j+", val:"+compressArray[i][j]);
+    					compressArray[0][j]=compressArray[i][j];
+    					compressArray[i][j]="";
+    				}
+    				else if(nrOfNonBlankCells==1){
+    					System.out.println("only one cell in row:"+i+", col:"+j+", val:"+compressArray[i][j]);
+    					if(compressArray[latestRowUpdate][j].equals("")){
+    						compressArray[latestRowUpdate][j] = compressArray[i][j];
+    					}else{
+    						compressArray[latestRowUpdate][j]=compressArray[latestRowUpdate][j]+";;"+compressArray[i][j];
+    					}
+    					
+    					compressArray[i][j]="";
+    					/*
+    					if(!replacedNastyCell){
+    						compressArray[latestRowUpdate][j]=compressArray[latestRowUpdate-1][j]+compressArray[latestRowUpdate][j];
+    						compressArray[latestRowUpdate-1][j]="";
+    						replacedNastyCell = true;
+    					}*/
+    					
+    				}
+    				else if (rightmostField >=j){
+    					latestRowUpdate++;
+    					compressArray[latestRowUpdate][j] = compressArray[i][j];
+    					compressArray[i][j]="";
+    				} else{
+    					compressArray[latestRowUpdate][j] = compressArray[i][j];
+    					compressArray[i][j]="";
+    				}
+    				
+    				/*
+    				else if(parent == previousChild && previousChild<i ){
+    					System.out.println("parent same as previous child:"+i+", col:"+j+", val:"+compressArray[i][j]);
+    					compressArray[previousChild+1][j] = compressArray[i][j];
+    					compressArray[i][j]="";
+    				}else if(parent>previousChild){
+    					System.out.println("parent later than previous child:"+i+", col:"+j+", val:"+compressArray[i][j]);
+    					compressArray[parent][j] = compressArray[i][j];
+    					compressArray[i][j]="";
+    				}else if(parent<previousChild){
+    					System.out.println("previousChild has to be merged with current:"+i+", col:"+j+", val:"+compressArray[i][j]);
+    					compressArray[previousChild][j]=compressArray[previousChild][j]+";"+compressArray[i][j];
+    					compressArray[i][j]="";
+    				}*/
+    				
+    				
+    			}
+    			
+    		}
+    	}
+    	String[][] resultCompressArray = new String[latestRowUpdate][compressArray[0].length];
+    	for(int i=0;i<latestRowUpdate;i++){
+    		System.out.print("row:"+i+", values:");
+    		for(int j=0;j<compressArray[i].length;j++){
+    			resultCompressArray[i][j] = compressArray[i][j];
+    			System.out.print(compressArray[i][j]+"| ");
+    			
+    		}
+    		System.out.println();
+    	}
+    	
+    	
+    	return resultCompressArray;
+    }
+    
+    
     /**
      * {@inheritDoc}
      */
@@ -244,7 +465,7 @@ public class OPS_JSONNodeModel extends NodeModel {
 
     	}
     	
-        return new DataTableSpec[]{null};
+        return new DataTableSpec[]{null,null};
     }
 
     /**
@@ -403,31 +624,44 @@ private Map<String, Map<String, String>> getResultTable(JSONObject o){
 
 
 		String type = currentJSON.getClass().getName();
+		System.out.println(type);
 		if (type.equals("net.sf.json.JSONArray")) {
 			JSONArray jArray = (JSONArray) currentJSON;
 
 			for (int i = 0; i < jArray.size(); i++) {
+				
 				String keytype = jArray.get(i).getClass().getName();
 				
-				if (keytype
+				if (!keytype
 						.equals("java.lang.String")) {
+					dim(resultTable, currentPath, jArray.get(i));
 					
-					String extPath = currentPath;
+				} else {
+					String extPath = currentPath ;
 					if (resultTable.get(extPath) == null) {
 						Map<String, String> newCol = new LinkedHashMap<String, String>();
 						resultTable.put(extPath, newCol);
 					}
 					Map<String, String> col = resultTable.get(extPath);
+					
 					if(col.get(""+rowIndex)!=null){
-						col.put("" + rowIndex, col.get(""+rowIndex)+jArray.get(i).toString());
+						
+						rowIndex += 1;
+						col.put("" + rowIndex, jArray.get(i).toString());
+						System.out.println("row:"+rowIndex+", extpath:"+extPath+",elements:"+col.size()+",last resul1t:"+resultTable.get(extPath).get(""+rowIndex).toString());
+						
+						
 					}else{
 						col.put("" + rowIndex,jArray.get(i).toString());
+						System.out.println("row:"+rowIndex+", extpath:"+extPath+",elements:"+col.size()+",last resul1t:"+resultTable.get(extPath).get(""+rowIndex).toString());
+						
+						rowIndex += 1;
 					}
-					//rowIndex += 1;
-				} else {
+					
+					
 					
 					//rowIndex+=1;
-					dim(resultTable, currentPath, jArray.get(i));
+					
 					//rowIndex += 1;
 				}
 
@@ -443,32 +677,29 @@ private Map<String, Map<String, String>> getResultTable(JSONObject o){
 				String objectType = object.getClass().getName();
 			
 				String extPath = currentPath + ".." + key;
-				boolean firstColOccur = false;
-				if(objectType.equals("java.lang.String")){
-					if (resultTable.get(extPath) == null) {
-						firstColOccur = true;
-						Map<String, String> newCol = new LinkedHashMap<String, String>();
-						resultTable.put(extPath, newCol);
-					}
-					
-					Map<String, String> col = resultTable.get(extPath);
-					if(firstColOccur){
-						col.put("0",jObject.get(key).toString());
-						System.out.println("elements:"+col.size()+",last result:"+resultTable.get(extPath).get("0").toString());
-					}else{
-						if(col.get(""+rowIndex)!=null){
-							rowIndex+=1;
-						}
-					
-						col.put("" + rowIndex, jObject.get(key).toString());
-						System.out.println("elements:"+col.size()+",last result:"+resultTable.get(extPath).get(""+rowIndex).toString());
-					}
-					
-					
-					//rowIndex+=1;
-				}else{
-					
+				System.out.println(extPath);
+				//boolean firstColOccur = false;
+				if(!objectType.equals("java.lang.String")){
 					dim(resultTable,extPath,object);
+					
+					
+					
+				}else{
+					if (resultTable.get(extPath) == null) {
+					
+						Map<String, String> newCol = new LinkedHashMap<String, String>();
+
+						resultTable.put(extPath, newCol);
+		
+					}
+				
+					Map<String, String> col = resultTable.get(extPath);
+					col.put("" + rowIndex, jObject.get(key).toString());
+				
+					System.out.println("row:"+rowIndex+", extpath:"+extPath+", elements:"+col.size()+",last result:"+resultTable.get(extPath).get(""+rowIndex).toString());
+					rowIndex += 1;
+					
+					
 				}
 					
 				
