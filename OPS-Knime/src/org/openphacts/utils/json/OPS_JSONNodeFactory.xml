@@ -3,15 +3,20 @@
     <name>OPS_JSON</name>
     
     <shortDescription>
-        Reads a JSON file and transforms it to a KNIME table
+        Reads JSON from a URL and transforms the result into  KNIME tables
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
+        <intro>Reads JSON from a URL provided by the input table and creates two tables. The first table is a user specified selection
+        of the json result where the user specified the desired JSON path keys via the option panel. The second table is the fully
+        serialized JSON result. The option panel needs an example JSON file for which it automatically derives the JSON keys that
+        the user can select. </intro>
         
         
-        <option name="short name of first option (like in the dialog)">description of first option</option>
-        <option name="short name of second option (like in the dialog)">description of second option</option>
+        <option name="JSON example URL">Provide a URL to a JSON result that contains all the keys that you expect from the
+        JSON url that will arrive from the node input.</option>
+        <option name="JSON key selection">Select the key that you want to have in the first output table. The key will become the column header. You can change
+        the column header by typing a new name in the textfield next to the parameter option.</option>
         <!-- possibly more options that can also be grouped by tabs -->
         <!--
         <tab name="Standard Options">
@@ -25,9 +30,10 @@
     </fullDescription>
     
     <ports>
-        <inPort index="0" name="In-Port name">Description of first input port...</inPort>
+        <inPort index="0" name="JSON url">A table with one cell containing the url to the JSON data. Make sure that the column header is named 'url'</inPort>
         <!-- possibly more input ports here-->
-        <outPort index="0" name="Out-Port name">Description of first output port...</outPort>
+        <outPort index="0" name="JSON selection">Result of the parsed JSON filtered by user-specified key selection and custom column headers</outPort>
+        <outPort index="1" name="JSON complete">Complete JSON result, ignoring the selection settings from the user</outPort>
         <!-- possibly more output ports here-->
     </ports>    
     <views>

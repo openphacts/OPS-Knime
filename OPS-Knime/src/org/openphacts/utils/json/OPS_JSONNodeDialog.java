@@ -2,6 +2,7 @@ package org.openphacts.utils.json;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -131,7 +132,14 @@ public class OPS_JSONNodeDialog extends DefaultNodeSettingsPane {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
+				int componentCount = optionPanel.getComponentCount();
+				Component[] components = optionPanel.getComponents();
+				if(componentCount>2){//remove the old options
+					for(int i=2;i<componentCount;i++){
+						optionPanel.remove(components[i]);
+						//System.out.println("removing component"+i);
+					}
+				}
 				 
 				JSONObject exampleJSON = new JSONObject();
 				
