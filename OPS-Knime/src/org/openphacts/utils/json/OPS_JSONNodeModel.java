@@ -71,6 +71,8 @@ public class OPS_JSONNodeModel extends NodeModel {
 	static final String JSON_CONFIG_RESULT = "json_result";
 	static final String SELECTION_PARAMETERS = "selection_parameters";
 	static final String SELECTION_CUSTOMIZED_NAMES = "selection_customized_names";
+	static final String ALL_PARAMETERS = "all_parameters";
+	static final String ALL_CUSTOMIZED_NAMES = "all_customized_names";
 	
 	
     private static int rowIndex = 0;
@@ -83,9 +85,10 @@ public class OPS_JSONNodeModel extends NodeModel {
     static final String DEFAULT_JSON_URL = "https://raw.githubusercontent.com/openphacts/OPS_LinkedDataApi/1.3.1/api-config-files/swagger.jsonhttps://raw.githubusercontent.com/openphacts/OPS_LinkedDataApi/1.3.1/api-config-files/swagger.json";
     //static final String DEFAULT_JSON_CONFIG_RESULT = "{}";
     // Here we put the parts of the JSON result that the user selected, and optionally gave new names to
- 	static final String[] DEFAULT_SELECTION_PARAMETERS = new String[100];//should be enough
- 	static final String[] DEFAULT_SELECTION_CUSTOMIZED_NAMES = new String[100];
-    
+ 	static final String[] DEFAULT_SELECTION_PARAMETERS = new String[1000];//should be enough
+ 	static final String[] DEFAULT_SELECTION_CUSTOMIZED_NAMES = new String[1000];
+ 	static final String[] DEFAULT_ALL_PARAMETERS = new String[1000];//should be enough
+ 	static final String[] DEFAULT_ALL_CUSTOMIZED_NAMES = new String[1000];
 
     // example value: the models count variable filled from the dialog 
     // and used in the models execution method. The default components of the
@@ -99,7 +102,9 @@ public class OPS_JSONNodeModel extends NodeModel {
     
     private final SettingsModelStringArray selection_parameters = new SettingsModelStringArray(OPS_JSONNodeModel.SELECTION_PARAMETERS, OPS_JSONNodeModel.DEFAULT_SELECTION_PARAMETERS);
     private final SettingsModelStringArray selection_customized_names = new SettingsModelStringArray(OPS_JSONNodeModel.SELECTION_CUSTOMIZED_NAMES, OPS_JSONNodeModel.DEFAULT_SELECTION_CUSTOMIZED_NAMES);
-      
+    private final SettingsModelStringArray all_parameters = new SettingsModelStringArray(OPS_JSONNodeModel.ALL_PARAMETERS, OPS_JSONNodeModel.DEFAULT_ALL_PARAMETERS);
+    private final SettingsModelStringArray all_customized_names = new SettingsModelStringArray(OPS_JSONNodeModel.ALL_CUSTOMIZED_NAMES, OPS_JSONNodeModel.DEFAULT_ALL_CUSTOMIZED_NAMES);
+   
 
     /**
      * Constructor for the node model.
@@ -286,8 +291,9 @@ public class OPS_JSONNodeModel extends NodeModel {
         while(selectionRowIt.hasNext()){
         	Vector<String> currentRow = selectionRowIt.next();
         	RowKey key = new RowKey("Row" + (selectionRowCounter));
-        	DataCell[] resultCells = new DataCell[currentRow.size()];
         	System.out.println("sais:"+ currentRow.size());
+        	DataCell[] resultCells = new DataCell[currentRow.size()];
+        	
         	Iterator<String> cellIt = currentRow.iterator();
         	int cellCounter = 0;
         	while(cellIt.hasNext()){
@@ -319,10 +325,13 @@ public class OPS_JSONNodeModel extends NodeModel {
         }
         // once we are done, we close the containers and return its tables
         selectionContainer.close();
-        
+        System.out.println("hier");
         completeContainer.close();
+
+        System.out.println("daar");
        BufferedDataTable selectionComplete = selectionContainer.getTable();
         BufferedDataTable outComplete = completeContainer.getTable();
+        System.out.println("ready");
         return new BufferedDataTable[]{selectionComplete,outComplete};
         //return new BufferedDataTable[]{ outComplete};
 
@@ -335,6 +344,7 @@ public class OPS_JSONNodeModel extends NodeModel {
     protected void reset() {
     	
     	rowIndex=0;
+    	
         // TODO Code executed on reset.
         // Models build during execute are cleared here.
         // Also data handled in load/saveInternals will be erased here.
@@ -478,6 +488,9 @@ public class OPS_JSONNodeModel extends NodeModel {
        // json_result_string.saveSettingsTo(settings);
         selection_parameters.saveSettingsTo(settings);
         selection_customized_names.saveSettingsTo(settings);
+        all_parameters.saveSettingsTo(settings);
+        all_customized_names.saveSettingsTo(settings);
+        
        // settings.
 
     }
@@ -493,6 +506,8 @@ public class OPS_JSONNodeModel extends NodeModel {
       //  json_result_string.loadSettingsFrom(settings);
         selection_parameters.loadSettingsFrom(settings);
         selection_customized_names.loadSettingsFrom(settings);
+        all_parameters.loadSettingsFrom(settings);
+        all_customized_names.loadSettingsFrom(settings);
 
     }
 
@@ -510,9 +525,15 @@ public class OPS_JSONNodeModel extends NodeModel {
     	//System.out.println("setting:"+settings.getString(selection_parameters.getStringArrayValue()[0]));
        //  json_result_string.validateSettings(settings);
          selection_parameters.validateSettings(settings);
+         System.out.println("validatesettings:"+selection_parameters.getStringArrayValue().length);
          selection_customized_names.validateSettings(settings);
+         all_parameters.validateSettings(settings);
+         all_customized_names.validateSettings(settings);
          selection_parameters.setStringArrayValue(settings.getStringArray(SELECTION_PARAMETERS));
+         System.out.println("validatesettingsXX:"+selection_parameters.getStringArrayValue().length);
          selection_customized_names.setStringArrayValue(settings.getStringArray(SELECTION_CUSTOMIZED_NAMES));
+         all_parameters.setStringArrayValue(settings.getStringArray(ALL_PARAMETERS));
+         all_customized_names.setStringArrayValue(settings.getStringArray(ALL_CUSTOMIZED_NAMES));
          System.out.println("start");
          for (int i=0;i<selection_parameters.getStringArrayValue().length;i++){
         	 System.out.println("we have:"+selection_parameters.getStringArrayValue()[i] );

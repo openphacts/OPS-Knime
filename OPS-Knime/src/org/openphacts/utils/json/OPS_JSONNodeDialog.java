@@ -44,9 +44,14 @@ import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
 import org.knime.core.data.DataColumnSpecCreator;
+import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.def.StringCell;
+import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeSettings;
+import org.knime.core.node.NodeSettingsRO;
+import org.knime.core.node.NodeSettingsWO;
+import org.knime.core.node.NotConfigurableException;
 import org.knime.core.node.config.base.ConfigBase;
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponentButton;
@@ -82,26 +87,43 @@ public class OPS_JSONNodeDialog extends DefaultNodeSettingsPane {
 	private static Object currentJsonKey = null;
 	Collection<String> optionsArrayDummy;//{"niks"};
 	Collection<String> optionNamesArrayDummy;//{"niks"};
+	Collection<String> allOptionsArrayDummy;//{"niks"};
+	Collection<String> allOptionNamesArrayDummy;//{"niks"};
 	private String[] optionsArray = {"niks"};
 	// the settingsmodels that persistently store things, even after knime shuts down properly
 	private final SettingsModelString json_config_url = new SettingsModelString(
 			OPS_JSONNodeModel.JSON_URL, OPS_JSONNodeModel.DEFAULT_JSON_URL);
 	private final SettingsModelStringArray selection_parameters = new SettingsModelStringArray(OPS_JSONNodeModel.SELECTION_PARAMETERS, OPS_JSONNodeModel.DEFAULT_SELECTION_PARAMETERS);
 	private final SettingsModelStringArray selection_customized_names = new SettingsModelStringArray(OPS_JSONNodeModel.SELECTION_CUSTOMIZED_NAMES, OPS_JSONNodeModel.DEFAULT_SELECTION_CUSTOMIZED_NAMES);
-    DialogComponentStringListSelection var_sel = null;
+	private final SettingsModelStringArray all_parameters = new SettingsModelStringArray(OPS_JSONNodeModel.ALL_PARAMETERS, OPS_JSONNodeModel.DEFAULT_ALL_PARAMETERS);
+	private final SettingsModelStringArray all_customized_names = new SettingsModelStringArray(OPS_JSONNodeModel.ALL_CUSTOMIZED_NAMES, OPS_JSONNodeModel.DEFAULT_ALL_CUSTOMIZED_NAMES);
+    
+	DialogComponentStringListSelection var_sel = null;
     DialogComponentStringListSelection name_sel = null;
+    DialogComponentStringListSelection var_all_sel = null;
+    DialogComponentStringListSelection name_all_sel = null;
+    
 	JScrollPane scrollPane;
 	DialogComponentString json_config_urlDialog = null;
 	JPanel optionPanel;
 	
     protected OPS_JSONNodeDialog() {
     	super();
+    	
     	optionsArrayDummy = new Vector<String>();
     	var_sel = new DialogComponentStringListSelection(selection_parameters,"var_sel",optionsArrayDummy,1,false,0);
     	optionNamesArrayDummy = new Vector<String>();
-    	name_sel = new DialogComponentStringListSelection(selection_customized_names,"var_sel",optionNamesArrayDummy,1,false,0);
+    	name_sel = new DialogComponentStringListSelection(selection_customized_names,"var_sel_names",optionNamesArrayDummy,1,false,0);
+    	allOptionsArrayDummy = new Vector<String>();
+    	var_all_sel = new DialogComponentStringListSelection(all_parameters,"var_all",allOptionsArrayDummy,1,false,0);
+    	allOptionNamesArrayDummy = new Vector<String>();
+    	name_all_sel = new DialogComponentStringListSelection(all_customized_names,"var_all_names",allOptionNamesArrayDummy,1,false,0);
     	addDialogComponent(var_sel);
     	addDialogComponent(name_sel);
+    	addDialogComponent(var_all_sel);
+    	addDialogComponent(name_all_sel);
+    	
+    	
     	final JScrollPane scrollPane;
 		logger = NodeLogger.getLogger(getClass());
 		optionPanel= new JPanel();
@@ -152,12 +174,15 @@ public class OPS_JSONNodeDialog extends DefaultNodeSettingsPane {
 					
 					 optionsArray = new String[jsonOptions.size()];
 					jsonOptions.copyInto(optionsArray);
-					selection_parameters.setStringArrayValue(optionsArray);
+					//selection_parameters.setStringArrayValue(optionsArray);
 					var_sel.replaceListItems(jsonOptions, optionsArray);
 					
 					String[] optionNamesArray = new String[jsonOptions.size()];
+					System.out.println("before:"+jsonOptions.size());
+					
 					jsonOptions.copyInto(optionNamesArray);
-					selection_customized_names.setStringArrayValue(optionNamesArray);
+					System.out.println("after:"+jsonOptions.size());
+					//selection_customized_names.setStringArrayValue(optionNamesArray);
 					
 					Iterator<String> jsonOptionsIt = jsonOptions.iterator();
 					int index = 0;
@@ -261,25 +286,41 @@ public class OPS_JSONNodeDialog extends DefaultNodeSettingsPane {
 								Iterator<SettingsModelOptionalString> prefIt = userPrefs.iterator();
 								final Vector<String> userVars = new Vector<String>();
 								final Vector<String> userVarNames = new Vector<String>();
+								final Vector<String> allVars = new Vector<String>();
+								final Vector<String> allVarNames = new Vector<String>();
 								while(prefIt.hasNext()){
-									SettingsModelOptionalString curPref = prefIt.next();
+									final SettingsModelOptionalString curPref = prefIt.next();
 									if(curPref.isActive()){
 										
 										userVars.add(curPref.getKey());
 										userVarNames.add(curPref.getStringValue());
 										System.out.println("woot"+curPref.getKey()+",.."+ model.getStringValue());
 									}
+									allVars.add(curPref.getKey());
+									allVarNames.add(curPref.getStringValue());
 								}
 								String[] userVarsArray = new String[userVars.size()];
 								String[] userVarNamesArray = new String[userVarNames.size()];
+								String[] allVarsArray = new String[allVars.size()];
+								String[] allVarNamesArray = new String[allVarNames.size()];
 								userVars.copyInto(userVarsArray);
 								userVarNames.copyInto(userVarNamesArray);
-								selection_parameters.setStringArrayValue(userVarsArray);
-								selection_customized_names.setStringArrayValue(userVarNamesArray);
+								allVars.copyInto(allVarsArray);
+								allVarNames.copyInto(allVarNamesArray);
+								//selection_parameters.setStringArrayValue(userVarsArray);
+								//var_sel.replaceListItems(userVars, null);
+								//System.out.println("uservararray"+userVarsArray.length);
+								//selection_customized_names.setStringArrayValue(userVarNamesArray);
+								//all_parameters.setStringArrayValue(allVarsArray);
+								//all_customized_names.setStringArrayValue(allVarNamesArray);
 								if(userVarsArray.length!=0){
+									System.out.println("wasdatnou");
 									var_sel.replaceListItems(userVars, userVarsArray);
 									name_sel.replaceListItems(userVarNames, userVarNamesArray);
+									var_all_sel.replaceListItems(allVars, allVarsArray);
+									name_all_sel.replaceListItems(allVarNames, allVarNamesArray);
 								}
+								
 								
 							}
 
@@ -364,7 +405,129 @@ public class OPS_JSONNodeDialog extends DefaultNodeSettingsPane {
 		return result;
 	}
 	
-	
+	 public void loadAdditionalSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs) throws NotConfigurableException {
+	        try {
+	        	selection_parameters.loadSettingsFrom(settings);
+	        	
+	        	selection_parameters.setStringArrayValue(settings.getStringArray(OPS_JSONNodeModel.SELECTION_PARAMETERS));
+	        	System.out.println("loadAdditionalSettings"+selection_parameters.getStringArrayValue().length);
+	        	selection_customized_names.loadSettingsFrom(settings);
+	        	selection_customized_names.setStringArrayValue(settings.getStringArray(OPS_JSONNodeModel.SELECTION_CUSTOMIZED_NAMES));
+	        	all_parameters.loadSettingsFrom(settings);
+	        	all_parameters.setStringArrayValue(settings.getStringArray(OPS_JSONNodeModel.ALL_PARAMETERS));
+	        	all_customized_names.loadSettingsFrom(settings);
+	        	all_customized_names.setStringArrayValue(settings.getStringArray(OPS_JSONNodeModel.ALL_CUSTOMIZED_NAMES));
+	        	System.out.println("start1");
+	        	
+	        	final Vector<SettingsModelOptionalString> userPrefs = new Vector<SettingsModelOptionalString>(); 
+		         for (int i=0;i<all_parameters.getStringArrayValue().length;i++){
+		        	 System.out.println("we2 have:"+all_parameters.getStringArrayValue()[i] );
+		        	 final SettingsModelOptionalString model = new SettingsModelOptionalString(all_parameters.getStringArrayValue()[i],all_parameters.getStringArrayValue()[i],false);
+						DialogComponentOptionalString dm1 = new DialogComponentOptionalString(model, all_customized_names.getStringArrayValue()[i]);
+						userPrefs.add( model);
+						
+						for(int j=0;j<selection_parameters.getStringArrayValue().length;j++){
+							if(all_parameters.getStringArrayValue()[i].equals(selection_parameters.getStringArrayValue()[j])){
+								//model. = new SettingsModelOptionalString(selection_parameters.getStringArrayValue()[j],selection_customized_names.getStringArrayValue()[j],true);
+								model.setStringValue(selection_customized_names.getStringArrayValue()[j]);
+								dm1 = new DialogComponentOptionalString(model, selection_parameters.getStringArrayValue()[j]);
+								model.setIsActive(true);
+								//model.setStringValue(selection_customized_names.getStringArrayValue()[j]);
+							}else{
+								model.setIsActive(false);
+							}
+						}
+						
+						
+						
+						optionPanel.add(dm1.getComponentPanel());
+						dm1.getComponentPanel().addMouseListener(new MouseListener(){
+
+							@Override
+							public void mouseClicked(MouseEvent arg0) {
+								
+							}
+
+							@Override
+							public void mouseEntered(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							@Override
+							public void mouseExited(MouseEvent arg0) {
+								System.out.println(arg0.getComponent().getClass().getName());
+								Iterator<SettingsModelOptionalString> prefIt = userPrefs.iterator();
+								final Vector<String> userVars = new Vector<String>();
+								final Vector<String> userVarNames = new Vector<String>();
+								final Vector<String> allVars = new Vector<String>();
+								final Vector<String> allVarNames = new Vector<String>();
+								while(prefIt.hasNext()){
+									SettingsModelOptionalString curPref = prefIt.next();
+									if(curPref.isActive()){
+										
+										userVars.add(curPref.getKey());
+										userVarNames.add(curPref.getStringValue());
+										//System.out.println("woot"+curPref.getKey()+",.."+ model.getStringValue());
+									}
+									allVars.add(curPref.getKey());
+									allVarNames.add(curPref.getStringValue());
+								}
+								String[] userVarsArray = new String[userVars.size()];
+								String[] userVarNamesArray = new String[userVarNames.size()];
+								String[] allVarsArray = new String[allVars.size()];
+								String[] allVarNamesArray = new String[allVarNames.size()];
+								userVars.copyInto(userVarsArray);
+								userVarNames.copyInto(userVarNamesArray);
+								allVars.copyInto(allVarsArray);
+								allVarNames.copyInto(allVarNamesArray);
+								//selection_parameters.setStringArrayValue(userVarsArray);
+								//var_sel.replaceListItems(userVars, null);
+								//System.out.println("uservararray"+userVarsArray.length);
+								//selection_customized_names.setStringArrayValue(userVarNamesArray);
+								//all_parameters.setStringArrayValue(allVarsArray);
+								//all_customized_names.setStringArrayValue(allVarNamesArray);
+								if(userVarsArray.length!=0){
+									System.out.println("wasdatnosu");
+									var_sel.replaceListItems(userVars, userVarsArray);
+									name_sel.replaceListItems(userVarNames, userVarNamesArray);
+									var_all_sel.replaceListItems(allVars, allVarsArray);
+									name_all_sel.replaceListItems(allVarNames, allVarNamesArray);
+								}
+								
+								
+							}
+
+							@Override
+							public void mousePressed(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							@Override
+							public void mouseReleased(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+						});
+		         }
+		         
+	        } catch (InvalidSettingsException ex) {
+	                ex.printStackTrace();
+	        }
+	        
+	        
+	         
+	    }
+	   
+	    @Override
+	    public void saveAdditionalSettingsTo(NodeSettingsWO settings) {
+	    	selection_parameters.saveSettingsTo(settings);
+	    	selection_customized_names.saveSettingsTo(settings);
+	    	all_parameters.saveSettingsTo(settings);
+	    	all_customized_names.saveSettingsTo(settings);
+	    }
+
     protected void showException(Throwable throwable)
     {
         logger.error("Exception", throwable);

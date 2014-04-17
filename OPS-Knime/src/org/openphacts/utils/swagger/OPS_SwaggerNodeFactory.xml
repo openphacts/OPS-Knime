@@ -7,17 +7,23 @@
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
+        <intro>Via the config panel the user provides the URL to a swagger file. Once the fetch button is clicked a number of services described
+        in the loaded swagger appear in a drop-down list. The 'parameters' tab appears after loading and shows the parameters that will hold the
+        default parameter settings for that service. The input table overwrites the values accordingly. The result of this service is a (hopefully)
+        executable REST url composed of the parameters and service that is selected. 
+      </intro>
         
         
-        <option name="short name of first option (like in the dialog)">description of first option</option>
-        <option name="short name of second option (like in the dialog)">description of second option</option>
+        <option name="Swagger URL">provide the swagger url here</option>
+        <option name="Select Service">after successfully fetching the swagger file, a list of services appear in this drop-down list. The parameter tab will show the parameters that are available for the selected service</option>
         <!-- possibly more options that can also be grouped by tabs -->
-        <!--
-        <tab name="Standard Options">
-            <option name="short name of first option (like in the dialog)">description of first option</option>
-            <option name="short name of second option (like in the dialog)">description of second option</option>
+        
+        <tab name="Parameters">
+            <option name="parameter names and default values">One can specify the default settings for the parameters. For example, an 
+            application verification key. Note that the parameter values in the input table will overwrite these default parameters</option>
+           
         </tab>
+        <!--
         <tab name="Advanced Options">
             <option name="short name of first advanced option (like in the dialog)">description of first advanced option</option>
         </tab>
@@ -25,13 +31,15 @@
     </fullDescription>
     
     <ports>
-        <inPort index="0" name="In-Port name">Description of first input port...</inPort>
+        <inPort index="0" name="Parameters">A table with one row. The column headers are the parameter names and the each corresponding cell 
+        on the first row (rest of the rows are ignored)</inPort>
         <!-- possibly more input ports here-->
-        <outPort index="0" name="Out-Port name">Description of first output port...</outPort>
+        <outPort index="0" name="executable URL">A table with one cell containing he result service call URL based on the selected service and the parameters. </outPort>
         <!-- possibly more output ports here-->
     </ports>    
     <views>
-        <view index="0" name="name of first view">Description of first view...</view>
+    <!--
+        <view index="0" name="name of first view">Description of first view...</view>-->
         <!--view index="1" name="name of second view">Description of second view...</view-->
     </views>
 </knimeNode>
