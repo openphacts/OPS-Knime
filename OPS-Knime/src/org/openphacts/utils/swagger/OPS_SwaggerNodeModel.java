@@ -131,8 +131,7 @@ public class OPS_SwaggerNodeModel extends NodeModel {
     protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
             final ExecutionContext exec) throws Exception {
 
-        // TODO do something here
-        logger.error("Node Model Stub... this is not yet implemented !"+resultUrl.getStringValue());
+
 
     	DataColumnSpec[] allColSpecs = new DataColumnSpec[1];
         allColSpecs[0] = 
@@ -298,6 +297,7 @@ public class OPS_SwaggerNodeModel extends NodeModel {
     protected void loadInternals(final File internDir,
             final ExecutionMonitor exec) throws IOException,
             CanceledExecutionException {
+    	
         
         // TODO load internal data. 
         // Everything handed to output ports is loaded automatically (data

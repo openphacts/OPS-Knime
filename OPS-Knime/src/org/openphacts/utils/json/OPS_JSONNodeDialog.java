@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -154,12 +155,14 @@ public class OPS_JSONNodeDialog extends DefaultNodeSettingsPane {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				buildUI();
+				/**
 				int componentCount = optionPanel.getComponentCount();
 				Component[] components = optionPanel.getComponents();
 				if(componentCount>2){//remove the old options
 					for(int i=2;i<componentCount;i++){
 						optionPanel.remove(components[i]);
-						//System.out.println("removing component"+i);
+						System.out.println("removing component"+i);
 					}
 				}
 				 
@@ -204,6 +207,7 @@ public class OPS_JSONNodeDialog extends DefaultNodeSettingsPane {
 						model.setIsActive(false);
 						
 						optionPanel.add(dm1.getComponentPanel());
+						System.out.println("adding component"+dm1.getModel().toString());
 						
 						model.addChangeListener(new ChangeListener(){
 
@@ -363,11 +367,234 @@ public class OPS_JSONNodeDialog extends DefaultNodeSettingsPane {
 					showException(e);
 				}
 
-
+**/
 			}
 		});
         
                     
+    }
+    
+    
+    protected void buildUI(){
+    	int componentCount = optionPanel.getComponentCount();
+		Component[] components = optionPanel.getComponents();
+		if(componentCount>2){//remove the old options
+			for(int i=2;i<componentCount;i++){
+				optionPanel.remove(components[i]);
+				System.out.println("removing component"+i);
+			}
+		}
+		 
+		JSONObject exampleJSON = new JSONObject();
+		
+		try {
+			exampleJSON = grabSomeJson(buildRequestURL(json_config_url
+					.getStringValue()));
+			
+			Vector<String> jsonOptions = getJSONOptions(exampleJSON);
+			
+			
+			 optionsArray = new String[jsonOptions.size()];
+			jsonOptions.copyInto(optionsArray);
+			//selection_parameters.setStringArrayValue(optionsArray);
+			//var_sel.replaceListItems(jsonOptions, optionsArray);
+			
+			String[] optionNamesArray = new String[jsonOptions.size()];
+			System.out.println("before:"+jsonOptions.size());
+			
+			jsonOptions.copyInto(optionNamesArray);
+			System.out.println("after:"+jsonOptions.size());
+			//selection_customized_names.setStringArrayValue(optionNamesArray);
+			
+			Iterator<String> jsonOptionsIt = jsonOptions.iterator();
+			int index = 0;
+			
+		
+		    
+		   final Vector<SettingsModelOptionalString> userPrefs = new Vector<SettingsModelOptionalString>();  
+		   
+		   HashSet<String> selectionSet = new HashSet<String>();
+		   for(int i=0;i<selection_parameters.getStringArrayValue().length;i++){
+			   System.out.println("ADDING SELECETION:"+selection_parameters.getStringArrayValue()[i]);
+			   selectionSet.add(selection_parameters.getStringArrayValue()[i]);
+		   }
+		   
+		  
+			while(jsonOptionsIt.hasNext()){
+				
+				
+				String jsonOption = jsonOptionsIt.next();
+				//selection_parameters.
+				final SettingsModelOptionalString model = new SettingsModelOptionalString(jsonOption,jsonOption,false);
+				DialogComponentOptionalString dm1 = new DialogComponentOptionalString(model, jsonOption);
+				userPrefs.add( model);
+				model.setEnabled(true);
+				if(selectionSet.contains(jsonOption)){
+					model.setIsActive(true);
+				}else{
+					model.setIsActive(false);
+				}
+				optionPanel.add(dm1.getComponentPanel());
+				System.out.println("adding component"+dm1.getModel().toString());
+				
+				model.addChangeListener(new ChangeListener(){
+
+					@Override
+					public void stateChanged(ChangeEvent e) {
+						
+						System.out.println("model"+model.getStringValue());
+						//model.setIsActive(false);
+						// TODO Auto-generated method stub
+						
+					}
+					
+					
+				});
+				dm1.getComponentPanel().addFocusListener(new FocusListener(){
+
+					@Override
+					public void focusGained(FocusEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void focusLost(FocusEvent arg0) {
+						
+					
+					}
+					
+					
+				});
+				dm1.getComponentPanel().setVerifyInputWhenFocusTarget(false);
+				dm1.getComponentPanel().addKeyListener(new KeyListener() {
+					
+					@Override
+					public void keyTyped(KeyEvent arg0) {
+						// TODO Auto-generated method stub
+						java.awt.Robot r;
+						try {
+							System.out.println("pressed key");
+							if(arg0.getKeyCode()!=13){
+							r = new java.awt.Robot();
+							r.keyPress(13);
+							}
+						} catch (AWTException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						
+					}
+					
+					@Override
+					public void keyReleased(KeyEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void keyPressed(KeyEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+				dm1.getComponentPanel().addMouseListener(new MouseListener(){
+
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						
+					}
+
+					@Override
+					public void mouseEntered(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void mouseExited(MouseEvent arg0) {
+						System.out.println(arg0.getComponent().getClass().getName());
+						Iterator<SettingsModelOptionalString> prefIt = userPrefs.iterator();
+						final Vector<String> userVars = new Vector<String>();
+						final Vector<String> userVarNames = new Vector<String>();
+						final Vector<String> allVars = new Vector<String>();
+						final Vector<String> allVarNames = new Vector<String>();
+						while(prefIt.hasNext()){
+							final SettingsModelOptionalString curPref = prefIt.next();
+							if(curPref.isActive()){
+								
+								userVars.add(curPref.getKey());
+								userVarNames.add(curPref.getStringValue());
+								System.out.println("woot"+curPref.getKey()+",.."+ model.getStringValue());
+							}
+							allVars.add(curPref.getKey());
+							allVarNames.add(curPref.getStringValue());
+						}
+						String[] userVarsArray = new String[userVars.size()];
+						String[] userVarNamesArray = new String[userVarNames.size()];
+						String[] allVarsArray = new String[allVars.size()];
+						String[] allVarNamesArray = new String[allVarNames.size()];
+						userVars.copyInto(userVarsArray);
+						userVarNames.copyInto(userVarNamesArray);
+						allVars.copyInto(allVarsArray);
+						allVarNames.copyInto(allVarNamesArray);
+						//selection_parameters.setStringArrayValue(userVarsArray);
+						//var_sel.replaceListItems(userVars, null);
+						//System.out.println("uservararray"+userVarsArray.length);
+						//selection_customized_names.setStringArrayValue(userVarNamesArray);
+						//all_parameters.setStringArrayValue(allVarsArray);
+						//all_customized_names.setStringArrayValue(allVarNamesArray);
+						if(userVarsArray.length!=0){
+							System.out.println("wasdatnou");
+							var_sel.replaceListItems(userVars, userVarsArray);
+							name_sel.replaceListItems(userVarNames, userVarNamesArray);
+							var_all_sel.replaceListItems(allVars, allVarsArray);
+							name_all_sel.replaceListItems(allVarNames, allVarNamesArray);
+						}
+						
+						
+					}
+
+					@Override
+					public void mousePressed(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void mouseReleased(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					
+					
+				});
+			
+				
+			}
+			
+			
+		       // getPanel().add(scrollPane);
+		        getPanel().updateUI();
+		       
+			//ret = getTemplates(swaggerJSON);
+			//resultUrl.setStringValue(getDefaultUrl());
+			//templateDialog.replaceListItems(ret, null);
+			//templateDialog.getModel().setEnabled(true);
+
+		} catch (MalformedURLException e) {
+			showException(e);
+
+		} catch (UnsupportedEncodingException e) {
+			showException(e);
+		} catch (IOException e) {
+			showException(e);
+		} catch (URISyntaxException e) {
+			showException(e);
+		}
+
     }
 	protected URL buildRequestURL(String c_uri) throws URISyntaxException,
 		MalformedURLException, UnsupportedEncodingException {
@@ -418,7 +645,16 @@ public class OPS_JSONNodeDialog extends DefaultNodeSettingsPane {
 	        	all_customized_names.loadSettingsFrom(settings);
 	        	all_customized_names.setStringArrayValue(settings.getStringArray(OPS_JSONNodeModel.ALL_CUSTOMIZED_NAMES));
 	        	System.out.println("start1");
-	        	
+	        	buildUI();
+	        	/**
+	        	int componentCount = optionPanel.getComponentCount();
+				Component[] components = optionPanel.getComponents();
+				if(componentCount>2){//remove the old options
+					for(int i=2;i<componentCount;i++){
+						optionPanel.remove(components[i]);
+						System.out.println("removing listed component"+i);
+					}
+				}
 	        	final Vector<SettingsModelOptionalString> userPrefs = new Vector<SettingsModelOptionalString>(); 
 		         for (int i=0;i<all_parameters.getStringArrayValue().length;i++){
 		        	 System.out.println("we2 have:"+all_parameters.getStringArrayValue()[i] );
@@ -511,6 +747,7 @@ public class OPS_JSONNodeDialog extends DefaultNodeSettingsPane {
 							}
 						});
 		         }
+		         **/
 		         
 	        } catch (InvalidSettingsException ex) {
 	                ex.printStackTrace();
@@ -527,6 +764,7 @@ public class OPS_JSONNodeDialog extends DefaultNodeSettingsPane {
 	    	all_parameters.saveSettingsTo(settings);
 	    	all_customized_names.saveSettingsTo(settings);
 	    }
+	    
 
     protected void showException(Throwable throwable)
     {
@@ -574,6 +812,7 @@ public class OPS_JSONNodeDialog extends DefaultNodeSettingsPane {
 				Object object = jObject.get(key);
 				String objectType = object.getClass().getName();
 				String extPath = currentPath + ".." + key;
+				/*
 				try {
 					if (jsonKey != null) {
 						if (jsonKey.equals(extPath)) {
@@ -582,21 +821,23 @@ public class OPS_JSONNodeDialog extends DefaultNodeSettingsPane {
 							jsonSet.put(object, newMap);
 							currentJsonKey = object;
 						} 
-						/*else if (paramSet.containsKey(extPath)) {
-							if (!jsonSet.get(currentJsonKey).containsKey(
-									extPath)) {
-								Set<Object> agrObjects = new LinkedHashSet<Object>();
-								jsonSet.get(currentJsonKey).put(extPath,
-										agrObjects);
-							}
+						//else if (paramSet.containsKey(extPath)) {
+						//	if (!jsonSet.get(currentJsonKey).containsKey(
+						//			extPath)) {
+						////		Set<Object> agrObjects = new LinkedHashSet<Object>();
+						//		jsonSet.get(currentJsonKey).put(extPath,
+						//				agrObjects);
+						//	}
 							jsonSet.get(currentJsonKey).get(extPath)
 							.add(object);
 
-						}*/
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				*/
+				
 				if (objectType.equals("net.sf.json.JSONArray")
 						|| objectType.equals("net.sf.json.JSONObject")) {
 					dim(resultTable, extPath, object);
@@ -607,6 +848,7 @@ public class OPS_JSONNodeDialog extends DefaultNodeSettingsPane {
 					}
 					Map<String, String> col = resultTable.get(extPath);
 					if (object.toString() != null) {
+						System.out.println("I am putting on row:"+rowIndex+",value:"+object.toString());
 						col.put("" + rowIndex, object.toString());
 					} else {
 						// error

@@ -36,7 +36,12 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
+import org.knime.core.data.DataTableSpec;
+import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeLogger;
+import org.knime.core.node.NodeSettingsRO;
+import org.knime.core.node.NodeSettingsWO;
+import org.knime.core.node.NotConfigurableException;
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponentButton;
 import org.knime.core.node.defaultnodesettings.DialogComponentString;
@@ -400,4 +405,22 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         return scrollPane;
     }
+    /*
+    @Override
+    public void saveAdditionalSettingsTo(NodeSettingsWO settings) {
+    	swaggerUrl.saveSettingsTo(settings);
+    	templateSelection.saveSettingsTo(settings);
+    	resultUrl.saveSettingsTo(settings);
+    }
+    public void loadAdditionalSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs) throws NotConfigurableException {
+        try {
+        	swaggerUrl.loadSettingsFrom(settings);
+        	templateSelection.loadSettingsFrom(settings);
+        	resultUrl.loadSettingsFrom(settings);
+        } catch (InvalidSettingsException ex) {
+            ex.printStackTrace();
+        }
+    }*/
+
+  
 }

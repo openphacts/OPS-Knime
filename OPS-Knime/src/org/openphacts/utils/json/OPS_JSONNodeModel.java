@@ -149,7 +149,7 @@ public class OPS_JSONNodeModel extends NodeModel {
 		  			new DataColumnSpecCreator(colName ,
 							ListCell.getCollectionType(StringCell.TYPE))
 					.createSpec();
-		  	//System.out.println(colName+",contains it?:"+mySelectionParams.contains(colName));
+		  	System.out.println(colName+",contains it?:"+mySelectionParams.contains(colName));
 		  	//
 		  		allColIndex.put(new Integer(allCollCounter),colName);
 		  		if(mySelectionParams.contains(colName)){
@@ -653,11 +653,12 @@ private Map<String, Map<String, String>> getResultTable(JSONObject o){
 				
 				String keytype = jArray.get(i).getClass().getName();
 				
-				if (!keytype
-						.equals("java.lang.String")) {
+				
+				if (keytype.equals("net.sf.json.JSONArray")
+						|| keytype.equals("net.sf.json.JSONObject")) {
 					dim(resultTable, currentPath, jArray.get(i));
-					
-				} else {
+				
+				}else {
 					String extPath = currentPath ;
 					if (resultTable.get(extPath) == null) {
 						Map<String, String> newCol = new LinkedHashMap<String, String>();
@@ -700,11 +701,11 @@ private Map<String, Map<String, String>> getResultTable(JSONObject o){
 				String extPath = currentPath + ".." + key;
 				System.out.println(extPath);
 				//boolean firstColOccur = false;
-				if(!objectType.equals("java.lang.String")){
-					dim(resultTable,extPath,object);
-					
-					
-					
+				
+				if (objectType.equals("net.sf.json.JSONArray")
+						|| objectType.equals("net.sf.json.JSONObject")) {
+					dim(resultTable, extPath, object);
+				
 				}else{
 					if (resultTable.get(extPath) == null) {
 					
