@@ -46,11 +46,16 @@ the user wants to have, and the second table is the complete transformed JSON re
 
 #Installation
 
-To run the Open PHACTS nodes you need to install both the JSON+SWAGGER nodes and the metanodes. 
+* Download "org.openphacts.utils.json_1.0.0.zip" and unzip it in the plugins folder of your KNIME installation
+* Download the example workflow (OPS_KNIME 1.4-example-workflow.zip)
+* Start your Knime environment (you should see already a couple of new nodes at the left, like OPS_KNIME)
+* import the example workflow (file>>import-workflow...>>select archive file)
 
-Installing the JSON and SWAGGER nodes
-------------
-* Download "org.openphacts.utils.json_1.0.0.jar" and put it in the plugins folder of your KNIME installation
+#Running
+* Double click on the example workflow
+* Reset the input table (click on input table, then click on table icon with red cross)
+* Execute the node (click on the green 'play' button).
+
 
 
 
