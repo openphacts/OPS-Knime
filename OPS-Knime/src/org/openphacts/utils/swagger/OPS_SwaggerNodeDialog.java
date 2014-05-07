@@ -81,7 +81,7 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
 	private String defaultAppID = "15a18100";
 	private String defaultAppKey = "528a8272f1cd961d215f318a0315dd3d";
 	private LinkedHashMap<String, String> templates = new LinkedHashMap<String, String>();
-	private LinkedHashMap<String,LinkedHashMap<String,SettingsModelString>> settings = new LinkedHashMap<String,LinkedHashMap<String,SettingsModelString>>();
+	private LinkedHashMap<String,LinkedHashMap<String,SettingsModelString>> _settings = new LinkedHashMap<String,LinkedHashMap<String,SettingsModelString>>();
 	private LinkedHashMap<String,LinkedHashMap<String,String>> tooltips = new LinkedHashMap<String,LinkedHashMap<String,String>>();
 	private String defaultPath = "";
 	private String currentTemplateKey="";
@@ -131,7 +131,7 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
 				if(getTab("parameters") != null){
 					 removeTab("parameters");
 				 }
-				 addTab("parameters", createTab(settings.get(templateSelection.getStringValue()),tooltips.get(templateSelection.getStringValue())));
+				 addTab("parameters", createTab(_settings.get(templateSelection.getStringValue()),tooltips.get(templateSelection.getStringValue())));
 				 currentTemplateKey = templateSelection.getStringValue();
 				 resultUrl.setStringValue(getDefaultUrl());
 				
@@ -214,7 +214,7 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
 					JSONArray parameters = operation.getJSONArray("parameters");
 					LinkedHashMap<String,SettingsModelString> operationMap = new LinkedHashMap<String,SettingsModelString>();
 					LinkedHashMap<String,String> tooltipMap = new LinkedHashMap<String,String>();
-					settings.put(description, operationMap);
+					_settings.put(description, operationMap);
 					tooltips.put(description, tooltipMap);
 					operationMap.put("path", new SettingsModelString("path",defaultPath));
 					for (int k = 0; k < parameters.size(); k++) {
@@ -262,9 +262,9 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
 		//System.out.println("called getDefaultURL:"+ currentTemplateKey);
 		
 		
-		Iterator<String> paramsIt = settings.get(currentTemplateKey).keySet().iterator();
+		Iterator<String> paramsIt = _settings.get(currentTemplateKey).keySet().iterator();
 		
-		String result =settings.get(currentTemplateKey).get("path").getStringValue();//we assume there is always a path being set
+		String result =_settings.get(currentTemplateKey).get("path").getStringValue();//we assume there is always a path being set
 		
 		while (paramsIt.hasNext()){
 			
@@ -274,7 +274,7 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
 				//operationMap.get(parameter.getString("name"),new SettingsModelString(parameter.getString("name"),""));
 				
 				//String value = params.get(currentTemplateKey).get(param);
-				SettingsModelString settingsModel = settings.get(currentTemplateKey).get(param);
+				SettingsModelString settingsModel = _settings.get(currentTemplateKey).get(param);
 				if(!settingsModel.getStringValue().equals("")){
 						result += "["+settingsModel.getKey()+"="+settingsModel.getStringValue()+"&]";
 						//System.out.println("NOT EMPTY PARAM: "+ param+", value ="+result);
@@ -397,12 +397,12 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
         
        // urlField = addField(connectionPanel, "openBIS URL", new JTextField(20));
         
-        panel.add(connectionPanel, BorderLayout.NORTH);
+       // panel.add(connectionPanel, BorderLayout.NORTH);
         
 
-        JScrollPane scrollPane = new JScrollPane(panel);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane scrollPane = new JScrollPane(connectionPanel);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         return scrollPane;
     }
     /*
@@ -413,14 +413,20 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
     	resultUrl.saveSettingsTo(settings);
     }
     public void loadAdditionalSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs) throws NotConfigurableException {
+    	System.out.println("loading settings");
         try {
+        	 
         	swaggerUrl.loadSettingsFrom(settings);
         	templateSelection.loadSettingsFrom(settings);
         	resultUrl.loadSettingsFrom(settings);
+        	addTab("parameters", createTab(_settings.get(templateSelection.getStringValue()),tooltips.get(templateSelection.getStringValue())));
+			 currentTemplateKey = templateSelection.getStringValue();
+			 resultUrl.setStringValue(getDefaultUrl());
         } catch (InvalidSettingsException ex) {
+        	System.out.println("some error");
             ex.printStackTrace();
         }
-    }*/
-
+    }
+*/
   
 }

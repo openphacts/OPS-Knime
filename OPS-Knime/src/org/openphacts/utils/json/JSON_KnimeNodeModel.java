@@ -64,28 +64,35 @@ public class JSON_KnimeNodeModel extends NodeModel {
      */
     @Override
     protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
-            final ExecutionContext exec) throws Exception {
+            final ExecutionContext exec)  {
     	JSONObject json=null;
     	if(type_settings.getStringValue().equals("URL")){
 	        String compoundUri= inData[0].iterator().next().getCell(0).toString(); // ugly...needs definitely some array bound checks here
 	
-	        URL requestURL = buildRequestURL(compoundUri);
-	        try{
-	         json = JSON_KnimeNodeModel.grabSomeJson(requestURL);
-	        } catch (IOException e){
-	        	//the json is not valid (e.g. 404 page), therefore create an empty table
-	        	DataColumnSpec[] allColSpecs = new DataColumnSpec[0];
+	        URL requestURL;
+			try {
+				requestURL = buildRequestURL(compoundUri);
+				json = JSON_KnimeNodeModel.grabSomeJson(requestURL);
+			} catch (MalformedURLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (UnsupportedEncodingException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (URISyntaxException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				DataColumnSpec[] allColSpecs = new DataColumnSpec[0];
 	        	DataTableSpec outputSpec = new DataTableSpec(allColSpecs);
 	   		 BufferedDataContainer container = exec.createDataContainer(outputSpec);
 	   		 container.close();
 	        	return new BufferedDataTable[]{container.getTable()};
-	        }
+			}
+	       
 	        
-    	}else{
-    		
-    		String jsonString= inData[0].iterator().next().getCell(0).toString(); 
-    		
-    		json = parseSomeJson(jsonString);
     	}
         BufferedDataTable out = makeTable(exec,json);
         return new BufferedDataTable[]{out};

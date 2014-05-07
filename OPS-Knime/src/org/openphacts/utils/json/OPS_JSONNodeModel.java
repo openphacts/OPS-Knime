@@ -120,7 +120,7 @@ public class OPS_JSONNodeModel extends NodeModel {
      */
     @Override
     protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
-            final ExecutionContext exec) throws Exception {
+            final ExecutionContext exec){
 
         // TODO do something here
         logger.info("Starting OPS_JSON execution ...");
@@ -128,9 +128,45 @@ public class OPS_JSONNodeModel extends NodeModel {
         
         String jsonToFetch = inData[0].iterator().next().getCell(0).toString();
         
-        URL jsonURL=	buildRequestURL(jsonToFetch);
-        JSONObject jsonObject = grabSomeJson(jsonURL);
-        Map<String, Map<String, String>> resultTable = getResultTable(jsonObject);
+        URL jsonURL;
+        Map<String, Map<String, String>> resultTable = null;
+		try {
+			jsonURL = buildRequestURL(jsonToFetch);
+			JSONObject jsonObject = grabSomeJson(jsonURL);
+	         resultTable = getResultTable(jsonObject);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			DataColumnSpec[] selectedColSpecs = new DataColumnSpec[selection_customized_names.getStringArrayValue().length];
+	        for (int i=0;i<selection_customized_names.getStringArrayValue().length;i++){
+	        	selectedColSpecs[i] = 
+	          			new DataColumnSpecCreator(selection_customized_names.getStringArrayValue()[i] ,
+								ListCell.getCollectionType(StringCell.TYPE))
+						.createSpec();
+	        }
+	   
+	        DataTableSpec selectedOutputSpec = new DataTableSpec(selectedColSpecs);
+	        System.out.println("Length:"+selectedOutputSpec.getColumnNames().length);
+	        BufferedDataContainer selectionContainer = exec.createDataContainer(selectedOutputSpec);
+	        BufferedDataContainer selectionContainer2 = exec.createDataContainer(selectedOutputSpec);
+	        selectionContainer.close();
+	        selectionContainer2.close();
+	        BufferedDataTable selectionComplete = selectionContainer.getTable();
+	        BufferedDataTable outComplete = selectionContainer2.getTable();
+	        System.out.println("ready");
+	        return new BufferedDataTable[]{selectionComplete,outComplete};
+	        
+		}
+        
         
         
         Vector<String> mySelectionParams = new Vector<String>();
