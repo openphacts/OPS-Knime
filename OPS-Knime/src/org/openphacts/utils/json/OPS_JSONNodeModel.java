@@ -160,6 +160,10 @@ public class OPS_JSONNodeModel extends NodeModel {
 	        BufferedDataContainer selectionContainer2 = exec.createDataContainer(selectedOutputSpec);
 	        selectionContainer.close();
 	        selectionContainer2.close();
+	        
+	        
+	        
+	        
 	        BufferedDataTable selectionComplete = selectionContainer.getTable();
 	        BufferedDataTable outComplete = selectionContainer2.getTable();
 	        System.out.println("ready");
@@ -231,13 +235,13 @@ public class OPS_JSONNodeModel extends NodeModel {
 		Vector<Vector<String>> selectionVector = new Vector<Vector<String>>();
 		
 		
-		
+		System.out.println("compressArray"+compressArray.length);
 		for(int i=0;i<compressArray.length;i++){
 			
 			Vector<String> rowVals =new Vector<String>();
 			boolean atLeastOneCellValueInRow=false;
 			for(int j=0;j<compressArray[i].length;j++){
-				
+				System.out.println("selCols.length:"+selCols.size());
 				if(selCols.contains(new Integer(j))){
 					
 					if(compressArray[i][j] !=""){
@@ -293,7 +297,7 @@ public class OPS_JSONNodeModel extends NodeModel {
 	        		}else{
 	        			cellValue.add(new StringCell(cellVal));
 	        		}
-					cellValue.add(new StringCell(resultArray[i][j]));
+					//cellValue.add(new StringCell(resultArray[i][j]));
 				}
 				resultCells[j]=CollectionCellFactory
 						.createListCell(cellValue);
@@ -396,7 +400,9 @@ public class OPS_JSONNodeModel extends NodeModel {
     			if(fullArray[i][j]==null){
     				fullArray[i][j]="";
     				compressArray[i][j]="";
+    				System.out.println("--------------ARRRRAYYY NULLLL");
     			}else{
+    				System.out.println("compressArrauy["+i+"]["+j+"] = "+fullArray[i][j]);
     				compressArray[i][j]=fullArray[i][j];
     			}
     			
@@ -407,13 +413,13 @@ public class OPS_JSONNodeModel extends NodeModel {
     	
     	int latestRowUpdate = 0;
     	for(int i=1;i<fullArray.length;i++){
-    		boolean replacedNastyCell = false;
+    		//boolean replacedNastyCell = false;
     		for(int j=1;j<fullArray[i].length;j++){
     			if(!fullArray[i][j].equals("")){
     				
     				int rightmostField = 0;
     				int nrOfNonBlankCells = 0;
-    				for(int k=0;k<compressArray[i].length;k++){
+    				for(int k=1;k<compressArray[i].length;k++){
     					
     					if(!compressArray[latestRowUpdate][k].equals("")){
     						nrOfNonBlankCells++;
@@ -440,6 +446,7 @@ public class OPS_JSONNodeModel extends NodeModel {
     					if(compressArray[latestRowUpdate][j].equals("")){
     						compressArray[latestRowUpdate][j] = compressArray[i][j];
     					}else{
+    						System.out.println("compressArray[latestRowUpdate][j]"+compressArray[latestRowUpdate][j]);
     						compressArray[latestRowUpdate][j]=compressArray[latestRowUpdate][j]+";;"+compressArray[i][j];
     					}
     					
@@ -452,12 +459,17 @@ public class OPS_JSONNodeModel extends NodeModel {
     					}*/
     					
     				}
-    				else if (rightmostField >=j){
+    				else if (rightmostField >j){
     					latestRowUpdate++;
     					compressArray[latestRowUpdate][j] = compressArray[i][j];
     					compressArray[i][j]="";
     				} else{
-    					compressArray[latestRowUpdate][j] = compressArray[i][j];
+    					if(compressArray[latestRowUpdate][j].equals("")){
+    						compressArray[latestRowUpdate][j] = compressArray[i][j];
+    					}else{
+    						compressArray[latestRowUpdate][j] = compressArray[latestRowUpdate][j] + ";;" + compressArray[i][j];
+    					}
+    					
     					compressArray[i][j]="";
     				}
     				
@@ -481,15 +493,31 @@ public class OPS_JSONNodeModel extends NodeModel {
     			
     		}
     	}
-    	String[][] resultCompressArray = new String[latestRowUpdate][compressArray[0].length];
-    	for(int i=0;i<latestRowUpdate;i++){
-    		System.out.print("row:"+i+", values:");
-    		for(int j=0;j<compressArray[i].length;j++){
-    			resultCompressArray[i][j] = compressArray[i][j];
-    			System.out.print(compressArray[i][j]+"| ");
+    	String[][] resultCompressArray = null;
+    	if(latestRowUpdate ==0){
+    		resultCompressArray  = new String[1][compressArray[0].length];
+    	}else{
+    		resultCompressArray  = new String[latestRowUpdate][compressArray[0].length];
+    	}
+    	
+    	System.out.println("latestrowupdate:"+latestRowUpdate);
+    	
+    	if(latestRowUpdate==0){
+    		for(int j=0;j<compressArray[0].length;j++){
+    			resultCompressArray[0][j] = compressArray[0][j];
+    			System.out.print(compressArray[0][j]+"| ");
     			
     		}
-    		System.out.println();
+    	}else{
+	    	for(int i=0;i<latestRowUpdate;i++){
+	    		System.out.print("row:"+i+", values:");
+	    		for(int j=0;j<compressArray[i].length;j++){
+	    			resultCompressArray[i][j] = compressArray[i][j];
+	    			System.out.print(compressArray[i][j]+"| ");
+	    			
+	    		}
+	    		System.out.println();
+	    	}
     	}
     	
     	

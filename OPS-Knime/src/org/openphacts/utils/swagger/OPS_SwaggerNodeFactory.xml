@@ -13,21 +13,15 @@
         executable REST url composed of the parameters and service that is selected. 
       </intro>
         
-        
-        <option name="Swagger URL">provide the swagger url here</option>
-        <option name="Select Service">after successfully fetching the swagger file, a list of services appear in this drop-down list. The parameter tab will show the parameters that are available for the selected service</option>
-        <!-- possibly more options that can also be grouped by tabs -->
-        
-        <tab name="Parameters">
-            <option name="parameter names and default values">One can specify the default settings for the parameters. For example, an 
-            application verification key. Note that the parameter values in the input table will overwrite these default parameters</option>
-           
+        <tab name="Swagger URL settings">
+        	<option name="Swagger URL">provide the swagger url here</option>
+        	<option name="Select Service">after successfully fetching the swagger file, a list of services appear in this drop-down list. The parameter tab will show the parameters that are available for the selected service</option>
+     	 </tab>
+        <tab name="Service selection parameters">
+            <option name="parameter names and default values">One can specify the default settings for the parameters. For example, an application verification key. Note that the parameter values in the input table will overwrite these default parameters</option>
         </tab>
-        <!--
-        <tab name="Advanced Options">
-            <option name="short name of first advanced option (like in the dialog)">description of first advanced option</option>
-        </tab>
-        -->
+        
+        
     </fullDescription>
     
     <ports>
@@ -38,8 +32,7 @@
         <!-- possibly more output ports here-->
     </ports>    
     <views>
-    <!--
-        <view index="0" name="name of first view">Description of first view...</view>-->
+        <view index="0" name="name of first view">Description of first view...</view>
         <!--view index="1" name="name of second view">Description of second view...</view-->
     </views>
 </knimeNode>
