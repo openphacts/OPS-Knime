@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -276,7 +277,12 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
 				//String value = params.get(currentTemplateKey).get(param);
 				SettingsModelString settingsModel = _settings.get(currentTemplateKey).get(param);
 				if(!settingsModel.getStringValue().equals("")){
-						result += "["+settingsModel.getKey()+"="+settingsModel.getStringValue()+"&]";
+						try {
+							result += "["+settingsModel.getKey()+"="+URLEncoder.encode(settingsModel.getStringValue(),"UTF-8")+"&]";
+						} catch (UnsupportedEncodingException e) {
+							// TODO Auto-generated catch block
+							showException(e);
+						}
 						//System.out.println("NOT EMPTY PARAM: "+ param+", value ="+result);
 				}
 			}

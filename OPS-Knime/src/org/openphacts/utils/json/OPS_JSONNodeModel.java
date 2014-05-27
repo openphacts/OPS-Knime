@@ -174,15 +174,18 @@ public class OPS_JSONNodeModel extends NodeModel {
         
         
         Vector<String> mySelectionParams = new Vector<String>();
+        
 		mySelectionParams.addAll(Arrays.asList(selection_parameters.getStringArrayValue()));
         /** FIRST WE CREATE THE TABLE WITH THE COMPLETE JSON RESULT **/
 
         /** Create the column specs, and a lookup map **/
 		DataColumnSpec[] allColSpecs = new DataColumnSpec[resultTable.keySet().size()];
 		Map<Integer,String> allColIndex = new LinkedHashMap<Integer,String>();
+		Map<Integer,String> colIndexBySelCol = new LinkedHashMap<Integer,String>();
 		Set<Integer> selCols = new LinkedHashSet<Integer>();
 		Iterator<String> allColNameIt = resultTable.keySet().iterator();
 		int allCollCounter=0;
+		int selCollCounter=0;
 		while( allColNameIt.hasNext()){
 			String colName = allColNameIt.next();
 		  	allColSpecs[allCollCounter] = 
@@ -192,8 +195,11 @@ public class OPS_JSONNodeModel extends NodeModel {
 		  	System.out.println(colName+",contains it?:"+mySelectionParams.contains(colName));
 		  	//
 		  		allColIndex.put(new Integer(allCollCounter),colName);
+		  		
 		  		if(mySelectionParams.contains(colName)){
 		  			selCols.add(new Integer(allCollCounter));
+		  			colIndexBySelCol.put(new Integer(selCollCounter),colName);
+		  			selCollCounter++;
 		  		}
 		  		System.out.println("allColIndex:"+allCollCounter+", colName:"+colName);
 		  		allCollCounter++;
@@ -332,7 +338,14 @@ public class OPS_JSONNodeModel extends NodeModel {
         	Vector<String> currentRow = selectionRowIt.next();
         	RowKey key = new RowKey("Row" + (selectionRowCounter));
         	System.out.println("sais:"+ currentRow.size());
-        	DataCell[] resultCells = new DataCell[currentRow.size()];
+        	
+        	
+        	DataCell[] resultCells = new DataCell[selection_customized_names.getStringArrayValue().length];
+        	for (int i =0;i<selection_customized_names.getStringArrayValue().length;i++){
+        		ArrayList<StringCell> cellValues = new ArrayList<StringCell>();
+        		resultCells[i]=CollectionCellFactory
+						.createListCell(cellValues);
+        	}
         	
         	Iterator<String> cellIt = currentRow.iterator();
         	int cellCounter = 0;
@@ -349,9 +362,14 @@ public class OPS_JSONNodeModel extends NodeModel {
         		}else{
         			cellValues.add(new StringCell(cellValue));
         		}
-        		resultCells[cellCounter]=CollectionCellFactory
+        		System.out.println("cellcoutner"+ colIndexBySelCol.get(cellCounter));
+        		if( mySelectionParams.indexOf(colIndexBySelCol.get(cellCounter))>-1){
+        		resultCells[ mySelectionParams.indexOf(colIndexBySelCol.get(cellCounter))]=CollectionCellFactory
 						.createListCell(cellValues);
+        		System.out.println("have it");
+        		}
         		cellCounter++;
+        		
         	}
         	selectionRowCounter++;
         	//System.out.println("")
@@ -400,7 +418,7 @@ public class OPS_JSONNodeModel extends NodeModel {
     			if(fullArray[i][j]==null){
     				fullArray[i][j]="";
     				compressArray[i][j]="";
-    				System.out.println("--------------ARRRRAYYY NULLLL");
+    				//System.out.println("--------------ARRRRAYYY NULLLL");
     			}else{
     				System.out.println("compressArrauy["+i+"]["+j+"] = "+fullArray[i][j]);
     				compressArray[i][j]=fullArray[i][j];

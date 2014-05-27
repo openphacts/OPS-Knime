@@ -170,8 +170,15 @@ public class OPS_SwaggerNodeModel extends NodeModel {
 					System.out.println("2curvar:"+curVar+", curval:"+curVal+", urlTemplate:"+urlTemplate);
 				}else{
 					System.out.println("3curvar:"+curVar+", curval:"+curVal+", urlTemplate:"+urlTemplate);
-					String configValue = urlTemplate.substring(urlTemplate.indexOf(curVar)+curVar.length()+1,urlTemplate.indexOf("]",urlTemplate.indexOf(curVar)));
-					
+					String configValue = "";
+					if(urlTemplate.indexOf("&"+curVar)!=-1){
+						configValue = urlTemplate.substring(urlTemplate.indexOf("&"+curVar)+curVar.length()+2,urlTemplate.indexOf("]",urlTemplate.indexOf(curVar)));
+						
+					}else if(urlTemplate.indexOf("?"+curVar)!=-1){
+						configValue = urlTemplate.substring(urlTemplate.indexOf("?"+curVar)+curVar.length()+2,urlTemplate.indexOf("]",urlTemplate.indexOf(curVar)));
+						
+					}
+				
 					System.out.println("4curvar:"+curVar+", curval:"+curVal+", urlTemplate:"+urlTemplate);
 					if(configValue.endsWith("&")){
 						configValue = configValue.substring(0,configValue.length()-1); //get rid of the &
@@ -189,9 +196,15 @@ public class OPS_SwaggerNodeModel extends NodeModel {
 					}else{
 						//System.out.println("now we are here");
 						System.out.println("7curvar:"+curVar+", curval:"+curVal+", urlTemplate:"+urlTemplate);
-						String doubleStr= urlTemplate.toString();
-						urlTemplate = urlTemplate.replaceAll(Pattern.quote("["+curVar+"="+configValue+"&]"), curVar+"="+URLEncoder.encode(currentCell.toString(),"UTF-8")+"&");
-						urlTemplate = urlTemplate.replaceAll(Pattern.quote("["+curVar+"="+configValue+"]"), curVar+"="+URLEncoder.encode(currentCell.toString(),"UTF-8"));
+						if(urlTemplate.endsWith("&")||urlTemplate.endsWith("?")){
+							//urlTemplate = urlTemplate.substring(0,urlTemplate.length()-1);
+							urlTemplate = urlTemplate+curVar+"="+URLEncoder.encode(curVal,"UTF-8");
+						}else{
+							urlTemplate = "&"+urlTemplate+curVar+"="+URLEncoder.encode(curVal,"UTF-8");
+						}
+						
+						//urlTemplate = urlTemplate.replaceAll(Pattern.quote("["+curVar+"="+configValue+"&]"), curVar+"="+URLEncoder.encode(currentCell.toString(),"UTF-8")+"&");
+						//urlTemplate = urlTemplate.replaceAll(Pattern.quote("["+curVar+"="+configValue+"]"), curVar+"="+URLEncoder.encode(currentCell.toString(),"UTF-8"));
 						//System.out.println("urlTemplate before:"+doubleStr+",  and after:"+urlTemplate);
 					}
 				}
@@ -212,6 +225,9 @@ public class OPS_SwaggerNodeModel extends NodeModel {
 	//urlTemplate =urlTemplate.replaceAll("\\[.*?\\]", "");
 	urlTemplate =urlTemplate.replaceAll("\\[", "");
 	urlTemplate =urlTemplate.replaceAll("\\]", "");
+	if(urlTemplate.endsWith("&")){
+		urlTemplate = urlTemplate.substring(0,urlTemplate.length()-1);
+	}
 	//urlTemplate = urlTemplate.substring(0, urlTemplate.length()-1);
 	//System.out.println("urlTemplate became "+urlTemplate);
 	cells[0] = new StringCell(urlTemplate);
