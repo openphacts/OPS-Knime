@@ -225,6 +225,13 @@ public class OPS_SwaggerNodeModel extends NodeModel {
 	//urlTemplate =urlTemplate.replaceAll("\\[.*?\\]", "");
 	urlTemplate =urlTemplate.replaceAll("\\[", "");
 	urlTemplate =urlTemplate.replaceAll("\\]", "");
+	urlTemplate =urlTemplate.replaceAll("%28", "(");
+	urlTemplate =urlTemplate.replaceAll("%29", ")");
+	//urlTemplate =urlTemplate.replaceAll("%5B", "["); //strange that this is needed....API issue?
+	//urlTemplate =urlTemplate.replaceAll("%5D", "]");
+	System.out.println("yy:"+urlTemplate);
+	
+
 	if(urlTemplate.endsWith("&")){
 		urlTemplate = urlTemplate.substring(0,urlTemplate.length()-1);
 	}
