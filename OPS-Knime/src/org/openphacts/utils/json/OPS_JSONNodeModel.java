@@ -242,12 +242,18 @@ public class OPS_JSONNodeModel extends NodeModel {
 		
 		
 		System.out.println("compressArray"+compressArray.length);
+		
+		
+
+
+		
+		
 		for(int i=0;i<compressArray.length;i++){
 			
 			Vector<String> rowVals =new Vector<String>();
 			boolean atLeastOneCellValueInRow=false;
 			for(int j=0;j<compressArray[i].length;j++){
-				System.out.println("selCols.length:"+selCols.size());
+				//System.out.println("selCols.length:"+selCols.size());
 				if(selCols.contains(new Integer(j))){
 					
 					if(compressArray[i][j] !=""){
@@ -271,7 +277,140 @@ public class OPS_JSONNodeModel extends NodeModel {
 			
 			
 		}
+		/*This part is going to merge redundant rows
+		 * Algorithm:
+		 * - Take row x, and the next row y
+		 * - iterate over each column and flag if the col value of x and col value of y have different values, with exception when one of the cells is empty
+		 * - if the flag remains false then the two rows can be merged
+		 * - merging means moving the non-empty cell values of y to row x and after that removing row y completely
+		 */
+		/*
+		//first move the cell values of the 'next' row to the 'current' row if applicable
+    	boolean continueMergingProcess = true;
+    	while(continueMergingProcess){
+    		boolean anyRowMerged = false;
+			for(int i=0;i<compressArray.length;i++){
+				System.out.println(compressArray.length);
+				//take row i and row i+1 (if that exists)
+				if(compressArray.length> i+1){
+					boolean colHasDifferentValues = false;
+					for (int j =0; j<compressArray[i].length;j++){
+						
+						if((!compressArray[i][j].equals("")&&compressArray[i][j]!=null) && (!compressArray[i+1][j].equals("")&&compressArray[i+1][j]!=null) && !compressArray[i][j].equals(compressArray[i+1][j])){
+							colHasDifferentValues = true;
+							System.out.println(compressArray[i][j]+", "+compressArray[i+1][j]);
+							System.out.println("true");
+							//i++;
+							
+							break;//we can skip the loop because these two rows can't be merged
+						}
+						
+					}
+					System.out.println("Before "+printArrayRow(compressArray[i]));
+					System.out.println("Before "+printArrayRow(compressArray[i+1]));
+					if(!colHasDifferentValues){
+						anyRowMerged = true;
+						
+						for (int j =0; j<compressArray[i].length;j++){
+							
+							if(!compressArray[i+1][j].equals("")){
+								//put the non-empty cell of row i+1 in row i
+								compressArray[i][j] = compressArray[i+1][j];
+								// clear the cell of row i+1;
+								compressArray[i+1][j] = "";
+								
+								
+							}
+							
+						}
+						System.out.println("after "+printArrayRow(compressArray[i]));
+						System.out.println("after "+printArrayRow(compressArray[i+1]));
+						String[][] newArray = new String[compressArray.length-1][compressArray[0].length];
+						for( int j =0; j<compressArray.length-1;j++){
+							if(j<i+1){
+								newArray[j] = compressArray[j];
+							}else{
+								newArray[j]= compressArray[j+1];
+							}
+							
+						}
+						compressArray = newArray;
+						
+						break;
+					}
+					
+					
+				}
+			
+			}
+			System.out.println("anyRowMerged="+anyRowMerged);
+			if(!anyRowMerged){
+				
+				continueMergingProcess = false;
+			}
+    	}
+		*/
 		
+		/*This part is going to merge redundant rows
+		 * Algorithm:
+		 * - Take row x, and the next row y
+		 * - iterate over each column and flag if the col value of x and col value of y have different values, with exception when one of the cells is empty
+		 * - if the flag remains false then the two rows can be merged
+		 * - merging means moving the non-empty cell values of y to row x and after that removing row y completely
+		 */
+		
+		//first move the cell values of the 'next' row to the 'current' row if applicable
+    	boolean continueMergingProcess = true;
+    	
+    	while(continueMergingProcess){
+    		boolean atLeastOneMerge = false;	
+    		for(int i=0;i<selectionVector.size()-1;i++){
+    			if(selectionVector.size()>1){//we need at least two rows to make this procedure applicable
+        			Vector<String> row1 = selectionVector.get(i);
+            		Vector<String> row2 = selectionVector.get(i+1);
+            		boolean colHasDifferentValues = false;
+            		int firstValPosRow1 = 100000;
+            		int firstValPosRow2 = 100000;
+        			for(int j =0;j<row1.size();j++){
+        				if (!row1.get(j).equals("")&&firstValPosRow1 == 100000){
+        					firstValPosRow1 = j;
+        				}
+        				if (!row2.get(j).equals("")&&firstValPosRow2 == 100000){
+        					firstValPosRow2 = j;
+        				}
+        				if((!row1.get(j).equals("") && !row2.get(j).equals("") && !row1.get(j).equals(row2.get(j))) || (firstValPosRow1>=firstValPosRow2 &&firstValPosRow1!=100000 )){
+        					System.out.println(firstValPosRow1+";;;"+ firstValPosRow2);
+        					colHasDifferentValues = true;
+							break;//we can skip the loop because these two rows can't be merged
+						}
+        			}
+        			if(!colHasDifferentValues){
+        				atLeastOneMerge = true;
+        				//Vector<String> mergedRow = new Vector<String>(row1);
+        				for (int j =0; j<row2.size();j++){
+							
+							if(!row2.get(j).equals("")){
+								//put the non-empty cell of row i+1 in row i
+								row1.set(j, row2.get(j));
+								
+								
+							}
+							
+						}
+        				//selectionVector.set(i, mergedRow); //replace first row with merged row
+        				selectionVector.remove(i+1);//delete the second row
+        			}
+    			}else{
+    				break;
+    			}
+    			
+    		}
+    		if(!atLeastOneMerge){//we can stop now because no rows can be merged anymore
+    			continueMergingProcess = false;
+    		}
+    		
+    	}
+    	
 		Iterator<Vector<String>> test = selectionVector.iterator();
 		while(test.hasNext()){
 			Vector<String> next = test.next();
@@ -395,6 +534,16 @@ public class OPS_JSONNodeModel extends NodeModel {
 
     }
 
+    
+    private String printArrayRow(String[] row){
+    	
+    	String result = "";
+    	for(int i=0;i<row.length;i++){
+    		result+=(row[i]+", ");
+    	}
+    	result = result.substring(0, result.length()-2);
+    	return result;
+    }
     /**
      * {@inheritDoc}
      */
@@ -511,6 +660,9 @@ public class OPS_JSONNodeModel extends NodeModel {
     			
     		}
     	}
+    	
+    	    	//latestRowUpdate = compressArray.length;
+	
     	String[][] resultCompressArray = null;
     	if(latestRowUpdate ==0){
     		resultCompressArray  = new String[1][compressArray[0].length];
