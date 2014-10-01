@@ -24,6 +24,7 @@ import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
+import org.knime.core.node.defaultnodesettings.SettingsModelStringArray;
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.ExecutionMonitor;
 import org.knime.core.node.InvalidSettingsException;
@@ -57,20 +58,31 @@ public class OPS_SwaggerNodeModel extends NodeModel {
 	public static final String TEMPLATE_SELECTION_DEFAULT = "empty";
 
 	public static final String TEMPLATE_SELECTION = "templateSelection";
+	
+	public static final String TEMPLATE_SELECTION_COPY_DEFAULT = "empty";
 
+	public static final String TEMPLATE_SELECTION_COPY = "templateSelectionCopy";
+	
+	public static final String CURRENT_SWAGGER_DEFAULT = "empty";
+
+	public static final String CURRENT_SWAGGER = "currentSwagger";
+    
 
 
 	public static final String RESULT_URL = "resultUrl";
 
-
+	public static final String[] paramValues = new String[200];
 
 	public static final String RESULT_URL_DEFAULT = "<empty>";
 
-
-    private final SettingsModelString swaggerUrl = new SettingsModelString(OPS_SwaggerNodeModel.SWAGGER_URL,OPS_SwaggerNodeModel.SWAGGER_URL_DEFAULT);
+    protected final SettingsModelStringArray paramValuesModel= new SettingsModelStringArray("paramValues", paramValues); 
+    protected final SettingsModelString swaggerUrl = new SettingsModelString(OPS_SwaggerNodeModel.SWAGGER_URL,OPS_SwaggerNodeModel.SWAGGER_URL_DEFAULT);
    // protected final SettingsModelString swaggerResult = new SettingsModelString(OPS_SwaggerNodeModel.SWAGGER_RESULT,OPS_SwaggerNodeModel.SWAGGER_RESULT_DEFAULT);
     protected final SettingsModelString templateSelection = new SettingsModelString(OPS_SwaggerNodeModel.TEMPLATE_SELECTION,OPS_SwaggerNodeModel.TEMPLATE_SELECTION_DEFAULT);
-    private final SettingsModelString resultUrl = new SettingsModelString(OPS_SwaggerNodeModel.RESULT_URL,OPS_SwaggerNodeModel.RESULT_URL_DEFAULT);
+    protected final SettingsModelString templateSelectionCopy = new SettingsModelString(OPS_SwaggerNodeModel.TEMPLATE_SELECTION_COPY,OPS_SwaggerNodeModel.TEMPLATE_SELECTION_COPY_DEFAULT);
+
+    protected final SettingsModelString resultUrl = new SettingsModelString(OPS_SwaggerNodeModel.RESULT_URL,OPS_SwaggerNodeModel.RESULT_URL_DEFAULT);
+    protected final SettingsModelString currentSwagger = new SettingsModelString(OPS_SwaggerNodeModel.CURRENT_SWAGGER,OPS_SwaggerNodeModel.CURRENT_SWAGGER_DEFAULT);
 
     
     /**
@@ -78,7 +90,7 @@ public class OPS_SwaggerNodeModel extends NodeModel {
      */
     protected OPS_SwaggerNodeModel() {
     	
-   
+  
         // TODO one incoming port and one outgoing port is assumed
         super(1, 1);
      	resultUrl.addChangeListener(new ChangeListener(){
@@ -108,19 +120,7 @@ public class OPS_SwaggerNodeModel extends NodeModel {
         	
         });
         
-        templateSelection.addChangeListener(new ChangeListener(){
-
-			@Override
-			public void stateChanged(ChangeEvent arg0) {
-				//System.out.println("templateSelection"+templateSelection.getStringValue());
-				
-				
-			}
-        	
-        	
-        	
-        	
-        });
+       
     }
 
 
@@ -280,10 +280,13 @@ public class OPS_SwaggerNodeModel extends NodeModel {
      */
     @Override
     protected void saveSettingsTo(final NodeSettingsWO settings) {
-
+        settings.addString("goede", "middag");
         swaggerUrl.saveSettingsTo(settings);
         templateSelection.saveSettingsTo(settings);
         resultUrl.saveSettingsTo(settings);
+        currentSwagger.saveSettingsTo(settings);
+        templateSelectionCopy.saveSettingsTo(settings);
+        System.out.println("currentSwagger"+currentSwagger.getStringValue()+"...");
 
     }
 
@@ -296,7 +299,9 @@ public class OPS_SwaggerNodeModel extends NodeModel {
 
         swaggerUrl.loadSettingsFrom(settings);
         templateSelection.loadSettingsFrom(settings);
+        templateSelectionCopy.loadSettingsFrom(settings);
        resultUrl.loadSettingsFrom(settings);
+       currentSwagger.loadSettingsFrom(settings);
     }
 
     /**
@@ -307,10 +312,11 @@ public class OPS_SwaggerNodeModel extends NodeModel {
             throws InvalidSettingsException {
 
         swaggerUrl.validateSettings(settings);
-        templateSelection.validateSettings(settings);
-        
+       // templateSelection.validateSettings(settings);
+        templateSelectionCopy.validateSettings(settings);
         resultUrl.validateSettings(settings);
-      //  System.out.println("url"+resultUrl.getStringValue());
+        currentSwagger.validateSettings(settings);
+        
     }
     
     /**
