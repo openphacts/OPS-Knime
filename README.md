@@ -46,7 +46,8 @@ the user wants to have, and the second table is the complete transformed JSON re
 
 #Installation
 
-* Download "org.openphacts.utils.json_1.0.0.zip" and unzip it in the plugins folder of your KNIME installation
+* Download "org.openphacts.utils.json_1.0.0.zip" [download](https://github.com/openphacts/OPS-Knime/raw/master/org.openphacts.utils.json_1.0.0.zip) and unzip it in the plugins folder of your KNIME installation
+   * on the Mac the plug-ins folder is under the Knime application 
 * Download the example workflow (OPS_KNIME 1.4-example-workflow.zip)
 * Start your Knime environment (you should see already a couple of new nodes at the left, like OPS_KNIME)
 * import the example workflow (file>>import-workflow...>>select archive file)
