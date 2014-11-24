@@ -100,10 +100,10 @@ public class OPS_JSONNodeModel extends NodeModel {
    // private final SettingsModelString json_result_string = new SettingsModelString(OPS_JSONNodeModel.JSON_CONFIG_RESULT,
      //       OPS_JSONNodeModel.DEFAULT_JSON_CONFIG_RESULT);
     
-    private final SettingsModelStringArray selection_parameters = new SettingsModelStringArray(OPS_JSONNodeModel.SELECTION_PARAMETERS, OPS_JSONNodeModel.DEFAULT_SELECTION_PARAMETERS);
-    private final SettingsModelStringArray selection_customized_names = new SettingsModelStringArray(OPS_JSONNodeModel.SELECTION_CUSTOMIZED_NAMES, OPS_JSONNodeModel.DEFAULT_SELECTION_CUSTOMIZED_NAMES);
-    private final SettingsModelStringArray all_parameters = new SettingsModelStringArray(OPS_JSONNodeModel.ALL_PARAMETERS, OPS_JSONNodeModel.DEFAULT_ALL_PARAMETERS);
-    private final SettingsModelStringArray all_customized_names = new SettingsModelStringArray(OPS_JSONNodeModel.ALL_CUSTOMIZED_NAMES, OPS_JSONNodeModel.DEFAULT_ALL_CUSTOMIZED_NAMES);
+    public  final SettingsModelStringArray selection_parameters = new SettingsModelStringArray(OPS_JSONNodeModel.SELECTION_PARAMETERS, OPS_JSONNodeModel.DEFAULT_SELECTION_PARAMETERS);
+    public  final SettingsModelStringArray selection_customized_names = new SettingsModelStringArray(OPS_JSONNodeModel.SELECTION_CUSTOMIZED_NAMES, OPS_JSONNodeModel.DEFAULT_SELECTION_CUSTOMIZED_NAMES);
+    public  final SettingsModelStringArray all_parameters = new SettingsModelStringArray(OPS_JSONNodeModel.ALL_PARAMETERS, OPS_JSONNodeModel.DEFAULT_ALL_PARAMETERS);
+    public  final SettingsModelStringArray all_customized_names = new SettingsModelStringArray(OPS_JSONNodeModel.ALL_CUSTOMIZED_NAMES, OPS_JSONNodeModel.DEFAULT_ALL_CUSTOMIZED_NAMES);
    
 
     /**
@@ -549,8 +549,17 @@ public class OPS_JSONNodeModel extends NodeModel {
      */
     @Override
     protected void reset() {
-    	
+    	System.out.println("@reset");
     	rowIndex=0;
+    	
+     System.out.println("start2 with parameters"+all_parameters.getStringArrayValue().length);
+     for (int i=0;i<all_customized_names.getStringArrayValue().length;i++){
+    	 System.out.println("we have custom name:"+all_customized_names.getStringArrayValue()[i] );
+     }
+     for (int i=0;i<selection_customized_names.getStringArrayValue().length;i++){
+    	 System.out.println("we have selected name:"+selection_customized_names.getStringArrayValue()[i] );
+     }
+    	 System.out.println("start with parameters"+all_customized_names.getStringArrayValue().length);
     	
         // TODO Code executed on reset.
         // Models build during execute are cleared here.
@@ -717,7 +726,8 @@ public class OPS_JSONNodeModel extends NodeModel {
      */
     @Override
     protected void saveSettingsTo(final NodeSettingsWO settings) {
-    	
+    	System.out.println("@saveSettingsTo");
+    	 System.out.println("start with parameters"+all_customized_names.getStringArrayValue().length);
         json_url.saveSettingsTo(settings);
        // json_result_string.saveSettingsTo(settings);
         selection_parameters.saveSettingsTo(settings);
@@ -728,21 +738,41 @@ public class OPS_JSONNodeModel extends NodeModel {
        // settings.
 
     }
-
+    boolean loaded = false;
     /**
      * {@inheritDoc}
      */
     @Override
+
     protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
             throws InvalidSettingsException {
             
+    	System.out.println("@loadValidatedSettingsFrom");
+    	//if(!loaded){
+    		System.out.println("start with all parameters"+all_customized_names.getStringArrayValue().length);
+    	 System.out.println("start with custom parameters"+all_customized_names.getStringArrayValue().length);
         json_url.loadSettingsFrom(settings);
       //  json_result_string.loadSettingsFrom(settings);
         selection_parameters.loadSettingsFrom(settings);
         selection_customized_names.loadSettingsFrom(settings);
         all_parameters.loadSettingsFrom(settings);
         all_customized_names.loadSettingsFrom(settings);
-
+        loaded=true;
+    	//}
+        /*
+        selection_parameters.setStringArrayValue(settings.getStringArray(SELECTION_PARAMETERS));
+        selection_customized_names.setStringArrayValue(settings.getStringArray(SELECTION_CUSTOMIZED_NAMES));
+        all_parameters.setStringArrayValue(settings.getStringArray(ALL_PARAMETERS));
+        all_customized_names.setStringArrayValue(settings.getStringArray(ALL_CUSTOMIZED_NAMES));
+        */
+    	System.out.println("start2 with all parameters"+all_customized_names.getStringArrayValue().length);
+   	 	System.out.println("start2 with custom parameters"+all_customized_names.getStringArrayValue().length);
+        for (int i=0;i<all_customized_names.getStringArrayValue().length;i++){
+       	 System.out.println("we have custom name:"+all_customized_names.getStringArrayValue()[i] );
+        }
+        for (int i=0;i<selection_customized_names.getStringArrayValue().length;i++){
+       	 System.out.println("we have selected name:"+selection_customized_names.getStringArrayValue()[i] );
+        }
     }
 
     /**
@@ -751,30 +781,36 @@ public class OPS_JSONNodeModel extends NodeModel {
     @Override
     protected void validateSettings(final NodeSettingsRO settings)
             throws InvalidSettingsException {
-            
+    	System.out.println("@validateSettings in model");
+    		
     	 json_url.validateSettings(settings);
     	 
-    
+    	 System.out.println("start with parameters"+all_customized_names.getStringArrayValue().length);
+    	 String[] all_custom = all_customized_names.getStringArrayValue();
+    	 for(int i =0;i<all_custom.length;i++){
+    		 System.out.println("all custom: "+ all_custom[i]);
+    	 }
+    	 all_customized_names.validateSettings(settings);
+    	 String[] all_custom_again = all_customized_names.getStringArrayValue();
+    	 for(int i =0;i<all_custom_again.length;i++){
+    		 System.out.println("all custom again: "+ all_custom_again[i]);
+    	 }
     	 
+    	 System.out.println("start with parameters again"+all_customized_names.getStringArrayValue().length);
     	//System.out.println("setting:"+settings.getString(selection_parameters.getStringArrayValue()[0]));
        //  json_result_string.validateSettings(settings);
-         selection_parameters.validateSettings(settings);
+        // selection_parameters.validateSettings(settings);
          System.out.println("validatesettings:"+selection_parameters.getStringArrayValue().length);
          selection_customized_names.validateSettings(settings);
-         all_parameters.validateSettings(settings);
-         all_customized_names.validateSettings(settings);
-         selection_parameters.setStringArrayValue(settings.getStringArray(SELECTION_PARAMETERS));
+         
+        // all_parameters.validateSettings(settings);
+       //  all_customized_names.validateSettings(settings);
+        // selection_parameters.setStringArrayValue(settings.getStringArray(SELECTION_PARAMETERS));
          System.out.println("validatesettingsXX:"+selection_parameters.getStringArrayValue().length);
-         selection_customized_names.setStringArrayValue(settings.getStringArray(SELECTION_CUSTOMIZED_NAMES));
-         all_parameters.setStringArrayValue(settings.getStringArray(ALL_PARAMETERS));
-         all_customized_names.setStringArrayValue(settings.getStringArray(ALL_CUSTOMIZED_NAMES));
-         System.out.println("start");
-         for (int i=0;i<selection_parameters.getStringArrayValue().length;i++){
-        	 System.out.println("we have:"+selection_parameters.getStringArrayValue()[i] );
-         }
-         for (int i=0;i<selection_customized_names.getStringArrayValue().length;i++){
-        	 System.out.println("we have name:"+selection_customized_names.getStringArrayValue()[i] );
-         }
+         //selection_customized_names.setStringArrayValue(settings.getStringArray(SELECTION_CUSTOMIZED_NAMES));
+       //  all_parameters.setStringArrayValue(settings.getStringArray(ALL_PARAMETERS));
+        // all_customized_names.setStringArrayValue(settings.getStringArray(ALL_CUSTOMIZED_NAMES));
+        
     }
     
     /**

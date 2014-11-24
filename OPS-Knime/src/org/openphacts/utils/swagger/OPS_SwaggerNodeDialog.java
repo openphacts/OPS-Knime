@@ -119,8 +119,10 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
 			
 		});
 		logger = NodeLogger.getLogger(getClass());
+		
 		ret.add(" ");
-		templateCopyDialog = new DialogComponentString(templateSelectionCopy,"templateCopy");
+		templateCopyDialog = new DialogComponentString(templateSelectionCopy,"");
+		templateCopyDialog.setSizeComponents(0, 0);
 		addDialogComponent(templateCopyDialog);
 	
 		templateDialog = new DialogComponentStringSelection(templateSelection,
@@ -132,8 +134,10 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
 		urlDialog = new DialogComponentString(swaggerUrl,
 				"Swagger URL: ");
 		swaggerDialog = new DialogComponentString(currentSwagger,
-				"currentSwagger: ");
+				"");
+		swaggerDialog.setSizeComponents(0, 0);
 		addDialogComponent(swaggerDialog);
+		
 		urlDialog.setSizeComponents(700, 40);
 		urlDialog.getComponentPanel().setEnabled(false);
 		//urlDialog.setSizeComponents(500, 100);
@@ -141,10 +145,10 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
 		
 		
 		resultDialog = new DialogComponentString(resultUrl,
-				"Result URL: ");
+				"");
 		resultDialog.setSizeComponents(700, 40);
 		resultDialog.getComponentPanel().setSize(700, 40);
-		
+		resultDialog.setSizeComponents(0, 0);
 		final DialogComponentButton loadSwagger = new DialogComponentButton(
 				"Fetch") {
 
@@ -467,7 +471,7 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
     
     protected <T extends JComponent> T addField(JPanel panel, String label, T field)
     {
-        panel.add(new JLabel(label + ":"), createFirst());
+        panel.add(new JLabel(label ), createFirst());
         panel.add(field, createLast());
         return field;
     }
@@ -549,7 +553,7 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setPreferredSize(new Dimension(600, 450));
         JPanel connectionPanel = new JPanel(new GridBagLayout());
-        connectionPanel.setBorder(BorderFactory.createTitledBorder("Connection Parameters"));
+        connectionPanel.setBorder(BorderFactory.createTitledBorder("Default URL parameters"));
         
     	Iterator<String> operationsIt = operations.keySet().iterator();
     	final JTextField dummyField = new JTextField(1);
@@ -601,7 +605,10 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
 						field.grabFocus();
 						
 						System.out.println("typed");
-						
+						field.select(field.getText().length()-1, field.getText().length());
+						int end = field.getSelectionEnd();
+						field.setSelectionStart(end);
+						field.setSelectionEnd(end);System.out.println("lost focus:"+resultUrl.getStringValue());
 					}
 					
 				});
@@ -619,7 +626,11 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
 						
 						current.setStringValue(field.getText());
 						resultUrl.setStringValue(getDefaultUrl());
-						System.out.println("lost focus:"+resultUrl.getStringValue());
+						//int end = field.getSelectionEnd();
+						//field.setSelectionStart(end);
+						//field.setSelectionEnd(end);
+						//System.out.println("lost focus:"+resultUrl.getStringValue());
+						//field.select(field.getText().length(), field.getText().length());
 						// TODO Auto-generated method stub
 						
 					}
@@ -628,7 +639,7 @@ public class OPS_SwaggerNodeDialog extends DefaultNodeSettingsPane {
 				});
 			}
 			
-			addField(connectionPanel, "dummyField", dummyField);
+			//addField(connectionPanel, "", dummyField);
 			
 			
 			//addDialogComponent(operations.get(operationsIt.next()));

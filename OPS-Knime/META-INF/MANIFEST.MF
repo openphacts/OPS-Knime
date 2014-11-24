@@ -1,8 +1,8 @@
-Manifest-Version: 1.0
+Manifest-Version: 1.1
 Bundle-ManifestVersion: 2
 Bundle-Name: JSON_Knime-Node extension for KNIME Workbench
 Bundle-SymbolicName: org.openphacts.utils.json; singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.1.0
 Bundle-ClassPath: json_knime.jar,
  lib/commons-beanutils-1.8.3.jar,
  lib/commons-collections-3.2.1.jar,
