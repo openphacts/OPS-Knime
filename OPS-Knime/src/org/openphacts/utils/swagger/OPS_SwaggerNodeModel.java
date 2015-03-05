@@ -47,8 +47,7 @@ public class OPS_SwaggerNodeModel extends NodeModel {
         
 
 
-	//static final String SWAGGER_URL_DEFAULT = "https://raw.githubusercontent.com/openphacts/OPS_LinkedDataApi/1.4.0/api-config-files/swagger.json";
-	static final String SWAGGER_URL_DEFAULT = "https://raw.githubusercontent.com/openphacts/OPS_LinkedDataApi/1.3.1/api-config-files/swagger.json";
+	static final String SWAGGER_URL_DEFAULT = "https://raw.githubusercontent.com/openphacts/OPS_LinkedDataApi/1.4.0/api-config-files/swagger.json";
 	static final String SWAGGER_URL = "swagger";
 
 	public static final String SWAGGER_RESULT = "swaggerResult";

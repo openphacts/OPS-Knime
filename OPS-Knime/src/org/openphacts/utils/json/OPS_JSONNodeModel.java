@@ -82,7 +82,7 @@ public class OPS_JSONNodeModel extends NodeModel {
 	
 	
     /** initial default values. */
-    static final String DEFAULT_JSON_URL = "https://raw.githubusercontent.com/openphacts/OPS_LinkedDataApi/1.3.1/api-config-files/swagger.jsonhttps://raw.githubusercontent.com/openphacts/OPS_LinkedDataApi/1.3.1/api-config-files/swagger.json";
+    static final String DEFAULT_JSON_URL = "https://raw.githubusercontent.com/openphacts/OPS_LinkedDataApi/1.4.0/api-config-files/swagger.json";
     //static final String DEFAULT_JSON_CONFIG_RESULT = "{}";
     // Here we put the parts of the JSON result that the user selected, and optionally gave new names to
  	static final String[] DEFAULT_SELECTION_PARAMETERS = new String[1000];//should be enough

@@ -22,7 +22,7 @@ KNIME-UTILS: OPS_SWAGGER & OPS_JSON
 ----------
 The <a href="http://dev.openphacts.org">OpenPHACTS services</a> are accessible via HTTP-GET .
 These services are described in <a href="https://developers.helloreverb.com/swagger/">SWAGGER</a>, and rendered by <a href="http://www.3scale.net/">3scale</a> into convenient, human-readable html documentation. 
-The latest swagger file for the OpenPHACTS version 1.3 can be found <a href="https://raw.github.com/openphacts/OPS_LinkedDataApi/1.3.0/api-config-files/swagger.json">here </a>, and the visualisation is <a href="https://dev.openphacts.org/docs/1.3"> here </a>
+The latest swagger file for the OpenPHACTS version 1.4 can be found <a href="https://raw.github.com/openphacts/OPS_LinkedDataApi/1.4.0/api-config-files/swagger.json">here </a>, and the visualisation is <a href="https://dev.openphacts.org/docs/1.4"> here </a>
 SWAGGER is an easy way to describe REST services. 
 It contains all the necessary information needed to be able
 to understand the purpose and how to technically invoke  services that are provided. For example the address of the server, the path to the services and the parameters
