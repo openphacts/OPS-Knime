@@ -78,4 +78,4 @@ TODO
 * more nodes
 * better nodes
 
-for any questions or feedback, please send a mail to rm.siebes'''''AT'''''few.vu.nl
+for any questions or feedback, please send a mail to support'''''AT'''''openphacts.org or as your question at : http://support.openphacts.org/support/discussions/forums/4000000979
