@@ -50,7 +50,7 @@ the user wants to have, and the second table is the complete transformed JSON re
 * Rename to `org.openphacts.utils.json_1.1.0.jar` and place it in the `plugins/` folder of your KNIME installation.
   * Alternatively: Create a folder `plugins/org.openphacts.utils.json_1.1.0` and unzip the downloaded ZIP there, ensuring `plugin.xml` and friends are directly below `plugins/org.openphacts.utils.json_1.1.0`.
   * On Mac OS X the `plugins` folder is under the Knime application. Context-click on Knime and select _Show Package Content_.
-* Download the example workflow ([OPS_KNIME 1.4-example-workflow.zip](blob/master/OPS_KNIME%201.4-example-workflow.zip?raw=true))
+* Download the example workflow ([OPS_KNIME 1.4-example-workflow.zip](https://github.com/openphacts/OPS-Knime/blob/master/OPS_KNIME%201.4-example-workflow.zip?raw=true))
 * Start your Knime environment (you should see already a couple of new nodes at the left, like **OPS_KNIME**)
 * Import the example workflow (file>>import-workflow...>>select archive file)
 
